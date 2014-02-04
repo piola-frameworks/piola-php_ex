@@ -1,0 +1,71 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Crear nuevo texto</h3>
+    </div>
+    <div class="panel-body">
+        <form id="frmCrearTexto" class="form-horizontal" method="POST" role="form">
+            <div class="form-group">
+                <label for="txtNombre" class="col-sm-2 control-label">Nombre del texto</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="txtNombre" placeholder="Nombre del texto">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="txtAutor" class="col-sm-2 control-label">Autor</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="txtAutor" placeholder="Autor">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="txtPaginas" class="col-sm-2 control-label">Paginas</label>
+                <div class="col-sm-10">
+                    <input id="txtPaginas" class="form-control" type="number" min="1" placeholder="Cantidad de paginas">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ddlCarrera" class="col-sm-2 control-label">Carrera</label>
+                <div class="col-sm-10">
+                    <select id="ddlCarrera" class="form-control">
+                        <option value="{IdCarrera}">{NombreCarrera}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ddlMateria" class="col-sm-2 control-label">Materia</label>
+                <div class="col-sm-10">
+                    <select id="ddlMateria" class="form-control">
+                        <option value="{IdMateria}">{NombreMateria}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="txtDocente" class="col-sm-2 control-label">Docente</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="txtDocente" placeholder="Docente">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="fileTextoPDF">Archivo</label>
+                <div class="col-sm-2">
+                    <input id="fileTextoPDF" class="form-control" type="file" accept="application/pdf">
+                    <!-- <p class="help-block">Una breve ayuda sobre el archivo a subir.</p> -->
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="checkbox">
+                        <label for="chkActivo">
+                            <input id="chkActivo" type="checkbox"> &iquest;Activo?
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">Guardar</button>
+                    <button type="reset" class="btn btn-default">Limpiar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

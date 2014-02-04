@@ -1,0 +1,51 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Detalle del usuario:</h2>
+    </div>
+    <div class="panel-body">
+        <form id="frmDetalleUsuario" class="form-horizontal" name="frmDetalleUsuario">
+            <fieldset>
+                <legend>Datos</legend>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtUsuario">Usuario</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{IdUsuario}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="ddlRol">Rol</label>
+                    <div class="col-sm-10">
+                        <select id="ddlRol" class="form-control" name="ddlRol" disabled="disabled">
+                            <option value="{idRol}">{NombreRol}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtNombre">Nombre</label>
+                    <div class="col-sm-10">
+                        <input id="txtNombre" class="form-control" name="txtNombre" type="text" value="{Nombre}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtApellido">Apellido</label>
+                    <div class="col-sm-10">
+                        <input id="txtApellido" class="form-control" type="text" name="txtApellido" value="{Apellido}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtContrasena">Contrse&ntilde;a</label>
+                    <div class="col-sm-10">
+                        <input id="txtContrasena" class="form-control" type="password" name="txtContrasena" value="{Contrasena}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtComentario">Comentario</label>
+                    <div class="col-sm-10">
+                        <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4">{Comentario}</textarea>
+                    </div>
+                </div>
+            </fieldset>
+            <input class="btn btn-default" type="button" name="txtEnviar" value="Volver" />
+        </form>
+    </div>
+</div>

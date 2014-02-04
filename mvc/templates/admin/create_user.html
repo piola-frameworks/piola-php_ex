@@ -1,0 +1,36 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title">Nuevo usuario:</h2>
+  </div>
+  <div class="panel-body">
+    <form name="frmCrearUsuario" method="POST" role="form">
+        <fieldset>
+            <legend>Datos</legend>
+            <div class="form-group">
+                <label for="txtUsuario">Usuario:</label>
+                <input id="txtUsuario" class="form-control" name="txtUsuario" type="text" size="20" maxlength="20" disabled="disabled" readonly="readonly" />
+            </div>
+            <div class="form-group">
+                <label for="txtNombre">Nombre:</label>
+                <input id="txtNombre" class="form-control" name="txtNombre" type="text" size="50" maxlength="50" />
+            </div>
+            <div class="form-group">
+                <label for="txtApellido">Apellido:</label>
+                <input id="txtApellido" class="form-control" type="text" name="txtApellido" size="50" maxlength="50" />
+            </div>
+            <div class="form-group">
+                <label for="txtContrasena">Contrse&ntilde;a:</label>
+                <input id="txtContrasena" class="form-control" type="password" name="txtContrasena" size="20" maxlength="20" />
+            </div>
+            <div class="form-group">
+                <label for="txtComentario">Comentario:</label>
+                <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4"></textarea>
+            </div>
+        </fieldset>
+        <button class="btn btn-default" type="submit" name="txtEnviar"></button>
+        <button class="btn btn-default" type="reset" name="txtLimpiar"></button>
+    </form>
+  </div>
+</div>
+
+

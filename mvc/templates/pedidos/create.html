@@ -1,0 +1,87 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Filtros</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-inline" role="form">
+            <div class="form-group">
+                <label class="sr-only" for="ddlCarrera">Carreras</label>
+                <select id="ddlCarrera" class="form-control" name="ddlCarrera">
+                    <option selected="selected" disabled="disabled">Carrera</option>
+                    {combo_carrera}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="sr-only" for="ddlNiveles">Niveles</label>
+                <select class="form-control" name="ddlNiveles">
+                    <option selected="selected" disabled="disabled">Nivel</option>
+                    {combo_nivel}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="sr-only" for="ddlMaterias">Materias</label>
+                <select class="form-control" name="ddlMaterias">
+                    <option selected="selected" disabled="disabled">Materias</option>
+                    {combo_materia}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Filtrar</button>
+        </form>
+    </div>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Resultados</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Codigo</th>
+                    <th>Titulo</th>
+                    <th>Autor</th>
+                    <th>Docente</th>
+                    <th>Paginas</th>
+                    <th>Precio</th>
+                    <th>Agregar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {table_content}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#ddlCarrera').change(function() {
+        var carreraSeleccionada = $('#ddlCarrera').val();
+        $.ajax({
+            type: 'POST',
+            url: 'http://ceit.utn.edu.ar/pedidos/ajax_get_niveles',
+            data: 'idCarrera=' + carreraSeleccionada,
+            success: function (data, textStatus, jqXHR) {
+                console.debug(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.debug(jqXHR, textStatus, errorThrown);
+                alert('error');
+            }
+                    
+        });
+    });
+    /*$('#save').click(function(e) {
+        e.preventDefault(); //prevent default button action
+        var name = $('#name').val();
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost/myApp/process',
+            data: "{name:" + name + "}",
+            success: function (result) {
+                alert(result);
+            },
+            error: function (xhr, status, errorMessage) {  
+                alert(xhr.status);              
+            }
+        });
+    });*/
+</script>

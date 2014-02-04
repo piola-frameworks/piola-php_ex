@@ -1,0 +1,86 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Datos</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" name="frmDetalleUsuario" role="form">
+            <fieldset disabled="disabled">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtIdPedido">N&ordm; de pedido</label>
+                    <div class="col-sm-4">
+                        <input id="txtIdPedido" class="form-control" name="txtIdPedido" type="text" value="{IdPedido}" />
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtCreado">Creado</label>
+                    <div class="col-sm-4">
+                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="ddlEstado">Estado</label>
+                    <div class="col-sm-4">
+                        <select name="ddlEstado" class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtRetiro">Retiro</label>
+                    <div class="col-sm-4">
+                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" value="{Retiro}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtAnillado">Anillado</label>
+                    <div class="col-sm-4">
+                        <div class="checkbox">
+                            <input id="txtApellido" type="checkbox" name="txtAnillado" value="{Anillado}" />
+                        </div>
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtPagado">Pagado</label>
+                    <div class="col-sm-4">
+                        <div class="checkbox">
+                            <input id="txtApellido" type="checkbox" name="txtPagado" value="{Pagado}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtComentario">Comentario</label>
+                    <div class="col-lg-10">
+                        <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4">{Comentario}</textarea>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Items</h2>
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+            <th>N&ordm;</th>
+            <th>Cantidad</th>
+            <th>Codigo</th>
+            <th>Nombre</th>
+            <th>Docente</th>
+            <th>Materia</th>
+            <th>Hojas</th>
+            <th>Costo</th>
+            </thead>
+            <tbody>
+                {table_rows}
+            </tbody>
+        </table>
+        <div class="form-group">
+            <label class="col-sm-offset-8 col-sm-2 control-label" for="txtPrecioTotal">Precio:</label>
+            <div class="col-sm-2">
+                <input id="txtPrecioTotal" class="form-control" type="text" value="{PrecioTotal}" />
+            </div>
+        </div>
+    </div>
+</div>
+<input class="btn btn-default" type="button" name="btnVolver" value="Volver" />

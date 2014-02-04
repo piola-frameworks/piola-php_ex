@@ -1,0 +1,66 @@
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <h3 class="panel-title">A cobrar</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Legajo</th>
+                    <th>Precio Unitario</th>
+                    <th>Cantidad</th>
+                    <th>Importe</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {table_1_content}
+            </tbody>
+        </table>
+        <div class="form-group">
+            <label class=" col-sm-offset-9 col-sm-1" for="txtTotal">Total:</label>
+            <div class="col-sm-2">
+                <input id="txtTotal" class="form-control" type="number" readonly="readonly" />
+            </div>
+        </div>
+        <button id="btnCobrar" class="btn btn-default" type="submit" name="btnCobrar">Cobrar</button>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Filtros</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-inline" name="frmCajaFiltros" method="POST" role="form">
+            <div class="form-group">
+                <label class="sr-only" for="txtLegajo">Legajo</label>
+                <input id="txtLegajo" class="form-control" type="text" name="txtLegajo" placeholder="Legajo">
+            </div>
+            <button class="btn btn-default" type="submit" name="btnFiltrar">Filtrar</button>
+        </form>
+    </div>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Resultados</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Campo1</th>
+                    <th>Campo1</th>
+                    <th>Campo1</th>
+                    <th>Campo1</th>
+                    <th>Campo1</th>
+                    <th>Campo1</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {table_2_content}
+            </tbody>
+        </table>
+    </div>
+</div>
