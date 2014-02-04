@@ -48,12 +48,6 @@ namespace CEIT\mvc\controllers
         
         public function create()
         {
-            if(!empty($_POST))
-            {
-                var_dump($_POST);
-            }
-            
-            // indico el template a usar
             $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
             
             $this->result = $this->_model['Carreras']->Select();
@@ -75,46 +69,17 @@ namespace CEIT\mvc\controllers
             }
             unset($this->result);
             
-            $this->result = $this->_model['Niveles']->Select();
-            if(count($this->result) > 1)
+            if(!empty($_POST))
             {
-                foreach($this->result as $row)
-                {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/combo_nivel.html";
-                    $this->combo_nivel .= file_get_contents($filename);
-                    
-                    if(is_array($row))
-                    {
-                        foreach($row as $key => $value)
-                        {
-                            $this->combo_nivel = str_replace('{' . $key . '}', $value, $this->combo_nivel);
-                        }
-                    }
-                }
+                $modelTexto = new models\TextoModel();
+                $modelTexto->_idMateria = filter_input(INPUT_POST, 'ddlMateria', FILTER_SANITIZE_NUMBER_INT);
+                $this->result = $this->_model['Textos']->SelectByIdMateria($modelTexto);
             }
-            unset($this->result);
-            
-            $this->result = $this->_model['Materias']->Select();
-            if(count($this->result) > 1)
+            else
             {
-                foreach($this->result as $row)
-                {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/combo_materia.html";
-                    $this->combo_materia .= file_get_contents($filename);
-                    
-                    if(is_array($row))
-                    {
-                        foreach($row as $key => $value)
-                        {
-                            $this->combo_materia = str_replace('{' . $key . '}', $value, $this->combo_materia);
-                        }
-                    }
-                    
-                }
+                $this->result = $this->_model['Textos']->Select();
             }
-            unset($this->result);
             
-            $this->result = $this->_model['Textos']->Select();
             if(count($this->result) > 1)
             {
                 foreach($this->result as $row)
@@ -287,6 +252,18 @@ namespace CEIT\mvc\controllers
                 $nivelModel = new models\NivelModel();
                 $nivelModel->_idCarrera = filter_input(INPUT_POST, 'idCarrera', FILTER_SANITIZE_NUMBER_INT);
                 $this->result = $this->_model['Niveles']->SelectByIdCarrera($nivelModel);
+            }
+        }
+        
+        public function ajax_get_materias()
+        {
+            if(!empty($_POST))
+            {
+                $this->_ajaxRequest = true;
+                
+                $materiaModel = new models\MateriaModel();
+                $materiaModel->_idNivel = filter_input(INPUT_POST, 'idNivel', FILTER_SANITIZE_NUMBER_INT);
+                $this->result = $this->_model['Materias']->SelectByIdNivel($materiaModel);
             }
         }
     }

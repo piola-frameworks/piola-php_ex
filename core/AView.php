@@ -54,9 +54,16 @@ namespace CEIT\core
         
         public function json($object)
         {
-            var_dump($object);
+            if(is_array($object))
+            {
+                echo self::customJsonEncode($object);
+            }
+            else
+            {
+                trigger_error("Solo funciona con arrays, por el momento...", E_USER_NOTICE);
+            }
             
-            if(!is_resource($object))
+            /*if(!is_resource($object))
             {
                 if($asd = json_encode($object, JSON_PRETTY_PRINT))
                 {
@@ -101,7 +108,91 @@ namespace CEIT\core
             else
             {
                 trigger_error("El objecto a JSONificar no debe ser un recurso de PHP", E_USER_ERROR);
+            }*/
+        }
+        
+        private static function customJsonEncode(array $data)
+        {
+            /*if(function_exists('json_encode'))
+            {
+                return json_encode($data); //Lastest versions of PHP already has this functionality. 
+            }*/
+            
+            $parts = array();
+            $is_list = false;
+
+            //Find out if the given array is a numerical array 
+            $keys = array_keys($data);
+            $max_length = count($data) - 1;
+            if(($keys[0] == 0) && ($keys[$max_length] == $max_length)) //See if the first key is 0 and last key is length - 1
+            {
+                $is_list = true; 
+                for($index = 0; $index < count($keys); $index++) //See if each key correspondes to its position 
+                {
+                    if($index != $keys[$index]) //A key fails at position check. 
+                    {
+                        $is_list = false; //It is an associative array. 
+                        break; 
+                    }
+                } 
+            } 
+
+            foreach($data as $key => $value)
+            { 
+                if(is_array($value))
+                { //Custom handling for arrays 
+                    if($is_list)
+                    {
+                        $parts[] = self::customJsonEncode($value); /* :RECURSION: */ 
+                    }
+                    else
+                    {
+                        $parts[] = '"' . $key . '":' . self::customJsonEncode($value); /* :RECURSION: */ 
+                    }
+                }
+                else
+                { 
+                    $str = ''; 
+                    if(!$is_list)
+                    {
+                        $str = '"' . $key . '":'; 
+                    }
+
+                    //Custom handling for multiple data types 
+                    if(is_numeric($value))
+                    {
+                        $str .= $value; //Numbers 
+                    }
+                    else if($value === false)
+                    {
+                        $str .= 'false'; //The booleans 
+                    }
+                    else if($value === true)
+                    {
+                        $str .= 'true'; 
+                    }
+                    /*else if(is_string($value))
+                    {
+                        $str .= '"' . addslashes(htmlentities($value)) . '"'; //The strings
+                    }*/
+                    else
+                    {
+                        $str .= '"' . addslashes($value) . '"'; //All other things 
+                    }
+                    // :TODO: Is there any more datatype we should be in the lookout for? (Object?) 
+
+                    $parts[] = $str; 
+                } 
+            } 
+            
+            $json = implode(',', $parts); 
+
+            if($is_list)
+            {
+                return '[' . $json . ']';//Return numerical JSON 
             }
+            
+            return '{' . $json . '}';//Return associative JSON 
         }
     }
 }

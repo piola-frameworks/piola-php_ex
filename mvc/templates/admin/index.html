@@ -17,17 +17,15 @@
 <!-- Tab panes -->
 <div class="tab-content">
     <div class="tab-pane" id="users">
+        <div class="well well-sm">
+            &iquest;Desea crear un <a href="/admin/create_user/" class="btn btn-success btn-xs" role="button">nuevo usuario</a>?
+        </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Resultados</h3>
             </div>
             <div class="panel-body">
-                <div class="well">
-                    <p>
-                        &iquest;Desea crear un nuevo usuario?
-                        <a href="/admin/create_user/" class="btn btn-default" role="button">Crear</a>
-                    </p>
-                </div>
+
                 <table class="table">
                     <thead>
                         <tr>
@@ -48,17 +46,14 @@
         </div>
     </div>
     <div class="tab-pane" id="roles">
+        <div class="well well-sm">
+            &iquest;Desea crear un <a href="/admin/create_role/" class="btn btn-success btn-xs" role="button">nuevo rol</a>?
+        </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Roles</h3>
             </div>
-            <div class="panel-body">
-                <div class="well">
-                    <p>
-                        &iquest;Desea crear un nuevo rol?
-                        <a href="/admin/create_role/" class="btn btn-default" role="button">Crear</a>
-                    </p>
-                </div>
+            <div class="panel-body">        
                 <table class="table">
                     <thead>
                         <tr>
@@ -75,6 +70,9 @@
         </div>
     </div>
     <div class="tab-pane" id="perms">
+        <div class="well well-sm">
+            &iquest;Desea agregar un <a class="btn btn-success btn-xs" href="./create_perm" role="button">nuevo permiso</a>?
+        </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Permisos</h3>
@@ -84,6 +82,8 @@
                     <thead>
                         <tr>
                             <th>Id</th>
+                            <th>Controlador</th>
+                            <th>Accion</th>
                             <th>Descripcion</th>
                             <th>Acciones</th>
                         </tr>

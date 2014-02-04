@@ -10,11 +10,6 @@ namespace CEIT\mvc\controllers
     {
         public function __construct()
         {
-            if(DEBUG)
-            {
-                echo '<pre>[LOG ' . date('c') . '] Llamada a ' . __METHOD__ . '(ArgCount: ' . func_num_args() . ')</pre>' . PHP_EOL;
-            }
-            
             parent::__construct();
             
             if(empty($this->_model))
@@ -30,23 +25,14 @@ namespace CEIT\mvc\controllers
         
         public function __destruct()
         {
-            if(DEBUG)
-            {
-                echo '<pre>[LOG ' . date('c') . '] Llamada a ' . __METHOD__ . '(ArgCount: ' . func_num_args() . ')</pre>' . PHP_EOL;
-            }
-            
             parent::__destruct();
             
+            unset($this->result);
             $this->_view->render($this->_template, $this->_dataCollection);
         }
 
         public function index()
         {
-            if(DEBUG)
-            {
-                echo '<pre>[LOG ' . date('c') . '] Llamada a ' . __METHOD__ . '(ArgCount: ' . func_num_args() . ')</pre>' . PHP_EOL;
-            }
-            
             $this->_template = BASE_DIR . "/mvc/templates/login/{$this->_action}.html";
             
             if(!empty($_POST))

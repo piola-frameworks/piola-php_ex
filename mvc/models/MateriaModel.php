@@ -72,6 +72,16 @@ namespace CEIT\mvc\models
             }
         }
 
+        public function SelectByIdNivel(core\AModel $model)
+        {
+            $this->_sp = "sp_selMateriasByIdNivel";
+            $this->_params = array(
+                ':idNivel'  =>  $model->_idNivel,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function Update(array $model)
         {
             if(count($model) > 1)

@@ -3,7 +3,7 @@
         <h3 class="panel-title">Filtros</h3>
     </div>
     <div class="panel-body">
-        <form class="form-inline" role="form">
+        <form class="form-inline" name="frmFiltroPedido" method="POST" role="form">
             <div class="form-group">
                 <label class="sr-only" for="ddlCarrera">Carreras</label>
                 <select id="ddlCarrera" class="form-control" name="ddlCarrera">
@@ -12,20 +12,20 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="sr-only" for="ddlNiveles">Niveles</label>
-                <select class="form-control" name="ddlNiveles">
+                <label class="sr-only" for="ddlNivel">Niveles</label>
+                <select id="ddlNivel" class="form-control" name="ddlNivel">
                     <option selected="selected" disabled="disabled">Nivel</option>
                     {combo_nivel}
                 </select>
             </div>
             <div class="form-group">
-                <label class="sr-only" for="ddlMaterias">Materias</label>
-                <select class="form-control" name="ddlMaterias">
+                <label class="sr-only" for="ddlMateria">Materias</label>
+                <select id="ddlMateria" class="form-control" name="ddlMateria">
                     <option selected="selected" disabled="disabled">Materias</option>
                     {combo_materia}
                 </select>
             </div>
-            <button type="submit" class="btn btn-success">Filtrar</button>
+            <button id="btnFiltrar" class="btn btn-success" type="submit">Filtrar</button>
         </form>
     </div>
 </div>
@@ -53,35 +53,57 @@
     </div>
 </div>
 <script type="text/javascript">
+    // Desactivo los controles al principio para despues habilitarlos.
+    $('#ddlNivel').attr('disabled', true);
+    $('#ddlMateria').attr('disabled', true);
+    
     $('#ddlCarrera').change(function() {
-        var carreraSeleccionada = $('#ddlCarrera').val();
         $.ajax({
             type: 'POST',
-            url: 'http://ceit.utn.edu.ar/pedidos/ajax_get_niveles',
-            data: 'idCarrera=' + carreraSeleccionada,
+            url: './ajax_get_niveles',
+            data: 'idCarrera=' + $('#ddlCarrera').val(),
             success: function (data, textStatus, jqXHR) {
-                console.debug(data);
+                // Limpio los DDL foraneos.
+                $('#ddlNivel').empty();
+                $('#ddlNivel').append($('<option>').text('Niveles').attr('disabled', true));
+                $('#ddlMateria').empty();
+                $('#ddlMateria').append($('<option>').text('Materias').attr('disabled', true));
+                
+                // Parseo el JSON y agrego los datos en el DLL
+                $.parseJSON(data).map(function(value, key) {
+                    $('#ddlNivel').append($('<option>').val(value.IdNivel).text(value.Descripcion));
+                });
+                
+                // Habilito el DDL hijo.
+                $('#ddlNivel').removeAttr('disabled');
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.debug(jqXHR, textStatus, errorThrown);
                 alert('error');
             }
-                    
         });
     });
-    /*$('#save').click(function(e) {
-        e.preventDefault(); //prevent default button action
-        var name = $('#name').val();
+    
+    $('#ddlNivel').change(function() {
         $.ajax({
             type: 'POST',
-            url: 'http://localhost/myApp/process',
-            data: "{name:" + name + "}",
-            success: function (result) {
-                alert(result);
+            url: './ajax_get_materias',
+            data: 'idNivel=' + $('#ddlNivel').val(),
+            success: function (data, textStatus, jqXHR) {
+                // Limpio el DDL foraneo,
+                $('#ddlMateria').empty();
+                $('#ddlMateria').append($('<option>').text('Materias').attr('disabled', true));
+                
+                // Parseo el JSON y agrego los items al DDL.s
+                $.parseJSON(data).map(function(value) {
+                    $('#ddlMateria').append($('<option>').val(value.IdMateria).text(value.Descripcion));
+                });
+                
+                // Habilito el DDL hijo.
+                $('#ddlMateria').removeAttr('disabled');
             },
-            error: function (xhr, status, errorMessage) {  
-                alert(xhr.status);              
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('error');
             }
         });
-    });*/
+    });
 </script>

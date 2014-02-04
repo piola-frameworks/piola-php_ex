@@ -9,11 +9,12 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
-            $params = array(
+            $this->_sp = "sp_delUsuarios";
+            $this->_params = array(
                 ':id'   =>  $model->_idUsuario,
             );
 
-            Database::getInstance()->DoQuery("sp_delUsuarios", $params);
+            Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
         }
 
         public function Insert(array $model)
@@ -48,11 +49,12 @@ namespace CEIT\mvc\models
 
         public function SelectByUsername(core\AModel $model)
         {
-            $params = array(
+            $this->_sp = "sp_selUsuarioByLegajoOrUsername";
+            $this->_params = array(
                 ':username'   =>  $model->_data["username"],
             );
 
-            return Database::getInstance()->DoQuery("sp_selUsuarioByLegajoOrUsername", $params);
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
         public function Update(array $model)

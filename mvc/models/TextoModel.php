@@ -39,6 +39,16 @@ namespace CEIT\mvc\models
                 echo $ex->getTraceAsString();
             }
         }
+        
+        public function SelectByIdMateria(core\AModel $model)
+        {
+            $this->_sp = "sp_selTextosByIdMateria";
+            $this->_params = array(
+                ':idMateria' =>  $model->_idMateria,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
 
         public function Update(array $model)
         {
