@@ -50,6 +50,116 @@ namespace CEIT\mvc\controllers
         {
             $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
             
+            /*
+             * Formato del cookie
+             * 
+             * 'Pedido' => array(
+             *      'AnilladoCompleto' = booleano obligatorio,
+             *      'Comentario' = string opcional,
+             *      'Items' => array(
+             *          'IdTexto' = entero obligatorio,
+             *          'SimpleFaz' = booleano obligatorio,
+             *          'Anillado' = booleano obligatorio,
+             *          'Cantidad' = entero obligatorio,
+             *      );
+             * );
+             * 
+             */
+            
+            if(!empty($_POST))
+            {
+                // Si se agrego un texto, va a parar a la cookie.
+                if(isset($_POST['btnAgregarTexto']))
+                {
+                    // Creo un array temporal para trabajar.
+                    $tmpArray = array();
+                    
+                    // Saco los datos de la cookie.
+                    $cookie = filter_input(INPUT_COOKIE, 'TextosAgregados');
+                    if(!empty($cookie))
+                    {
+                        // Deserializo y lo guardo en el array temporal.
+                        $tmpArray = unserialize($cookie);
+                    }
+                    
+                    // Saco el dato de interes del POST.
+                    $post = filter_input(INPUT_POST, 'btnAgregarTexto', FILTER_SANITIZE_NUMBER_INT);
+                    if(!empty($post))
+                    {
+                        // Si no existe en el array temporal, lo guardo.
+                        if(!in_array($post, $tmpArray))
+                        {
+                            array_push($tmpArray, $post);
+                        }
+                    }
+                    
+                    // Serializo el array temporal y lo guardo en la cookie.
+                    $_COOKIE['TextosAgregados'] = serialize($tmpArray);
+                    setcookie('TextosAgregados', serialize($tmpArray), time() + 3600);
+                }
+                
+                // Si se quita un detalle, lo quito de la cookie.
+                if(isset($_POST['btnQuitarDetalle']))
+                {
+                    // Creo un array temporal para trabajar.
+                    $tmpArray = array();
+                    
+                    // Saco los datos de la cookie.
+                    $cookie = filter_input(INPUT_COOKIE, 'TextosAgregados');
+                    if(!empty($cookie))
+                    {
+                        // Deserializo y lo guardo en el array temporal.
+                        $tmpArray = unserialize($cookie);
+                    }
+                    
+                    // Saco el dato de interes del POST.
+                    $post = filter_input(INPUT_POST, 'btnQuitarDetalle', FILTER_SANITIZE_NUMBER_INT);
+                    if(!empty($post))
+                    {
+                        // Si existe en el array temporal, lo borro.
+                        if(in_array($post, $tmpArray))
+                        {
+                            $tmpArray = array_diff($tmpArray, array($post));
+                        }
+                    }
+                    
+                    // Serializo el array temporal y lo guardo en la cookie.
+                    $_COOKIE['TextosAgregados'] = serialize($tmpArray);
+                    setcookie('TextosAgregados', serialize($tmpArray), time() + 3600);
+                }
+            }
+            
+            // Me fijo si la cookie esta vacia.
+            if(!empty($_COOKIE))
+            {
+                $cookie = filter_input(INPUT_COOKIE, 'TextosAgregados');
+                if(!empty($cookie))
+                {
+                    // Obtengo el valor de la cookie.
+                    $tmpArray = unserialize($cookie);
+                    
+                    // Recorro los valores de la cookie.
+                    foreach($tmpArray as $item)
+                    {
+                        $modelTexto = new models\TextoModel();
+                        $modelTexto->_idTexto = $item;
+                        $this->result = $this->_model['Textos']->Select($modelTexto);
+                        if(count($this->result) == 1)
+                        {
+                            $filename = BASE_DIR . "/mvc/templates/pedidos/table_text_add_row.html";
+                            $this->table_text_added .= file_get_contents($filename);
+                            
+                            foreach($this->result[0] as $key => $value)
+                            {
+                                $this->table_text_added = str_replace('{' . $key . '}', htmlentities($value), $this->table_text_added);
+                            }
+                        }
+                        unset($this->result);
+                    }
+                }
+            }
+            
+            // Cargo las carreras.
             $this->result = $this->_model['Carreras']->Select();
             if(count($this->result) > 1)
             {
@@ -62,14 +172,15 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_carrera = str_replace('{' . $key .'}', $value, $this->combo_carrera);
+                            $this->combo_carrera = str_replace('{' . $key .'}', htmlentities($value), $this->combo_carrera);
                         }
                     }
                 }
             }
             unset($this->result);
             
-            if(!empty($_POST))
+            // Cargo la tabla de los resultados.
+            if(isset($_POST['ddlMateria']))
             {
                 $modelTexto = new models\TextoModel();
                 $modelTexto->_idMateria = filter_input(INPUT_POST, 'ddlMateria', FILTER_SANITIZE_NUMBER_INT);
@@ -91,7 +202,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
+                            $this->table_content = str_replace('{' . $key . '}', htmlentities($value), $this->table_content);
                         }
                     }
                 }
@@ -99,10 +210,72 @@ namespace CEIT\mvc\controllers
             unset($this->result);
         }
 
+        public function create_confirm()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            
+            if(!empty($_POST))
+            {
+                if(isset($_POST['IdTexto']) && isset($_POST['txtCantidadCopias']))
+                {
+                    // Agarro las variables del POST.
+                    $postIdTexto = filter_input(INPUT_POST, 'IdTexto', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+                    $postCantTexto = filter_input(INPUT_POST, 'txtCantidadCopias', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+
+                    // Verifico que existan
+                    if(!empty($postIdTexto) && !empty($postCantTexto))
+                    {
+                        // Y que tengan la misma cantidad
+                        if(count($postCantTexto) == count($postIdTexto))
+                        {
+                            for($index = 0; $index < count($postIdTexto); $index++)
+                            {
+                                $modelTexto = new models\TextoModel();
+                                $modelTexto->_idTexto = $postIdTexto[$index];
+                                $this->result = $this->_model['Textos']->Select($modelTexto);
+                                if(count($this->result) == 1)
+                                {
+                                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
+                                    $this->table_detail .= file_get_contents($filename);
+
+                                    foreach($this->result[0] as $key => $value)
+                                    {
+                                        $this->table_detail = str_replace('{' . $key . '}', $value, $this->table_detail);
+                                    }
+                                    $this->table_detail = str_replace('{Cantidad}', $postCantTexto[$index], $this->table_detail);
+
+                                }
+                                unset($this->result);
+                            }   
+                        }
+                    }
+                }
+
+                // Si acepto el pedido, persisto en DB.
+                if(isset($_POST['btnSi']))
+                {
+                    var_dump($_POST);
+                    
+                    // Agrego el pedido.
+                    
+                    // Agrego los items del pedido.
+                    
+                    // Quito la seleccion de la pagina previa.
+                    unset($_COOKIE['TextosAgregados']);
+                    setcookie('TextosAgregados', null, -1);
+                }
+            }
+        }
+
         public function create_tp()
         {
             // indico el template a usar
             $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            
+            if(!empty($_POST))
+            {
+                var_dump($_POST);
+            }
         }
         
         public function delete($id)
@@ -130,22 +303,20 @@ namespace CEIT\mvc\controllers
             foreach($this->result as $row)
             {
                 $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
-                $htmlRow = file_get_contents($filename);
+                $this->table_rows .= file_get_contents($filename);
                 
                 if(is_array($row))
                 {
-                    foreach($row as $innerKey => $innerValue)
+                    foreach($row as $key => $value)
                     {
-                        $htmlRow = str_replace("{" . $innerKey . "}", $innerValue, $htmlRow);
+                        $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
                         
-                        if($innerKey == "Costo")
+                        if($key == "Costo")
                         {
-                            $this->PrecioTotal += $innerValue;
+                            $this->PrecioTotal += $value;
                         }
                     }
                 }
-                
-                $this->table_rows .= $htmlRow;
             }
             
             // elaboro el parametro y traigo los datos
@@ -183,9 +354,9 @@ namespace CEIT\mvc\controllers
                 // verifico si trajo 1 o muchos resultados.
                 if(is_array($row))
                 {
-                    foreach($row as $innerKey => $innerValue)
+                    foreach($row as $key => $value)
                     {
-                        $this->table_content = str_replace("{" . $innerKey . "}", $innerValue, $this->table_content);
+                        $this->table_content = str_replace("{" . $key . "}", htmlentities($value), $this->table_content);
                     }
                 }
             }
@@ -204,7 +375,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_carreras = str_replace('{' . $key . '}', $value, $this->combo_carreras);
+                            $this->combo_carreras = str_replace('{' . $key . '}', htmlentities($value), $this->combo_carreras);
                         }
                     }
                 }
@@ -224,7 +395,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_estados = str_replace('{' . $key . '}', $value, $this->combo_estados);
+                            $this->combo_estados = str_replace('{' . $key . '}', htmlentities($value), $this->combo_estados);
                         }
                     }
                 }

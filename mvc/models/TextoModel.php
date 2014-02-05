@@ -19,24 +19,23 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
-            try
+            if($model != null)
             {
-                if($model != null)
-                {
-                    $params = array(
-                        ':idTexto'   =>  $model->_data["idTexto"],
-                    );
-                    
-                    return Database::getInstance()->DoQuery("sp_selTexto", $params);
-                }
-                else
-                {
-                    return Database::getInstance()->DoQuery("sp_selTextos");
-                }
+                $this->_sp = "sp_selTexto";
+                $this->_params = array(
+                    ':idTexto'   =>  $model->_idTexto,
+                );
+
+                return Database::getInstance()->DoQuery($this->_sp, $this->_params);
             }
-            catch(Exception $ex)
+            else
             {
-                echo $ex->getTraceAsString();
+                $this->_sp = "sp_selTextos";
+
+                /*$var = Database::getInstance()->DoQuery($this->_sp);
+                var_dump($var);
+                return $var;*/
+                return Database::getInstance()->DoQuery($this->_sp);
             }
         }
         
