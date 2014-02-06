@@ -1,6 +1,20 @@
 <tr>
-    <td>{CodigoInterno}</td>
+    <td>
+        {CodigoInterno}
+        <input type="hidden" name="hidIdTexto[]" value="{IdTexto}">
+    </td>
     <td>{Titulo}</td>
-    <td>{Cantidad}</td>
+    <td>
+        <input class="form-control-static" type="checkbox" disabled="disabled" {SimpleFaz}>
+        <input type="hidden" name="hidSimpleFaz[{IdTexto}]" value="{SimpleFaz}">
+    </td>
+    <td>
+        <input class="form-control-static" type="checkbox" disabled="disabled" {Anillado}>
+        <input type="hidden" name="hidAnillado[{IdTexto}]" value="{Anillado}">
+    </td>
+    <td>
+        {Cantidad}
+        <input type="hidden" name="hidCantidadText[{IdTexto}]" value="{Cantidad}">
+    </td>
     <td>{Precio}</td>
 </tr>

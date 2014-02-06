@@ -4,14 +4,45 @@
     </div>
     <div class="panel-body">
         <form class="form-horizontal" method="POST" role="form">
+            <p class="lead">Detalles del pedido</p>
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="txtComentario" class="col-sm-2 control-label">Comentario:</label>
+                        <div class="col-sm-4">
+                            <textarea id="txtComentario" class="form-control" rows="3" readonly="readonly">{Comentario}</textarea>
+                        </div>
+                        <label for="txtRetiro" class="col-sm-2 control-label">Retiro</label>
+                        <div class="col-sm-4">
+                            <input id="txtRetiro" class="form-control" type="date" name="txtRetiro" min="{RetiroMinimo}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="chkAnilladoCompleto" class="col-sm-2 control-label">&iquest;Anillado Completo?</label>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <input type="checkbox" name="chkAnilladoCompleto" disabled="disabled" {TodoAnillado}>
+                            </div>
+                        </div>
+                        <label for="ddlFranja" class="col-sm-2 control-label">Franja horaria</label>
+                        <div class="col-sm-4">
+                            <select id="ddlFranja" class="form-control" name="ddlFranja">
+                                <option disabled="disabled">Franjas horarias</option>
+                                {combo_franja}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="form-group">
                 <div class="col-sm-12">
-                    <p class="lead">Detalles del pedido</p>
                     <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>Codigo</th>
                                 <th>Titulo</th>
+                                <th>Simple Faz</th>
+                                <th>Anillado</th>
                                 <th>Cantidad</th>
                                 <th>Precio</th>
                             </tr>

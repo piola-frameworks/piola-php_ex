@@ -21,6 +21,7 @@ namespace CEIT\mvc\controllers
                     'Niveles'   =>  new models\NivelModel(),
                     'Materias'  =>  new models\MateriaModel(),
                     'Estados'   =>  new models\PedidoItemEstadosModel(),
+                    'Franjas'   =>  new models\HorarioFranjasModel(),
                 );
             }
             
@@ -68,12 +69,16 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
+                // Creo un array temporal para trabajar.
+                $tmpArray = array(
+                    'AnilladoCompleto'  =>  false,
+                    'Comentario'        =>  null,
+                    'Items'             =>  array(),
+                );
+                
                 // Si se agrego un texto, va a parar a la cookie.
                 if(isset($_POST['btnAgregarTexto']))
                 {
-                    // Creo un array temporal para trabajar.
-                    $tmpArray = array();
-                    
                     // Saco los datos de la cookie.
                     $cookie = filter_input(INPUT_COOKIE, 'TextosAgregados');
                     if(!empty($cookie))
@@ -83,13 +88,31 @@ namespace CEIT\mvc\controllers
                     }
                     
                     // Saco el dato de interes del POST.
-                    $post = filter_input(INPUT_POST, 'btnAgregarTexto', FILTER_SANITIZE_NUMBER_INT);
-                    if(!empty($post))
+                    $postIdTexto = filter_input(INPUT_POST, 'btnAgregarTexto', FILTER_SANITIZE_NUMBER_INT);
+                    
+                    if(!empty($postIdTexto))
                     {
-                        // Si no existe en el array temporal, lo guardo.
-                        if(!in_array($post, $tmpArray))
+                        $flagExist = false;
+                        
+                        // Busco si existe el item.
+                        foreach($tmpArray['Items'] as $item)
                         {
-                            array_push($tmpArray, $post);
+                            if($item['IdTexto'] == $postIdTexto)
+                            {
+                                $flagExist = true;
+                                break;
+                            }
+                        }
+                        
+                        // Si no existe en el array temporal, lo guardo.
+                        if(!$flagExist)
+                        {
+                            $tmpArray['Items'][] = array(
+                                'IdTexto'   =>  (int)$postIdTexto,
+                                'SimpleFaz' =>  false,
+                                'Anillado'  =>  false,
+                                'Cantidad'  =>  1,
+                            );
                         }
                     }
                     
@@ -101,9 +124,6 @@ namespace CEIT\mvc\controllers
                 // Si se quita un detalle, lo quito de la cookie.
                 if(isset($_POST['btnQuitarDetalle']))
                 {
-                    // Creo un array temporal para trabajar.
-                    $tmpArray = array();
-                    
                     // Saco los datos de la cookie.
                     $cookie = filter_input(INPUT_COOKIE, 'TextosAgregados');
                     if(!empty($cookie))
@@ -113,14 +133,18 @@ namespace CEIT\mvc\controllers
                     }
                     
                     // Saco el dato de interes del POST.
-                    $post = filter_input(INPUT_POST, 'btnQuitarDetalle', FILTER_SANITIZE_NUMBER_INT);
-                    if(!empty($post))
+                    $postIdTexto = filter_input(INPUT_POST, 'btnQuitarDetalle', FILTER_SANITIZE_NUMBER_INT);
+                    if(!empty($postIdTexto))
                     {
                         // Si existe en el array temporal, lo borro.
-                        if(in_array($post, $tmpArray))
+                        foreach($tmpArray['Items'] as $index => $item)
                         {
-                            $tmpArray = array_diff($tmpArray, array($post));
+                            if($postIdTexto == $item['IdTexto'])
+                            {
+                                unset($tmpArray['Items'][$index]);
+                            }
                         }
+                        
                     }
                     
                     // Serializo el array temporal y lo guardo en la cookie.
@@ -139,19 +163,19 @@ namespace CEIT\mvc\controllers
                     $tmpArray = unserialize($cookie);
                     
                     // Recorro los valores de la cookie.
-                    foreach($tmpArray as $item)
+                    foreach($tmpArray['Items'] as $item)
                     {
                         $modelTexto = new models\TextoModel();
-                        $modelTexto->_idTexto = $item;
+                        $modelTexto->_idTexto = $item['IdTexto'];
                         $this->result = $this->_model['Textos']->Select($modelTexto);
                         if(count($this->result) == 1)
                         {
-                            $filename = BASE_DIR . "/mvc/templates/pedidos/table_text_add_row.html";
+                            $filename = BASE_DIR . "/mvc/templates/pedidos/table_text_added_row.html";
                             $this->table_text_added .= file_get_contents($filename);
                             
                             foreach($this->result[0] as $key => $value)
                             {
-                                $this->table_text_added = str_replace('{' . $key . '}', htmlentities($value), $this->table_text_added);
+                                $this->table_text_added = str_replace('{' . $key . '}', $value, $this->table_text_added);
                             }
                         }
                         unset($this->result);
@@ -172,7 +196,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_carrera = str_replace('{' . $key .'}', htmlentities($value), $this->combo_carrera);
+                            $this->combo_carrera = str_replace('{' . $key .'}', $value, $this->combo_carrera);
                         }
                     }
                 }
@@ -202,7 +226,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->table_content = str_replace('{' . $key . '}', htmlentities($value), $this->table_content);
+                            $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
                         }
                     }
                 }
@@ -216,17 +240,23 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
+                var_dump($_POST);
+                
                 if(isset($_POST['IdTexto']) && isset($_POST['txtCantidadCopias']))
                 {
                     // Agarro las variables del POST.
                     $postIdTexto = filter_input(INPUT_POST, 'IdTexto', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
-                    $postCantTexto = filter_input(INPUT_POST, 'txtCantidadCopias', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+                    $postSimpleFaz = filter_input(INPUT_POST, 'chkSimpleFaz', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
+                    $postAnillado = filter_input(INPUT_POST, 'chkAnillado', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
+                    $postCantCopias = filter_input(INPUT_POST, 'txtCantidadCopias', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+                    $postTodoAnillado = filter_input(INPUT_POST, 'chkAnilladoCompleto', FILTER_SANITIZE_STRING);
+                    $postComentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
                     // Verifico que existan
-                    if(!empty($postIdTexto) && !empty($postCantTexto))
+                    if(!empty($postIdTexto) && !empty($postCantCopias))
                     {
                         // Y que tengan la misma cantidad
-                        if(count($postCantTexto) == count($postIdTexto))
+                        if(count($postCantCopias) == count($postIdTexto))
                         {
                             for($index = 0; $index < count($postIdTexto); $index++)
                             {
@@ -242,9 +272,15 @@ namespace CEIT\mvc\controllers
                                     {
                                         $this->table_detail = str_replace('{' . $key . '}', $value, $this->table_detail);
                                     }
-                                    $this->table_detail = str_replace('{Cantidad}', $postCantTexto[$index], $this->table_detail);
-
+                                    $this->table_detail = str_replace('{SimpleFaz}', empty($postSimpleFaz[$postIdTexto[$index]]) ? '' : 'checked', $this->table_detail);
+                                    $this->table_detail = str_replace('{Anillado}', empty($postAnillado[$postIdTexto[$index]]) ? '' : 'checked', $this->table_detail);
+                                    $this->table_detail = str_replace('{Cantidad}', $postCantCopias[$postIdTexto[$index]], $this->table_detail);
+                                    
                                 }
+                                
+                                $this->Comentario = empty($postComentario) ? '' : $postComentario;
+                                $this->TodoAnillado = empty($postTodoAnillado) ? '' : 'checked';
+                                
                                 unset($this->result);
                             }   
                         }
@@ -265,6 +301,28 @@ namespace CEIT\mvc\controllers
                     setcookie('TextosAgregados', null, -1);
                 }
             }
+            
+            $this->result = $this->_model['Franjas']->Select();
+            if(count($this->result) > 1)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/combo_franja.html";
+                    $this->combo_franja .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_franja = str_replace('{' . $key . '}', $value, $this->combo_franja);
+                        }
+                        
+                        // Fila extra que no viene en el resultado de la base de datos.
+                        $this->combo_franja = str_replace('{Seleccionado}', empty($post) ? '' : 'selected', $this->combo_franja);
+                    }
+                }
+            }
+            unset($this->result);
         }
 
         public function create_tp()
@@ -309,7 +367,7 @@ namespace CEIT\mvc\controllers
                 {
                     foreach($row as $key => $value)
                     {
-                        $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
+                        $this->table_rows = str_replace("{" . $key . "}", $value, $this->table_rows);
                         
                         if($key == "Costo")
                         {
@@ -356,7 +414,7 @@ namespace CEIT\mvc\controllers
                 {
                     foreach($row as $key => $value)
                     {
-                        $this->table_content = str_replace("{" . $key . "}", htmlentities($value), $this->table_content);
+                        $this->table_content = str_replace("{" . $key . "}", $value, $this->table_content);
                     }
                 }
             }
@@ -375,7 +433,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_carreras = str_replace('{' . $key . '}', htmlentities($value), $this->combo_carreras);
+                            $this->combo_carreras = str_replace('{' . $key . '}', $value, $this->combo_carreras);
                         }
                     }
                 }
@@ -395,7 +453,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_estados = str_replace('{' . $key . '}', htmlentities($value), $this->combo_estados);
+                            $this->combo_estados = str_replace('{' . $key . '}', $value, $this->combo_estados);
                         }
                     }
                 }
