@@ -14,7 +14,7 @@
                         </div>
                         <label for="txtRetiro" class="col-sm-2 control-label">Retiro</label>
                         <div class="col-sm-4">
-                            <input id="txtRetiro" class="form-control" type="date" name="txtRetiro" min="{RetiroMinimo}">
+                            <input id="txtRetiro" class="form-control" type="text" name="txtRetiro" value="{DiaRetiro}">
                         </div>
                     </div>
                     <div class="form-group">
@@ -27,7 +27,6 @@
                         <label for="ddlFranja" class="col-sm-2 control-label">Franja horaria</label>
                         <div class="col-sm-4">
                             <select id="ddlFranja" class="form-control" name="ddlFranja">
-                                <option disabled="disabled">Franjas horarias</option>
                                 {combo_franja}
                             </select>
                         </div>
@@ -63,3 +62,10 @@
         </form>
     </div>
 </div>
+<script type="text/javascript">
+    $('#txtRetiro').datepicker({
+        minDate: "{DiaRetiro}",
+        dateFormat: "yy-mm-dd",
+        showAnim: "slideDown",
+    });
+</script>

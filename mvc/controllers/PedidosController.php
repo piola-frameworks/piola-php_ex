@@ -175,7 +175,7 @@ namespace CEIT\mvc\controllers
                             
                             foreach($this->result[0] as $key => $value)
                             {
-                                $this->table_text_added = str_replace('{' . $key . '}', $value, $this->table_text_added);
+                                $this->table_text_added = str_replace('{' . $key . '}', htmlentities($value), $this->table_text_added);
                             }
                         }
                         unset($this->result);
@@ -196,7 +196,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_carrera = str_replace('{' . $key .'}', $value, $this->combo_carrera);
+                            $this->combo_carrera = str_replace('{' . $key .'}', htmlentities($value), $this->combo_carrera);
                         }
                     }
                 }
@@ -226,7 +226,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
+                            $this->table_content = str_replace('{' . $key . '}', htmlentities($value), $this->table_content);
                         }
                     }
                 }
@@ -270,7 +270,7 @@ namespace CEIT\mvc\controllers
 
                                     foreach($this->result[0] as $key => $value)
                                     {
-                                        $this->table_detail = str_replace('{' . $key . '}', $value, $this->table_detail);
+                                        $this->table_detail = str_replace('{' . $key . '}', htmlentities($value), $this->table_detail);
                                     }
                                     $this->table_detail = str_replace('{SimpleFaz}', empty($postSimpleFaz[$postIdTexto[$index]]) ? '' : 'checked', $this->table_detail);
                                     $this->table_detail = str_replace('{Anillado}', empty($postAnillado[$postIdTexto[$index]]) ? '' : 'checked', $this->table_detail);
@@ -282,7 +282,7 @@ namespace CEIT\mvc\controllers
                                 $this->TodoAnillado = empty($postTodoAnillado) ? '' : 'checked';
                                 
                                 unset($this->result);
-                            }   
+                            }
                         }
                     }
                 }
@@ -293,16 +293,23 @@ namespace CEIT\mvc\controllers
                     var_dump($_POST);
                     
                     // Agrego el pedido.
+                    $modelPedido = new models\PedidoModel();
+                    $modelPedido->_idUsuario = $_SESSION['idUsuario'];
+                    $modelPedido->_creado = date("Y-m-d H:i:s");
+                    $modelPedido->_creadoPor = $_SESSION['idUsuario'];
+                    $modelPedido->_anillado = filter_input(INPUT_POST, 'hidAnillado', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+                    $this->result = $this->_model['Pedidos']->Insert($modelPedido);
                     
                     // Agrego los items del pedido.
                     
                     // Quito la seleccion de la pagina previa.
-                    unset($_COOKIE['TextosAgregados']);
-                    setcookie('TextosAgregados', null, -1);
+                    //unset($_COOKIE['TextosAgregados']);
+                    //setcookie('TextosAgregados', null, -1);
                 }
             }
             
             $this->result = $this->_model['Franjas']->Select();
+            $this->result2 = $this->_model['Pedidos']->SelectDisponibilidad();
             if(count($this->result) > 1)
             {
                 foreach($this->result as $row)
@@ -314,15 +321,17 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_franja = str_replace('{' . $key . '}', $value, $this->combo_franja);
+                            $this->combo_franja = str_replace('{' . $key . '}', htmlentities($value), $this->combo_franja);
                         }
                         
                         // Fila extra que no viene en el resultado de la base de datos.
-                        $this->combo_franja = str_replace('{Seleccionado}', empty($post) ? '' : 'selected', $this->combo_franja);
+                        $this->combo_franja = str_replace('{Seleccionado}', $this->result2[0]['FranjaHoraria'] != $row['IdHorarioFranja'] ? '' : 'selected', $this->combo_franja);
                     }
                 }
+                $this->DiaRetiro = $this->result2[0]['DiaRetiro'];
             }
             unset($this->result);
+            unset($this->result2);
         }
 
         public function create_tp()
@@ -367,7 +376,7 @@ namespace CEIT\mvc\controllers
                 {
                     foreach($row as $key => $value)
                     {
-                        $this->table_rows = str_replace("{" . $key . "}", $value, $this->table_rows);
+                        $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
                         
                         if($key == "Costo")
                         {
@@ -384,7 +393,7 @@ namespace CEIT\mvc\controllers
             
             foreach($this->result[0] as $key => $value)
             {
-                $this->{$key} = $value;
+                $this->{$key} = htmlentities($value);
             }
         }
 
@@ -414,7 +423,7 @@ namespace CEIT\mvc\controllers
                 {
                     foreach($row as $key => $value)
                     {
-                        $this->table_content = str_replace("{" . $key . "}", $value, $this->table_content);
+                        $this->table_content = str_replace("{" . $key . "}", htmlentities($value), $this->table_content);
                     }
                 }
             }
@@ -433,7 +442,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_carreras = str_replace('{' . $key . '}', $value, $this->combo_carreras);
+                            $this->combo_carreras = str_replace('{' . $key . '}', htmlentities($value), $this->combo_carreras);
                         }
                     }
                 }
@@ -453,7 +462,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_estados = str_replace('{' . $key . '}', $value, $this->combo_estados);
+                            $this->combo_estados = str_replace('{' . $key . '}', htmlentities($value), $this->combo_estados);
                         }
                     }
                 }

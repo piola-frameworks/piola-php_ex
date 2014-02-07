@@ -20,7 +20,7 @@
                             <div class="col-sm-offset-2 col-sm-5">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" name="chkAnilladoCompleto"> Anillado completo
+                                        <input id="chkAnilladoCompleto" type="checkbox" name="chkAnilladoCompleto"> Anillado completo
                                     </label>
                                 </div>
                             </div>
@@ -122,9 +122,11 @@
 </div>
 <script type="text/javascript">
     // Desactivo los controles al principio para despues habilitarlos.
-    $('#ddlNivel').attr('disabled', true);
-    $('#ddlMateria').attr('disabled', true);
-
+    $.ready(function() {
+        $('#ddlNivel').attr('disabled', true);
+        $('#ddlMateria').attr('disabled', true);
+    });
+    
     $('#ddlCarrera').change(function() {
         $.ajax({
             type: 'POST',
@@ -185,5 +187,14 @@
         });
 
         $('#txtSubTotal').val(subTotal);
+    });
+    
+    $('#chkAnilladoCompleto').change(function() {
+        if(this.checked)
+        {
+            $('.chkAnillado').each(function(index, item) {
+                $(item).prop('checked', false);
+            });
+        }
     });
 </script>
