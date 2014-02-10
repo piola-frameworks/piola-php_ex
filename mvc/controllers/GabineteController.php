@@ -64,22 +64,6 @@ namespace CEIT\mvc\controllers
             }
             
             // traigo datos de la db.
-            $this->result = $this->_model['Gabinete']->Select();
-            foreach($this->result as $row)
-            {
-                $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table.html";
-                $this->table_content .= file_get_contents($filename);
-                
-                // verifico si trajo 1 o muchos resultados.
-                if(is_array($row))
-                {
-                    foreach($row as $innerKey => $innerValue)
-                    {
-                        $this->table_content = str_replace("{" . $innerKey . "}", $innerValue, $this->table_content);
-                    }
-                }
-            }
-            
             $this->result = $this->_model['Carreras']->Select();
             if(count($this->result) > 1)
             {
@@ -113,6 +97,23 @@ namespace CEIT\mvc\controllers
                         {
                             $this->combo_estados = str_replace('{' . $key . '}', $value, $this->combo_estados);
                         }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            $this->result = $this->_model['Gabinete']->Select();
+            foreach($this->result as $row)
+            {
+                $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table.html";
+                $this->table_content .= file_get_contents($filename);
+                
+                // verifico si trajo 1 o muchos resultados.
+                if(is_array($row))
+                {
+                    foreach($row as $innerKey => $innerValue)
+                    {
+                        $this->table_content = str_replace("{" . $innerKey . "}", $innerValue, $this->table_content);
                     }
                 }
             }

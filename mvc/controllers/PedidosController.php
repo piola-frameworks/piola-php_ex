@@ -15,13 +15,14 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
-                    'Pedidos'   =>  new models\PedidoModel(),
-                    'Textos'    =>  new models\TextoModel(),
-                    'Carreras'  =>  new models\CarreraModel(),
-                    'Niveles'   =>  new models\NivelModel(),
-                    'Materias'  =>  new models\MateriaModel(),
-                    'Estados'   =>  new models\PedidoItemEstadosModel(),
-                    'Franjas'   =>  new models\HorarioFranjasModel(),
+                    'Pedidos'       =>  new models\PedidoModel(),
+                    'PedidoItems'   =>  new models\PedidoItemModel(),
+                    'Textos'        =>  new models\TextoModel(),
+                    'Carreras'      =>  new models\CarreraModel(),
+                    'Niveles'       =>  new models\NivelModel(),
+                    'Materias'      =>  new models\MateriaModel(),
+                    'Estados'       =>  new models\PedidoItemEstadosModel(),
+                    'Franjas'       =>  new models\HorarioFranjasModel(),
                 );
             }
             
@@ -290,21 +291,45 @@ namespace CEIT\mvc\controllers
                 // Si acepto el pedido, persisto en DB.
                 if(isset($_POST['btnSi']))
                 {
-                    var_dump($_POST);
-                    
                     // Agrego el pedido.
                     $modelPedido = new models\PedidoModel();
-                    $modelPedido->_idUsuario = $_SESSION['idUsuario'];
+                    $modelPedido->_idUsuario = $_SESSION['IdUsuario'];
                     $modelPedido->_creado = date("Y-m-d H:i:s");
-                    $modelPedido->_creadoPor = $_SESSION['idUsuario'];
-                    $modelPedido->_anillado = filter_input(INPUT_POST, 'hidAnillado', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
-                    $this->result = $this->_model['Pedidos']->Insert($modelPedido);
+                    $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
+                    $modelPedido->_anillado = filter_input(INPUT_POST, 'chkAnilladoCompleto', FILTER_SANITIZE_STRING);
+                    $modelPedido->_comentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $modelPedido->_retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_STRING);
+                    $modelPedido->_idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
+                    $modelPedido->_pagado = 0;
+                    $modelPedido->_idEstado = 1;
+                    $this->lastId = $this->_model['Pedidos']->Insert(array($modelPedido));
                     
                     // Agrego los items del pedido.
+                    $modelPedidoItems = array();
+                    $items = filter_input(INPUT_POST, 'hidIdTexto', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+                    $simpleFaz_items = filter_input(INPUT_POST, 'hidSimpleFaz', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
+                    $anillado_items = filter_input(INPUT_POST, 'hidAnillado', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
+                    $canttext_items = filter_input(INPUT_POST, 'hidCantidadText', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+                    foreach($items as $item)
+                    {
+                        $tmpItem = new models\PedidoItemModel();
+                        $tmpItem->_idPedido = $this->lastId;
+                        $tmpItem->_cantidad = $canttext_items[$item];
+                        $tmpItem->_idTexto = $item;
+                        $tmpItem->_anillado = empty($anillado_items[$item]) ? false : true;
+                        $tmpItem->_simpleFaz = empty($simpleFaz_items[$item]) ? false : true;
+                        $tmpItem->_idEstado = 1;
+                        
+                        $modelPedidoItems[] = $tmpItem;
+                    }
+                    $this->result = $this->_model['PedidoItems']->Insert($modelPedidoItems);
+                    
+                    // Libero memoria.
+                    unset($this->lastId);
+                    unset($this->result);
                     
                     // Quito la seleccion de la pagina previa.
-                    //unset($_COOKIE['TextosAgregados']);
-                    //setcookie('TextosAgregados', null, -1);
+                    setcookie('TextosAgregados', null, -1);
                 }
             }
             
@@ -339,9 +364,77 @@ namespace CEIT\mvc\controllers
             // indico el template a usar
             $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
             
-            if(!empty($_POST))
+            if(!empty($_POST) && !empty($_FILES))
             {
-                var_dump($_POST);
+                var_dump($_POST, $_FILES);
+                
+                switch($_FILES['filArchivo']['error'])
+                {
+                    case UPLOAD_ERR_OK:
+                        //$cmd = "for /f \"tokens=2*\" %%a in ('" . str_replace("/", "\\", BASE_DIR) . "\\bin\\pdfinfo.exe \"" . $_FILES['filArchivo']['tmp_name'] . "\" ^| findstr \"Pages:\"') do echo %%a";
+                        $cmd2 = 'FOR /F "tokens=2*" %a IN ("' . str_replace('/', '\\', BASE_DIR) . '\\bin\\pdfinfo.exe" "' . $_FILES['filArchivo']['tmp_name'] . '" ^| findstr "Pages:") DO ECHO %a';
+                        echo $cmd2;
+                        echo shell_exec($cmd2);
+                        
+                        // Guardo en la db.
+                        $modelTP = new models\TextoModel();
+                        $modelTP->_creadoPor = $_SESSION['IdUsuario'];
+                        $modelTP->_creadoDia = date("Y-m-d H:i:s");
+                        $modelTP->_idTipo = 4;
+                        $modelTP->_nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                        $modelTP->_cantPaginas = shell_exec($cmd);
+                        $modelTP->_activo = 0;
+                        $this->result = $this->_model['Textos']->Insert(array($modelTP));
+                        
+                        // Muevo el archivo al directorio donde van a estar todos los PDFs
+                        $uploaddir = BASE_DIR . '/data/tps/';
+                        $uploadfile = $uploaddir . basename($_FILES['filArchivo']['name']);
+
+                        if($_FILES['filArchivo']['type'] != 'application/pdf')
+                        {
+                            trigger_error("Me queres hackear la aplicacion web?", E_USER_NOTICE);
+                        }
+
+                        if (move_uploaded_file($_FILES['filArchivo']['tmp_name'], $uploadfile)) {
+                            //echo "El archivo es válido y fue cargado exitosamente.\n";
+                        } else {
+                            echo "¡Posible ataque de carga de archivos!\n";
+                        }
+                        
+                        break;
+                    case UPLOAD_ERR_INI_SIZE:
+                        trigger_error("El archivo subido excede la directiva upload_max_filesize en php.ini.", E_USER_ERROR);
+                        
+                        break;
+                    case UPLOAD_ERR_FORM_SIZE:
+                        trigger_error("El archivo subido excede la directiva MAX_FILE_SIZE que fue especificada en el formulario HTML.", E_USER_ERROR);
+                        
+                        break;
+                    case UPLOAD_ERR_PARTIAL:
+                        trigger_error("El archivo subido fue sólo parcialmente cargado.", E_USER_ERROR);
+                        
+                        break;
+                    case UPLOAD_ERR_NO_FILE:
+                        trigger_error("Ningún archivo fue subido.", E_USER_WARNING);
+                        
+                        break;
+                    case UPLOAD_ERR_NO_TMP_DIR:
+                        trigger_error("Falta la carpeta temporal.", E_USER_ERROR);
+                        
+                        break;
+                    case UPLOAD_ERR_CANT_WRITE:
+                        trigger_error("No se pudo escribir el archivo en el disco.", E_USER_ERROR);
+                        
+                        break;
+                    case UPLOAD_ERR_EXTENSION:
+                        trigger_error("Una extensión de PHP detuvo la carga de archivos.", E_USER_ERROR);
+                        
+                        break;
+                    default:
+                        // Por que entro aca?
+                        
+                        break;
+                }
             }
         }
         

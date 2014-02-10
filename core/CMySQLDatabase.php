@@ -132,7 +132,7 @@ namespace CEIT\core
                     }
                     
                     $sentencia->execute();
-                    echo '<pre>' . $sentencia->debugDumpParams() . '</pre>';
+                    //echo '<pre>' . $sentencia->debugDumpParams() . '</pre>';
                 }
                 
                 // busco la ultima clave. no funciona a traves de pdo::lastinsertedid()

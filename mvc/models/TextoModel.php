@@ -14,7 +14,32 @@ namespace CEIT\mvc\models
 
         public function Insert(array $model)
         {
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
             
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_insTexto");
+                
+                array_push($this->_params, array(
+                    ':creadoPor'        =>  (int)$item->_creadoPor,
+                    ':creadoDia'        =>  (string)$item->_creadoDia,
+                    ':modificadoPor'    =>  (int)$item->_modificadoPor,
+                    ':modificadoDia'    =>  (string)$item->_modificadoDia,
+                    ':codInterno'       =>  (string)$item->_codInterno,
+                    ':idMateria'        =>  (int)$item->_idMateria,
+                    ':idTipo'           =>  (int)$item->_idTipo,
+                    ':nombre'           =>  (string)$item->_nombre,
+                    ':autor'            =>  (string)$item->_autor,
+                    ':docente'          =>  (string)$item->_docente,
+                    ':cantPaginas'      =>  (int)$item->_cantPaginas,
+                    ':activo'           =>  (bool)$item->_activo,
+                ));
+            }
+            
+            return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Select(core\AModel $model = null)

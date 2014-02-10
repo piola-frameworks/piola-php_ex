@@ -51,31 +51,24 @@ namespace CEIT\core
         
         public function run()
         {
-            try
+            if(class_exists($this->_controller))
             {
-                if(class_exists($this->_controller))
+                $controller = new $this->_controller();
+                $controller->_action = $this->_action;
+                $controller->_params = $this->_params;
+
+                if(method_exists($controller, $this->_action))
                 {
-                    $controller = new $this->_controller();
-                    $controller->_action = $this->_action;
-                    $controller->_params = $this->_params;
-                    
-                    if(method_exists($controller, $this->_action))
-                    {
-                        call_user_func_array(array($controller, $this->_action), $this->_params);
-                    }
-                    else
-                    {
-                        throw new \InvalidArgumentException("Accion " . $this->_action .  " no encontrada en el controlador.");
-                    }
+                    call_user_func_array(array($controller, $this->_action), $this->_params);
                 }
                 else
                 {
-                    throw new \InvalidArgumentException("El controlador " . $this->_controller . " no existe.");
+                    throw new \InvalidArgumentException("Accion " . $this->_action .  " no encontrada en el controlador.");
                 }
             }
-            catch(Exception $ex)
+            else
             {
-                echo $ex->getTraceAsString();
+                throw new \InvalidArgumentException("El controlador " . $this->_controller . " no existe.");
             }
         }
     }

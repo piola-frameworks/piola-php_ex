@@ -28,6 +28,7 @@ namespace CEIT\mvc\controllers
             parent::__destruct();
             
             unset($this->result);
+            
             $this->_view->render($this->_template, $this->_dataCollection);
         }
 
@@ -37,24 +38,20 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                $params = array();
-                foreach($_POST as $key => $value)
-                {
-                    $params[$key] = $value;
-                }
+                var_dump($_POST);
                 
                 $user = new models\UsuarioModel();
-                $user->username = $params['txtUser'];
+                $user->_username = filter_input(INPUT_POST, 'txtUser', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 
                 $this->result = $this->_model->SelectByUsername($user);
                 
                 if(count($this->result) == 1)
                 {
-                    if($this->result[0]['Contrasena'] == $params['txtPassword'])
+                    if($this->result[0]['Contrasena'] == filter_input(INPUT_POST, 'txtPassword', FILTER_SANITIZE_FULL_SPECIAL_CHARS))
                     {
                         // inicio sesion
                         $lifeTime = 600;
-                        if(isset($params['chkRememberMe']))
+                        if(filter_input(INPUT_POST, 'chkRememberMe', FILTER_SANITIZE_STRING) == 'checked')
                         {
                             $lifeTime = 3600;
                         }

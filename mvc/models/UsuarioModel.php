@@ -51,7 +51,7 @@ namespace CEIT\mvc\models
         {
             $this->_sp = "sp_selUsuarioByLegajoOrUsername";
             $this->_params = array(
-                ':username'   =>  $model->_data["username"],
+                ':username'   =>  $model->_username,
             );
 
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);

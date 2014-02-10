@@ -2,7 +2,10 @@
 
 namespace CEIT\core
 {
-    define('BASE_DIR', filter_input(INPUT_SERVER, 'DOCUMENT_ROOT'));
+    if(!defined('BASE_DIR'))
+    {
+        define('BASE_DIR', filter_input(INPUT_SERVER, 'DOCUMENT_ROOT'));
+    }
     
     final class CAutoLoader
     {

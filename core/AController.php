@@ -20,44 +20,36 @@ namespace CEIT\core
         
         public function __destruct()
         {
-            ;           
+            ;
         }
         
         public function __get($name)
         {
-            try
+            if(array_key_exists($name, $this->_dataCollection))
             {
-                if(array_key_exists($name, $this->_dataCollection))
-                {
-                    return $this->_dataCollection[$name];
-                }
-            }
-            catch(Exception $ex)
-            {
-                echo $ex->getTraceAsString();
+                return $this->_dataCollection[$name];
             }
         }
         
         public function __set($name, $value)
         {
-            try
-            {
-                $this->_dataCollection[$name] = $value;
-            }
-            catch(Exception $ex)
-            {
-                echo $ex->getTraceAsString();
-            }
+            $this->_dataCollection[$name] = $value;
         }
         
         public function __isset($name)
         {
-            return isset($this->_dataCollection[$name]);
+            if(!is_null($name) && is_string($name))
+            {
+                return isset($this->_dataCollection[$name]);
+            }
         }
         
         public function __unset($name)
         {
-            unset($this->_dataCollection[$name]);
+            if(!is_null($name) && is_string($name))
+            {
+                unset($this->_dataCollection[$name]);
+            }
         }
         
         public function __toString()
