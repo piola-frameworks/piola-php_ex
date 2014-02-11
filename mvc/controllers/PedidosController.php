@@ -145,7 +145,6 @@ namespace CEIT\mvc\controllers
                                 unset($tmpArray['Items'][$index]);
                             }
                         }
-                        
                     }
                     
                     // Serializo el array temporal y lo guardo en la cookie.
@@ -371,18 +370,38 @@ namespace CEIT\mvc\controllers
                 switch($_FILES['filArchivo']['error'])
                 {
                     case UPLOAD_ERR_OK:
-                        //$cmd = "for /f \"tokens=2*\" %%a in ('" . str_replace("/", "\\", BASE_DIR) . "\\bin\\pdfinfo.exe \"" . $_FILES['filArchivo']['tmp_name'] . "\" ^| findstr \"Pages:\"') do echo %%a";
-                        $cmd2 = 'FOR /F "tokens=2*" %a IN ("' . str_replace('/', '\\', BASE_DIR) . '\\bin\\pdfinfo.exe" "' . $_FILES['filArchivo']['tmp_name'] . '" ^| findstr "Pages:") DO ECHO %a';
-                        echo $cmd2;
-                        echo shell_exec($cmd2);
+                        $cmd = 'FOR /F "tokens=2*" %a IN ("' . str_replace("", "", BASE_DIR) . '\bin\pdfinfo.exe" "' . $_FILES['filArchivo']['tmp_name'] . '" ^| findstr "Pages:") DO ECHO %a';
+                        echo $cmd . "<br />";
+                        echo shell_exec($cmd) . "<br />";
                         
                         // Guardo en la db.
                         $modelTP = new models\TextoModel();
+                        /*
+                         *  ':creadoPor'        =>  (int)$item->_creadoPor,
+                            ':creadoDia'        =>  (string)$item->_creadoDia,
+                            ':modificadoPor'    =>  (int)$item->_modificadoPor,
+                            ':modificadoDia'    =>  (string)$item->_modificadoDia,
+                            ':codInterno'       =>  (string)$item->_codInterno,
+                            ':idMateria'        =>  (int)$item->_idMateria,
+                            ':idTipo'           =>  (int)$item->_idTipo,
+                            ':nombre'           =>  (string)$item->_nombre,
+                            ':autor'            =>  (string)$item->_autor,
+                            ':docente'          =>  (string)$item->_docente,
+                            ':cantPaginas'      =>  (int)$item->_cantPaginas,
+                         *  ':activo'           =>  (bool)$item->_activo,
+                         */
+                        
                         $modelTP->_creadoPor = $_SESSION['IdUsuario'];
                         $modelTP->_creadoDia = date("Y-m-d H:i:s");
+                        $modelTP->_modificadoPor = null;
+                        $modelTP->_modificadoDia = null;
+                        $modelTP->_codInterno = null;
+                        $modelTP->_idMateria = null;
                         $modelTP->_idTipo = 4;
                         $modelTP->_nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                        $modelTP->_cantPaginas = shell_exec($cmd);
+                        $modelTP->_autor = null;
+                        $modelTP->_docente = null;
+                        $modelTP->_cantPaginas = 1/*shell_exec($cmd)*/;
                         $modelTP->_activo = 0;
                         $this->result = $this->_model['Textos']->Insert(array($modelTP));
                         

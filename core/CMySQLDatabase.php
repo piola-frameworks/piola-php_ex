@@ -17,7 +17,6 @@ namespace CEIT\core
         public function __construct()
         {
             $this->_pdoExtended = new CPDOExtended(CPDOExtended::DB_MYSQL, self::$servidor, self::$usuario, self::$contrasena, self::$basedato);
-            /*$this->_pdoExtended->setAttribute(CPDOExtended::MYSQL_ATTR_INIT_COMMAND, "SET NAMES utf8");*/
             $this->_pdoExtended->setAttribute(CPDOExtended::MYSQL_ATTR_COMPRESS, true);
             $this->_pdoExtended->setAttribute(CPDOExtended::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
@@ -122,7 +121,6 @@ namespace CEIT\core
                 
                 foreach ($sp as $index => $sp_name)
                 {
-                    // realizo el insert
                     $sentencia = $this->_pdoExtended->prepare("CALL " . $sp_name . self::GenerateParenthesis($params[$index]));
                     
                     foreach($params[$index] as $key => $value)
@@ -138,8 +136,7 @@ namespace CEIT\core
                 // busco la ultima clave. no funciona a traves de pdo::lastinsertedid()
                 $sentencia = $this->_pdoExtended->prepare("SELECT LAST_INSERT_ID();");
                 $sentencia->execute();
-                echo '<pre>' . $sentencia->debugDumpParams() . '</pre>';
-
+                
                 // por que solo debe devovler 1 fila.
                 if($sentencia->rowCount() == 1)
                 {

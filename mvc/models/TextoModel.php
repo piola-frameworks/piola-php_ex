@@ -26,18 +26,20 @@ namespace CEIT\mvc\models
                 array_push($this->_params, array(
                     ':creadoPor'        =>  (int)$item->_creadoPor,
                     ':creadoDia'        =>  (string)$item->_creadoDia,
-                    ':modificadoPor'    =>  (int)$item->_modificadoPor,
-                    ':modificadoDia'    =>  (string)$item->_modificadoDia,
-                    ':codInterno'       =>  (string)$item->_codInterno,
-                    ':idMateria'        =>  (int)$item->_idMateria,
+                    ':modificadoPor'    =>  is_null($item->_modificadoPor) ? null : (int)$item->_modificadoPor,
+                    ':modificadoDia'    =>  is_null($item->_modificadoDia) ? null : (string)$item->_modificadoDia,
+                    ':codInterno'       =>  is_null($item->_codInterno) ? null : (string)$item->_codInterno,
+                    ':idMateria'        =>  is_null($item->_idMateria) ? null : (int)$item->_idMateria,
                     ':idTipo'           =>  (int)$item->_idTipo,
                     ':nombre'           =>  (string)$item->_nombre,
-                    ':autor'            =>  (string)$item->_autor,
-                    ':docente'          =>  (string)$item->_docente,
+                    ':autor'            =>  is_null($item->_autor) ? null : (string)$item->_autor,
+                    ':docente'          =>  is_null($item->_docente) ? null : (string)$item->_docente,
                     ':cantPaginas'      =>  (int)$item->_cantPaginas,
                     ':activo'           =>  (bool)$item->_activo,
                 ));
             }
+            
+            var_dump($this->_sp, $this->_params, $this->_trans);
             
             return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
