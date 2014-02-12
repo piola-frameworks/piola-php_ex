@@ -14,6 +14,8 @@ namespace CEIT\core
         private static $contrasena = 'qs33712503829';
         private static $basedato = 'ceit';
         
+        private $_lastError = '00000';
+        
         public function __construct()
         {
             $this->_pdoExtended = new CPDOExtended(CPDOExtended::DB_MYSQL, self::$servidor, self::$usuario, self::$contrasena, self::$basedato);
@@ -56,11 +58,26 @@ namespace CEIT\core
                     $sentencia = $this->_pdoExtended->prepare("CALL " . $sp_name . self::GenerateParenthesis($params[$index]));
                     foreach ($params[$index] as $key => $value)
                     {
-                        $sentencia->bindValue($key, $value, self::GetParameterType($value));
+                        $sentencia->bindValue($key, $this->DoParameterTreatment($value), self::GetParameterType($value));
                     }
                     
-                    $sentencia->execute();
                     //echo '<pre>' . $sentencia->debugDumpParams() . '</pre>';
+                    if($sentencia->execute() !== false)
+                    {
+                        $this->_lastError = $sentencia->errorCode();
+                    }
+                    else
+                    {
+                        if($sentencia->errorCode() == $this->_lastError)
+                        {
+                            trigger_error("PDO Error: Hay un error en los parametros o en la conexion contra la base de datos.", E_USER_ERROR);
+                        }
+                        else
+                        {
+                            $this->_lastError = $sentencia->errorCode();
+                            trigger_error("PDO Error: " . $sentencia->errorCode(), E_USER_ERROR);
+                        }
+                    }
                     
                     $rowCount += $sentencia->rowCount();
                 }
@@ -93,12 +110,27 @@ namespace CEIT\core
                 {
                     foreach($params as $key => $value)
                     {
-                        $sentencia->bindValue($key, $value, self::GetParameterType($value));
+                        $sentencia->bindValue($key, $this->DoParameterTreatment($value), self::GetParameterType($value));
                     }
                 }
                 
-                $sentencia->execute();
                 //echo '<pre>' . $sentencia->debugDumpParams() . '</pre>';
+                if($sentencia->execute() !== false)
+                {
+                    $this->_lastError = $sentencia->errorCode();
+                }
+                else
+                {
+                    if($sentencia->errorCode() == $this->_lastError)
+                    {
+                        trigger_error("PDO Error: Hay un error en los parametros o en la conexion contra la base de datos.", E_USER_ERROR);
+                    }
+                    else
+                    {
+                        $this->_lastError = $sentencia->errorCode();
+                        trigger_error("PDO Error: " . $sentencia->errorCode(), E_USER_ERROR);
+                    }
+                }
                 
                 return $sentencia->fetchAll();
             }
@@ -125,17 +157,47 @@ namespace CEIT\core
                     
                     foreach($params[$index] as $key => $value)
                     {
-                        //echo 'key = (' . $key . ') value = (' . $value . ') type = (' . self::GetParameterType($value) . ')<br />';
-                        $sentencia->bindValue($key, $value, self::GetParameterType($value));
+                        //echo 'key = (' . print_r($key, true) . ') value = (' . print_r($this->DoParameterTreatment($value), true) . ') type = (' . self::GetParameterType($value) . ')<br />';
+                        $sentencia->bindValue($key, $this->DoParameterTreatment($value), self::GetParameterType($value));
                     }
                     
-                    $sentencia->execute();
                     //echo '<pre>' . $sentencia->debugDumpParams() . '</pre>';
+                    if($sentencia->execute() !== false)
+                    {
+                        $this->_lastError = $sentencia->errorCode();
+                    }
+                    else
+                    {
+                        if($sentencia->errorCode() == $this->_lastError)
+                        {
+                            trigger_error("PDO Error: Hay un error en los parametros o en la conexion contra la base de datos.", E_USER_ERROR);
+                        }
+                        else
+                        {
+                            $this->_lastError = $sentencia->errorCode();
+                            trigger_error("PDO Error: " . $sentencia->errorCode(), E_USER_ERROR);
+                        }
+                    }
                 }
                 
                 // busco la ultima clave. no funciona a traves de pdo::lastinsertedid()
                 $sentencia = $this->_pdoExtended->prepare("SELECT LAST_INSERT_ID();");
-                $sentencia->execute();
+                if($sentencia->execute() !== false)
+                {
+                    $this->_lastError = $sentencia->errorCode();
+                }
+                else
+                {
+                    if($sentencia->errorCode() == $this->_lastError)
+                    {
+                        trigger_error("PDO Error: Hay un error en los parametros o en la conexion contra la base de datos.", E_USER_ERROR);
+                    }
+                    else
+                    {
+                        $this->_lastError = $sentencia->errorCode();
+                        trigger_error("PDO Error: " . $sentencia->errorCode(), E_USER_ERROR);
+                    }
+                }
                 
                 // por que solo debe devovler 1 fila.
                 if($sentencia->rowCount() == 1)
@@ -202,7 +264,7 @@ namespace CEIT\core
             
             if(is_bool($parameter))
             {
-                return CPDOExtended::PARAM_BOOL;
+                return CPDOExtended::PARAM_INT;
             }
             else if(is_null($parameter))
             {
@@ -228,6 +290,27 @@ namespace CEIT\core
             {
                 // TODO: fijarse el tipo correcto a regresar.
                 return CPDOExtended::PARAM_STR;
+            }
+        }
+        
+        private function DoParameterTreatment($parameter)
+        {
+            if(is_array($parameter))
+            {
+                trigger_error("Por que el parametro del query es un array?", E_USER_ERROR);
+            }
+            
+            if(is_null($parameter))
+            {
+                return 'NULL';
+            }
+            else if(is_bool($parameter))
+            {
+                return $parameter ? 1 : 0;
+            }
+            else
+            {
+                return $parameter;
             }
         }
     }
