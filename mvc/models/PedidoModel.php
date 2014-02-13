@@ -24,17 +24,21 @@ namespace CEIT\mvc\models
                 array_push($this->_sp, "sp_insPedido");
                 
                 array_push($this->_params, array(
-                    ':idCarrera'    =>  (int)$item->_idUsuario,
-                    ':creado'       =>  (int)$item->_creado,
-                    ':creadoPro'    =>  (string)$item->_creadoPor,
-                    ':anillado'     =>  (bool)$item->_anillado,
-                    ':comentario'   =>  (string)$item->_comentario,
-                    ':retiro'       =>  (string)$item->_retiro,
-                    ':idFranja'     =>  (int)$item->_idFranja,
-                    ':pagado'       =>  (bool)$item->_pagado,
-                    ':idEstado'     =>  (int)$item->_idEstado
+                    ':idUsuario'        =>  (int)$item->_idUsuario,
+                    ':creadoPor'        =>  (int)$item->_creadoPor,
+                    ':creadoDia'        =>  (string)$item->_creadoDia,
+                    ':modificadoPor'    =>  is_null($item->_modificadoPor) ? null : (int)$item->_modificadoPor,
+                    ':modificadoDia'    =>  is_null($item->_modificadoDia) ? null : (string)$item->_creadoDia,
+                    ':anillado'         =>  (bool)$item->_anillado,
+                    ':comentario'       =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
+                    ':retiro'           =>  (string)$item->_retiro,
+                    ':idFranja'         =>  (int)$item->_idFranja,
+                    ':pagado'           =>  (bool)$item->_pagado,
+                    ':idEstado'         =>  (int)$item->_idEstado
                 ));
             }
+            
+            var_dump($this->_sp, $this->_params, $this->_trans);
             
             return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
@@ -80,12 +84,30 @@ namespace CEIT\mvc\models
 
         public function SelectItem(core\AModel $model)
         {
-            $params = array(
+            $this->_sp = "sp_selPedidoItems";
+            $this->_params = array(
                 ':id'   =>  $model->_idPedido,
             );
 
-            return Database::getInstance()->DoQuery("sp_selPedidoItems" , $params);
+            return Database::getInstance()->DoQuery($this->_sp , $this->_params);
             
+        }
+        
+        public function SelectFinished()
+        {
+            $this->_sp = "sp_selPedidosTerminados";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
+        public function SelectItemCaja(core\AModel $model)
+        {
+            $this->_sp = "sp_selPedidoCaja";
+            $this->_params = array(
+                ':idPedido' =>  $model->_idPedido,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
         public function SelectDisponibilidad()
@@ -97,7 +119,17 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
             
+            foreach($model as $item)
+            {
+                
+            }
+            
+            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
     }
 }

@@ -50,7 +50,7 @@ namespace CEIT\mvc\models
             {
                 $this->_sp = "sp_selTexto";
                 $this->_params = array(
-                    ':idTexto'   =>  $model->_idTexto,
+                    ':idTexto'   =>  (int)$model->_idTexto,
                 );
 
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);
@@ -59,9 +59,6 @@ namespace CEIT\mvc\models
             {
                 $this->_sp = "sp_selTextos";
 
-                /*$var = Database::getInstance()->DoQuery($this->_sp);
-                var_dump($var);
-                return $var;*/
                 return Database::getInstance()->DoQuery($this->_sp);
             }
         }

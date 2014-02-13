@@ -154,7 +154,6 @@ namespace CEIT\core
                 foreach ($sp as $index => $sp_name)
                 {
                     $sentencia = $this->_pdoExtended->prepare("CALL " . $sp_name . self::GenerateParenthesis($params[$index]));
-                    
                     foreach($params[$index] as $key => $value)
                     {
                         //echo 'key = (' . print_r($key, true) . ') value = (' . print_r($this->DoParameterTreatment($value), true) . ') type = (' . self::GetParameterType($value) . ')<br />';

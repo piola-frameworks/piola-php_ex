@@ -168,6 +168,7 @@ namespace CEIT\mvc\controllers
                         $modelTexto = new models\TextoModel();
                         $modelTexto->_idTexto = $item['IdTexto'];
                         $this->result = $this->_model['Textos']->Select($modelTexto);
+                        var_dump($this->result);
                         if(count($this->result) == 1)
                         {
                             $filename = BASE_DIR . "/mvc/templates/pedidos/table_text_added_row.html";
@@ -293,13 +294,15 @@ namespace CEIT\mvc\controllers
                     // Agrego el pedido.
                     $modelPedido = new models\PedidoModel();
                     $modelPedido->_idUsuario = $_SESSION['IdUsuario'];
-                    $modelPedido->_creado = date("Y-m-d H:i:s");
+                    $modelPedido->_creadoDia = date("Y-m-d H:i:s");
                     $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
+                    $modelPedido->_modificadoDia = null;
+                    $modelPedido->_modificadoPor = null;
                     $modelPedido->_anillado = filter_input(INPUT_POST, 'chkAnilladoCompleto', FILTER_SANITIZE_STRING);
                     $modelPedido->_comentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $modelPedido->_retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_STRING);
                     $modelPedido->_idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
-                    $modelPedido->_pagado = 0;
+                    $modelPedido->_pagado = false;
                     $modelPedido->_idEstado = 1;
                     $this->lastId = $this->_model['Pedidos']->Insert(array($modelPedido));
                     
@@ -403,7 +406,56 @@ namespace CEIT\mvc\controllers
                         $modelTP->_docente = null;
                         $modelTP->_cantPaginas = 1/*shell_exec($cmd)*/;
                         $modelTP->_activo = 0;
-                        $this->result = $this->_model['Textos']->Insert(array($modelTP));
+                        $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));
+                        unset($modelTP);
+                        
+                        $modelPedido = new models\PedidoModel();
+                        /*
+                         *  ':idUsuario'    =>  (int)$item->_idUsuario,
+                         *  ':creadoDia'    =>  (int)$item->_creadoDia,
+                         *  ':creadoPor'    =>  (string)$item->_creadoPor,
+                         *  ':anillado'     =>  (bool)$item->_anillado,
+                         *  ':comentario'   =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
+                         *  ':retiro'       =>  (string)$item->_retiro,
+                         *  ':idFranja'     =>  (int)$item->_idFranja,
+                         *  ':pagado'       =>  (bool)$item->_pagado,
+                         *  ':idEstado'     =>  (int)$item->_idEstado
+                         */
+                        
+                        $modelPedido->_idUsuario = $_SESSION['IdUsuario'];
+                        $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
+                        $modelPedido->_creadoDia = date("Y-m-d H:i:s");
+                        $modelPedido->_modificadoPor = null;
+                        $modelPedido->_modificadoDia = null;
+                        $modelPedido->_anillado = false;
+                        $modelPedido->_comentario = null;
+                        $modelPedido->_retiro = filter_input(INPUT_POST, 'hidRetiro', FILTER_SANITIZE_STRING);
+                        $modelPedido->_idFranja = filter_input(INPUT_POST, 'hidFranja', FILTER_SANITIZE_NUMBER_INT);
+                        $modelPedido->_pagado = false;
+                        $modelPedido->_idEstado = 1;
+                        $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
+                        unset($modelPedido);
+                        
+                        $modelPedidoItem = new models\PedidoItemModel();
+                        /*
+                         *  ':idPedido'     =>  (int)$item->_idPedido,
+                         *  ':cantidad'     =>  (int)$item->_cantidad,
+                         *  ':idTexto'      =>  (int)$item->_idTexto,
+                         *  ':anillado'     =>  (bool)$item->_anillado,
+                         *  ':simpleFaz'    =>  (bool)$item->_simpleFaz,
+                         *  ':idEstado'     =>  (int)$item->_idEstado,
+                         */
+                        $modelPedidoItem->_idPedido = $this->_lastIdPedido;
+                        $modelPedidoItem->_cantidad = 1;
+                        $modelPedidoItem->_idTexto = $this->_lastIdTexto;
+                        $modelPedidoItem->_anillado = false;
+                        $modelPedidoItem->_simpleFaz = false;
+                        $modelPedidoItem->_idEstado = 1;
+                        $this->_model['PedidoItems']->Insert(array($modelPedidoItem));
+                        unset($modelPedidoItem);
+                        
+                        unset($this->lastIdTexto);
+                        unset($this->lastIdPedido);
                         
                         // Muevo el archivo al directorio donde van a estar todos los PDFs
                         $uploaddir = BASE_DIR . '/data/tps/';
@@ -453,6 +505,15 @@ namespace CEIT\mvc\controllers
                         // Por que entro aca?
                         
                         break;
+                }
+            }
+            
+            $this->result = $this->_model['Pedidos']->SelectDisponibilidad();
+            if(count($this->result) == 1)
+            {
+                foreach($this->result[0] as $key => $value)
+                {
+                    $this->{$key} = $value;
                 }
             }
         }
