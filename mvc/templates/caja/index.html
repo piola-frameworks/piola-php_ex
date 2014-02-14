@@ -1,71 +1,146 @@
-<div class="panel panel-success">
-    <div class="panel-heading">
-        <h3 class="panel-title">A cobrar</h3>
-    </div>
-    <div class="panel-body">
-        <form name="frmDetalleCobrar" method="POST">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Id Pedido</th>
-                        <th>Descripcion</th>
-                        <th>Precio Unitario</th>
-                        <th>Cantidad</th>
-                        <th>Importe</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {table_1_content}
-                </tbody>
-            </table>
-            <div class="form-group">
-                <label class=" col-sm-offset-9 col-sm-1" for="txtTotal">Total:</label>
-                <div class="col-sm-2">
-                    <input id="txtTotal" class="form-control" type="number" readonly="readonly" />
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">A cobrar</h3>
+            </div>
+            <form name="frmDetalleCobrar" method="POST">
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Descripcion</th>
+                                <th>
+                                    <abbr title="Precio Unitario">PU</abbr>
+                                </th>
+                                <th>Cantidad</th>
+                                <th>Importe</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {table_1_content}
+                        </tbody>
+                    </table>
                 </div>
+                <div class="panel-footer">
+                    <div class="form-group">
+                        <label class=" col-sm-offset-9 col-sm-1" for="txtTotal">Total:</label>
+                        <div class="col-sm-2">
+                            <input id="txtTotal" class="form-control" type="number" readonly="readonly" />
+                        </div>
+                    </div>
+                    <button id="btnCobrar" class="btn btn-default" type="submit" name="btnCobrar" formaction="./index_confirm">Cobrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">Pedidos</h3>
             </div>
-            <button id="btnCobrar" class="btn btn-default" type="submit" name="btnCobrar">Cobrar</button>
-        </form>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Filtros</h3>
-    </div>
-    <div class="panel-body">
-        <form class="form-inline" name="frmCajaFiltros" method="POST" role="form">
-            <div class="form-group">
-                <label class="sr-only" for="txtLegajo">Legajo</label>
-                <input id="txtLegajo" class="form-control" type="text" name="txtLegajo" placeholder="Legajo">
+
+            <div class="panel-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Filtros</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-inline" name="frmCajaFiltros" method="POST" role="form">
+                            <div class="form-group">
+                                <label class="sr-only" for="txtLegajo">Legajo o Id Pedido</label>
+                                <input id="txtLegajo" class="form-control" type="text" name="txtLegajo" placeholder="Legajo o Id Pedido">
+                            </div>
+                            <button class="btn btn-default" type="submit" name="btnFiltrar">Filtrar</button>
+                        </form>
+                    </div>
+                </div>
+                <form name="frmPedidosTerminados" method="POST" role="form">
+                    <table class="table table-hover">    
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Legajo/Usuario</th>
+                                <th>Comentario</th>
+                                <th>Anillado</th>
+                                <!-- <th>Retiro</th>
+                                <th>Horario</th>
+                                <th>Estado</th> -->
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {table_2_content}
+                        </tbody>
+                    </table>
+                </form>
             </div>
-            <button class="btn btn-default" type="submit" name="btnFiltrar">Filtrar</button>
-        </form>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Otros</h3>
+            </div>
+            <div class="panel-body">
+                <form name="frmAgregarItem" method="POST" role="form">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Id Item</th>
+                                <th>Descripcion</th>
+                                <th>
+                                    <abbr title="Precio Unitario">PU</abbr>
+                                </th>
+                                <th>Cantidad</th>
+                                <th>Importe</th>
+                                <th>Acciones</th>
+                            </tr>    
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input class="form-control" name="txtIdItem" type="text" required="required" />
+                                </td>
+                                <td>
+                                    <input class="form-control" name="txtDescripcion" type="text" required="required" />
+                                </td>
+                                <td>
+                                    <input class="form-control" name="txtPrecioUnitario" type="number" min="0" step="0.05" required="required" />
+                                </td>
+                                <td>
+                                    <input class="form-control" name="txtCantidad" type="number" min="1" step="1" required="required" />
+                                </td>
+                                <td>
+                                    <input class="form-control" name="txtImporte" type="number" min="0" step="0.05" readonly="readonly" />
+                                </td>
+                                <td>
+                                    <button class="btn btn-success btn-sm" name="btnAgregarItem" type="submit">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">Resultados</h3>
-    </div>
-    <div class="panel-body">
-        <form name="frmPedidosTerminados" method="POST" role="form">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Legajo/Usuario</th>
-                        <th>Comentario</th>
-                        <th>Anillado</th>
-                        <th>Retiro</th>
-                        <th>Horario</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {table_2_content}
-                </tbody>
-            </table>
-        </form>
-    </div>
-</div>
+<script type="text/javascript">
+    $('input[name=txtPrecioUnitario]').change(function() {
+        var precio = $('input[name=txtPrecioUnitario]').val();
+        var cant = $('input[name=txtCantidad]').val();
+        var importe = precio * cant;
+
+        $('input[name=txtImporte]').val(importe.toFixed(2));
+    });
+
+    $('input[name=txtCantidad]').change(function() {
+        var precio = $('input[name=txtPrecioUnitario]').val();
+        var cant = $('input[name=txtCantidad]').val();
+        var importe = precio * cant;
+
+        $('input[name=txtImporte]').val(importe.toFixed(2));
+    });
+</script>
