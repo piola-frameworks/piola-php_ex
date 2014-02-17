@@ -5,7 +5,7 @@ namespace CEIT\mvc\models
     use \CEIT\core;
     use \CEIT\core\CMySQLDatabase as Database;
     
-    class HorarioFranjasModel extends core\AModel
+    final class PedidoEstadosModel extends core\AModel
     {
         public function Delete(array $model)
         {
@@ -16,9 +16,9 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push($this->_sp, "sp_");
+                array_push($this->_sp, "");
                 array_push($this->_params, array(
-                    ':'  =>  $item,
+                    
                 ));
             }
             
@@ -34,43 +34,43 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push($this->_sp, "sp_");
+                array_push($this->_sp, "");
                 array_push($this->_params, array(
-                    ':'  =>  $item,
+                    
                 ));
             }
             
-            return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
+            Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Select(core\AModel $model = null)
         {
             if(!empty($model))
             {
-                $this->_sp = "sp_selHorarioFranja";
+                $this->_sp = "sp_selPedidoEstado";
                 $this->_params = array(
-                    ':IdFranja' =>  $model->_idFranja,
+                    ':idEstado'  =>  $model->_idEstado,
                 );
                 
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);
             }
             else
             {
-                $this->_sp = "sp_selHorarioFranjas";
+                $this->_sp = "sp_selPedidoEstados";
                 
                 return Database::getInstance()->DoQuery($this->_sp);
             }
         }
         
         /*
-         * Start custom selects
+         * Start Custom Selects
          */
         
         public function SelectByIdPedido(core\AModel $model)
         {
-            $this->_sp = "sp_selHorarioFranajasByIdPedido";
+            $this->_sp = "sp_selPedidoEstadosByIdPedido";
             $this->_params = array(
-                ':idPedido' =>  $model->_idPedido,
+                ':idPedido'  =>  $model->_idPedido,
             );
             
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
@@ -89,9 +89,9 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push($this->_sp, "sp_");
+                array_push($this->_sp, "");
                 array_push($this->_params, array(
-                    ':'  =>  $item,
+                    
                 ));
             }
             

@@ -34,6 +34,13 @@ namespace CEIT\mvc\controllers
             $this->_template = BASE_DIR . "/mvc/templates/web/{$this->_action}.html";
         }
         
+        public function error401($text)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/web/{$this->_action}.html";
+            
+            $this->error_description = $text;
+        }
+        
         public function error404($text)
         {
             $this->_template = BASE_DIR . "/mvc/templates/web/{$this->_action}.html";

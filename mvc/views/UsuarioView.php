@@ -13,7 +13,7 @@ namespace CEIT\mvc\views
         
         public function render($template = null, array $dataCollection)
         {
-            if($template != null)
+            if(!empty($template))
             {
                 if(is_readable($template))
                 {
@@ -31,12 +31,11 @@ namespace CEIT\mvc\views
                 }
                 else
                 {
-                    throw new \InvalidArgumentException("No se peude cargar la plantilla: " . $template);
+                    throw new \InvalidArgumentException("No se puede cargar la plantilla: " . $template);
                 }
+                
+                parent::render($template, $dataCollection);
             }
-            
-            //modifico el page_content del controller
-            parent::render($template, $dataCollection);
         }
     }
 }

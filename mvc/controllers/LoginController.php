@@ -14,7 +14,9 @@ namespace CEIT\mvc\controllers
             
             if(empty($this->_model))
             {
-                $this->_model = new models\UsuarioModel();
+                $this->_model = array(
+                    'Usuarios'  =>  new models\UsuarioModel(),
+                );
             }
             
             if(empty($this->_view))
@@ -38,12 +40,9 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
-                
                 $user = new models\UsuarioModel();
                 $user->_username = filter_input(INPUT_POST, 'txtUser', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                
-                $this->result = $this->_model->SelectByUsername($user);
+                $this->result = $this->_model['Usuarios']->SelectByUsername($user);
                 
                 if(count($this->result) == 1)
                 {
@@ -62,9 +61,25 @@ namespace CEIT\mvc\controllers
                         $_SESSION['user_logged'] = true;
                         $_SESSION['IdUsuario'] = $this->result[0]['IdUsuario'];
                         $_SESSION['Usuario'] = $this->result[0]['Usuario'];
+                        $_SESSION['Roles'] = array();
+                        
+                        // Traigo los privilegios desde la base de datos
+                        $user->_idUsuario = $this->result[0]['IdUsuario'];
+                        $this->result2 = $this->_model['Usuarios']->SelectRoles($user);
+                        //var_dump($this->result2);
+                        if(count($this->result2) == 1)
+                        {
+                            $_SESSION['Roles'] = $this->result2[0];
+                        }
+                        else
+                        {
+                            // Desde cuando un usuario puede tener mas de un rol?
+                        }
+                        
+                        //var_dump($_SESSION);
                         
                         // redirecciono
-                        header("Location: /dashboard");
+                        header("Location: /dashboard/index");
                     }
                     else
                     {

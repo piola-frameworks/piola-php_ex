@@ -17,6 +17,7 @@ namespace CEIT\mvc\controllers
                 $this->_model = array(
                     'Pedidos'       =>  new models\PedidoModel(),
                     'PedidoItems'   =>  new models\PedidoItemModel(),
+                    'PedidoEstados' =>  new models\PedidoEstadosModel(),
                     'Textos'        =>  new models\TextoModel(),
                     'Carreras'      =>  new models\CarreraModel(),
                     'Niveles'       =>  new models\NivelModel(),
@@ -168,7 +169,7 @@ namespace CEIT\mvc\controllers
                         $modelTexto = new models\TextoModel();
                         $modelTexto->_idTexto = $item['IdTexto'];
                         $this->result = $this->_model['Textos']->Select($modelTexto);
-                        var_dump($this->result);
+                        //var_dump($this->result);
                         if(count($this->result) == 1)
                         {
                             $filename = BASE_DIR . "/mvc/templates/pedidos/table_text_added_row.html";
@@ -241,7 +242,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 if(isset($_POST['IdTexto']) && isset($_POST['txtCantidadCopias']))
                 {
@@ -536,38 +537,87 @@ namespace CEIT\mvc\controllers
             
             // seteo el modelo para trabajar con los items del pedido
             $pedidosItems = new models\PedidoModel();
-            $pedidosItems->idPedido = $id;
+            $pedidosItems->_idPedido = $id;
             $this->result = $this->_model['Pedidos']->SelectItem($pedidosItems);
             
             // este foreach arma las files de la tabla.
-            foreach($this->result as $row)
+            if(count($this->result) > 0)
             {
-                $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
-                $this->table_rows .= file_get_contents($filename);
-                
-                if(is_array($row))
+                foreach($this->result as $row)
                 {
-                    foreach($row as $key => $value)
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
+                    $this->table_rows .= file_get_contents($filename);
+
+                    if(is_array($row))
                     {
-                        $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
-                        
-                        if($key == "Costo")
+                        foreach($row as $key => $value)
                         {
-                            $this->PrecioTotal += $value;
+                            $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
+
+                            if($key == "Costo")
+                            {
+                                $this->PrecioTotal += $value;
+                            }
                         }
                     }
                 }
             }
+            unset($this->result);
             
             // elaboro el parametro y traigo los datos
             $pedido = new models\PedidoModel();
-            $pedido->idPedido = $_SESSION['IdUsuario'];
+            $pedido->_idPedido = $id;
             $this->result = $this->_model['Pedidos']->Select($pedido);
-            
+            //var_dump($this->result);
             foreach($this->result[0] as $key => $value)
             {
                 $this->{$key} = htmlentities($value);
             }
+            unset($this->result);
+            
+            $modelEstadoPedido = new models\PedidoEstadosModel();
+            $modelEstadoPedido->_idEstado = $id;
+            $this->result = $this->_model['PedidoEstados']->SelectByIdPedido($modelEstadoPedido);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_estado_select_option.html";
+                    $this->combo_estado_pedido .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            $modelFranja = new models\HorarioFranjasModel();
+            $modelFranja->_idPedido = $id;
+            $this->result = $this->_model['Franjas']->SelectByIdPedido($modelFranja);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_franja_select_option.html";
+                    $this->combo_franja_horario .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_franja_horario = str_replace('{' . $key . '}', $value, $this->combo_franja_horario);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
         }
 
         public function index()
@@ -584,19 +634,45 @@ namespace CEIT\mvc\controllers
             $pedido = new models\PedidoModel();
             $pedido->_idUsuario = $_SESSION['IdUsuario'];
             
-            // traigo datos de la db.
-            $this->result = $this->_model['Pedidos']->Select($pedido);
-            foreach($this->result as $row)
+            // Verifico el rol que tiene en el sistema para saber qe datos traer
+            $hasFullRead = false;
+            $fullReadRoles = array(
+                'Administrador',
+                'Preparador',
+            );
+            foreach($fullReadRoles as $item)
             {
-                $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table.html";
-                $this->table_content .= file_get_contents($filename);
-                
-                // verifico si trajo 1 o muchos resultados.
-                if(is_array($row))
+                if($_SESSION['Roles']['Nombre'] == $item)
                 {
-                    foreach($row as $key => $value)
+                    $hasFullRead = true;
+                    break;
+                }
+            }
+            // traigo datos de la db.
+            if($hasFullRead)
+            {
+                //echo 'tiene lectura completa';
+                $this->result = $this->_model['Pedidos']->Select();
+            }
+            else
+            {
+                //echo 'tiene lectura para sus cosas';
+                $this->result = $this->_model['Pedidos']->Select($pedido);
+            }
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table.html";
+                    $this->table_content .= file_get_contents($filename);
+
+                    // verifico si trajo 1 o muchos resultados.
+                    if(is_array($row))
                     {
-                        $this->table_content = str_replace("{" . $key . "}", htmlentities($value), $this->table_content);
+                        foreach($row as $key => $value)
+                        {
+                            $this->table_content = str_replace("{" . $key . "}", htmlentities($value), $this->table_content);
+                        }
                     }
                 }
             }
@@ -604,7 +680,7 @@ namespace CEIT\mvc\controllers
             
             // Cargo el combo de carreras.
             $this->result = $this->_model['Carreras']->Select();
-            if(count($this->result) > 1)
+            if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
                 {
@@ -624,7 +700,7 @@ namespace CEIT\mvc\controllers
             
             // Cargo el combo de estados de items.
             $this->result = $this->_model['Estados']->Select();
-            if(count($this->result) > 1)
+            if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
                 {

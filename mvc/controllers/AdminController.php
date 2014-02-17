@@ -187,12 +187,35 @@ namespace CEIT\mvc\controllers
             $var = new models\UsuarioModel();
             $var->_idUsuario = $id;
             $this->result = $this->_model['Usuarios']->Select($var);
-            
-            // Construyo la pagina
-            foreach($this->result[0] as $key => $value)
+            if(count($this->result) > 0)
             {
-                $this->{$key} = $value;
+                foreach($this->result[0] as $key => $value)
+                {
+                    $this->{$key} = $value;
+                }
             }
+            unset($this->result);
+            
+            $modelUsuario = new models\UsuarioModel();
+            $modelUsuario->_idUsuario = $id;
+            $this->result = $this->_model['Usuarios']->SelectAllRolesAndMarkByUser($modelUsuario);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/admin/{$this->_action}_role_select_option.html";
+                    $this->combo_rol .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_rol = str_replace('{' . $key . '}', $value, $this->combo_rol);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
         }
 
         public function update_user($id)
@@ -201,7 +224,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                
+                var_dump($_POST);
             }
             
             $var = new models\UsuarioModel();

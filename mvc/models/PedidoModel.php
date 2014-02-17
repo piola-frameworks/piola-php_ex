@@ -9,7 +9,20 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
             
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_delPedido");
+                array_push($this->_params, array(
+                    ':idPedido' =>  (int)$item->_idPedido,
+                ));
+            }
+            
+            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Insert(array $model)
@@ -50,18 +63,18 @@ namespace CEIT\mvc\models
                 $params = array();
                 $sp = null;
 
-                if(array_key_exists("idUsuario", $model->_data))
+                if(array_key_exists("_idUsuario", $model->_data))
                 {
                     $params = array(
-                        ':id'   =>  $model->_data['idUsuario'],
+                        ':id'   =>  $model->_idUsuario,
                     );
 
                     $sp = "sp_selPedidoByIdUsuario";
                 }
-                else if(array_key_exists("idPedido", $model->_data))
+                else if(array_key_exists("_idPedido", $model->_data))
                 {
                     $params = array(
-                        ':id'   =>  $model->_data['idPedido'],
+                        ':id'   =>  $model->_idPedido,
                     );
 
                     $sp = "sp_selPedidoByIdPedido";

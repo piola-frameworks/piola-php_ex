@@ -50,7 +50,11 @@ namespace CEIT\mvc\models
                 return Database::getInstance()->DoQuery($this->_sp);
             }
         }
-
+        
+        /*
+         * Start custom selects
+         */
+        
         public function SelectByUsername(core\AModel $model)
         {
             $this->_sp = "sp_selUsuarioByLegajoOrUsername";
@@ -71,15 +75,39 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
-        public function SelectRolePermission(core\AModel $model)
+        public function SelectPermissionByIdUsuario(core\AModel $model)
         {
-            $this->_sp = "sp_selUsuarioPermisos";
+            $this->_sp = "sp_selUsuarioPermisosByIdUsuario";
+            $this->_params = array(
+                ':idUsuario'    =>  $model->_idUsuario,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        public function SelectPermissionByIdRol(core\AModel $model)
+        {
+            $this->_sp = "sp_selUsuarioPermisosByIdRol";
             $this->_params = array(
                 ':idRol'  =>  $model->_idRol,
             );
             
-            return Database::getInstance()->_DoQuery($this->_sp, $this->_params);
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
+        
+        public function SelectAllRolesAndMarkByUser(core\AModel $model)
+        {
+            $this->_sp = "sp_selUsuariosRoles2";
+            $this->_params = array(
+                ':idUsuario'    =>  $model->_idUsuario,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        /*
+         * End custom selects
+         */
         
         public function Update(array $model)
         {

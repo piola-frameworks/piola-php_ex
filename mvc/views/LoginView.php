@@ -31,7 +31,7 @@ namespace CEIT\mvc\views
                 }
                 else
                 {
-                    throw new \InvalidArgumentException("No se peude cargar la plantilla: " . $template);
+                    throw new \InvalidArgumentException("No se puede cargar la plantilla: " . $template);
                 }
             }
             
