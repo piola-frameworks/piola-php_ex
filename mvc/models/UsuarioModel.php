@@ -19,7 +19,8 @@ namespace CEIT\mvc\models
 
         public function Insert(array $model)
         {
-            $params = array(
+            $this->_sp = "sp_insUsuario";
+            $this->_params = array(
                 ":idAlumno"     =>  $model->_idAlumno,
                 ":nombre"       =>  $model->_nombre,
                 ":apellido"     =>  $model->_apellido,
@@ -28,22 +29,25 @@ namespace CEIT\mvc\models
                 ":privilegio"   =>  $model->_privilegio,
             );
 
-            Database::getInstance()->DoScalar("sp_insUsuario", $params);
+            Database::getInstance()->DoScalar($this->_sp, $this->_params);
         }
 
         public function Select(core\AModel $model = null)
         {
             if($model != null)
             {
-                $params = array(
-                    ':id'   =>  $model->_data["_idUsuario"],
+                $this->_sp = "sp_selUsuario";
+                $this->_params = array(
+                    ':idUsuario'   =>  $model->_idUsuario,
                 );
 
-                return Database::getInstance()->DoQuery("sp_selUsuario", $params);
+                return Database::getInstance()->DoQuery($this->_sp, $this->_params);
             }
             else
             {
-                return Database::getInstance()->DoQuery("sp_selUsuarios");
+                $this->_sp = "sp_selUsuarios";
+                
+                return Database::getInstance()->DoQuery($this->_sp);
             }
         }
 
@@ -57,9 +61,30 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
+        public function SelectRoles(core\AModel $model)
+        {
+            $this->_sp = "sp_selUsuarioRoles";
+            $this->_params = array(
+                ':idUsuario'    =>  $model->_idUsuario,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        public function SelectRolePermission(core\AModel $model)
+        {
+            $this->_sp = "sp_selUsuarioPermisos";
+            $this->_params = array(
+                ':idRol'  =>  $model->_idRol,
+            );
+            
+            return Database::getInstance()->_DoQuery($this->_sp, $this->_params);
+        }
+        
         public function Update(array $model)
         {
-            $params = array(
+            $this->_sp = "sp_updUsuario";
+            $this->_params = array(
                 ":idUsuario"    =>  $model->_idUsuario,
                 ":idAlumno"     =>  $model->_idAlumno,
                 ":nombre"       =>  $model->_nombre,
@@ -69,7 +94,7 @@ namespace CEIT\mvc\models
                 ":privilegio"   =>  $model->_privilegio,
             );
 
-            Database::getInstance()->DoNonQuery("sp_updUsuario", $params);
+            Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
         }
     }
 }

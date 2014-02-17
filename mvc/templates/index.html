@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{page_title}</title>
-        
+
         <!-- Bootstrap -->
         <link rel="stylesheet" type="text/css" href="/public/css/bootstrap.min.css">
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -15,7 +15,7 @@
           <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
         <link rel="stylesheet" type="text/css" href="/public/css/smoothness/jquery-ui-1.10.4.custom.min.css">
-        
+
         <script type="text/javascript" src="/public/js/jquery-2.1.0.min.js"></script>
         <script type="text/javascript" src="/public/js/jquery-ui-1.10.4.custom.min.js"></script>
     </head>
@@ -31,11 +31,14 @@
                             {nav_links}
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a href="#"><span class="glyphicon glyphicon-user"></span> {Usuario}</a></li>
+                            <li>
+                                <a href="/user/profile/{IdUsuario}">
+                                    <span class="glyphicon glyphicon-user"></span> {Usuario}
+                                </a>
+                            </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Opciones <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/user/profile/{IdUsuario}">Perfil</a></li>
                                     <li><a href="/web/help">Ayuda</a></li>
                                     <li><a href="/web/contact">Contacto</a></li>
                                     <li class="divider"></li>
@@ -51,11 +54,11 @@
                 <!-- Include all compiled plugins (below), or include individual files as needed -->
                 <script src="/public/js/bootstrap.min.js"></script>
             </section>
-            <section id="footer">
-                <div>
-                    <p>{copyright}</p>
-                </div>
-            </section>
+        </div>
+        <div class="footer">
+            <div class="container">
+                <p class="text-muted">{copyright}</p>
+            </div>
         </div>
     </body>
 </html>

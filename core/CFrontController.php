@@ -63,12 +63,20 @@ namespace CEIT\core
                 }
                 else
                 {
-                    throw new \InvalidArgumentException("Accion " . $this->_action .  " no encontrada en el controlador.");
+                    $controller = new \CEIT\mvc\controllers\WebController();
+                    $controller->_action = "error404";
+                    $controller->_params = array("Accion " . $this->_action .  " no encontrada en el controlador.");
+                    
+                    call_user_func_array(array($controller, $controller->_action), $controller->_params);
                 }
             }
             else
             {
-                throw new \InvalidArgumentException("El controlador " . $this->_controller . " no existe.");
+                $controller = new \CEIT\mvc\controllers\WebController();
+                $controller->_action = "error404";
+                $controller->_params = array("El controlador " . $this->_controller . " no existe.");
+                
+                call_user_func_array(array($controller, $controller->_action), $controller->_params);
             }
         }
     }

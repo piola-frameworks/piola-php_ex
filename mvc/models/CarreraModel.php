@@ -77,6 +77,16 @@ namespace CEIT\mvc\models
             }
         }
 
+        public function SelectByIdUsuario(core\AModel $model)
+        {
+            $this->_sp = "sp_selCarrerasByIdUsuario";
+            $this->_params = array(
+                ':idUsuario'    =>  $model->_idUsuario,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function Update(array $model)
         {
             if(count($model) > 1)
