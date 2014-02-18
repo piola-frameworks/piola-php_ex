@@ -467,44 +467,46 @@ namespace CEIT\mvc\controllers
                             trigger_error("Me queres hackear la aplicacion web?", E_USER_NOTICE);
                         }
 
-                        if (move_uploaded_file($_FILES['filArchivo']['tmp_name'], $uploadfile)) {
+                        if(move_uploaded_file($_FILES['filArchivo']['tmp_name'], $uploadfile))
+                        {
                             //echo "El archivo es válido y fue cargado exitosamente.\n";
-                        } else {
+                        }
+                        else
+                        {
                             echo "¡Posible ataque de carga de archivos!\n";
                         }
-                        
                         break;
+                        
                     case UPLOAD_ERR_INI_SIZE:
                         trigger_error("El archivo subido excede la directiva upload_max_filesize en php.ini.", E_USER_ERROR);
-                        
                         break;
+                    
                     case UPLOAD_ERR_FORM_SIZE:
                         trigger_error("El archivo subido excede la directiva MAX_FILE_SIZE que fue especificada en el formulario HTML.", E_USER_ERROR);
-                        
                         break;
+                    
                     case UPLOAD_ERR_PARTIAL:
-                        trigger_error("El archivo subido fue sólo parcialmente cargado.", E_USER_ERROR);
-                        
+                        trigger_error("El archivo subido fue sólo parcialmente cargado.", E_USER_ERROR);    
                         break;
+                    
                     case UPLOAD_ERR_NO_FILE:
                         trigger_error("Ningún archivo fue subido.", E_USER_WARNING);
-                        
                         break;
+                    
                     case UPLOAD_ERR_NO_TMP_DIR:
-                        trigger_error("Falta la carpeta temporal.", E_USER_ERROR);
-                        
+                        trigger_error("Falta la carpeta temporal.", E_USER_ERROR);    
                         break;
+                    
                     case UPLOAD_ERR_CANT_WRITE:
-                        trigger_error("No se pudo escribir el archivo en el disco.", E_USER_ERROR);
-                        
+                        trigger_error("No se pudo escribir el archivo en el disco.", E_USER_ERROR);    
                         break;
+                    
                     case UPLOAD_ERR_EXTENSION:
-                        trigger_error("Una extensión de PHP detuvo la carga de archivos.", E_USER_ERROR);
-                        
+                        trigger_error("Una extensión de PHP detuvo la carga de archivos.", E_USER_ERROR);    
                         break;
+                    
                     default:
-                        // Por que entro aca?
-                        
+                        // Por que entro aca?    
                         break;
                 }
             }
@@ -539,7 +541,7 @@ namespace CEIT\mvc\controllers
             $pedidosItems = new models\PedidoModel();
             $pedidosItems->_idPedido = $id;
             $this->result = $this->_model['Pedidos']->SelectItem($pedidosItems);
-            
+            //var_dump($this->result, $id);
             // este foreach arma las files de la tabla.
             if(count($this->result) > 0)
             {
@@ -620,6 +622,42 @@ namespace CEIT\mvc\controllers
             unset($this->result);
         }
 
+        public function detail_item($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            
+            $modelPedidoItem = new models\PedidoItemModel();
+            $modelPedidoItem->_idItem = $id;
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                $modelPedidoItem->_idEstado = filter_input(INPUT_POST, 'ddlEstadoItem', FILTER_SANITIZE_NUMBER_INT);
+                $this->result = $this->_model['PedidoItems']->UpdateEstado(array($modelPedidoItem));
+            }
+            
+            $this->result = $this->_model['PedidoItems']->SelectEstadosAndMarkByIdPedidoItem($modelPedidoItem);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_select_option.html";
+                    $this->combo_estado_item .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_estado_item = str_replace('{' . $key . '}', $value, $this->combo_estado_item);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+        }
+        
         public function index()
         {
             if(!empty($_POST))

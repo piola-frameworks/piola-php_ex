@@ -9,7 +9,20 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
             
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_delPedidoItem");
+                array_push($this->_params, array(
+                    ':idItem'  =>  (int)$item->_idItem,
+                ));
+            }
+            
+            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Insert(array $model)
@@ -22,7 +35,6 @@ namespace CEIT\mvc\models
             foreach($model as $item)
             {
                 array_push($this->_sp, "sp_insPedidoItem");
-                
                 array_push($this->_params, array(
                     ':idPedido'     =>  (int)$item->_idPedido,
                     ':cantidad'     =>  (int)$item->_cantidad,
@@ -32,8 +44,6 @@ namespace CEIT\mvc\models
                     ':idEstado'     =>  (int)$item->_idEstado,
                 ));
             }
-            
-            var_dump($this->_sp, $this->_params, $this->_trans);
             
             return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
@@ -49,18 +59,67 @@ namespace CEIT\mvc\models
             {
                 $this->_sp = "sp_selPedidoItems";
                 $this->_params = array(
-                    ':idPedido' => $this->_idPedido,
+                    ':idPedido' =>  (int)$this->_idPedido,
                 );
                 
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);
             }
         }
 
+        /*
+         * Start custom selects
+         */
+        
+        public function SelectEstadosAndMarkByIdPedidoItem(core\AModel $model)
+        {
+            $this->_sp = "sp_selPedidoItemEstadoListAndSelected";
+            $this->_params = array(
+                ':idItem' =>  (int)$model->_idItem
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        /*
+         * End custom selects
+         */
+        
         public function Update(array $model)
         {
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
             
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_updPedidoItem");
+                array_push($this->_params, array(
+                    ':idItem'  =>  (int)$item->_idItem,
+                ));
+            }
+            
+            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
-
+        
+        public function UpdateEstado(array $model)
+        {
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
+            
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_updPedidoItemEstado");
+                array_push($this->_params, array(
+                    ':idItem'   =>  (int)$item->_idItem,
+                    ':idEstado' =>  (int)$item->_idEstado,
+                ));
+            }
+            
+            Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
+        }
     }
 }
 

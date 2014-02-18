@@ -16,17 +16,11 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_delPermiso"
-                );
+                array_push($this->_sp, "sp_delPermiso");
                 
-                array_push(
-                    $this->_params,
-                    array(
+                array_push($this->_params, array(
                         ':idPermiso'   =>  (int)$item->_idPermiso,
-                    )
-                );
+                ));
             }
             
             return Database::getInstance()->DoQuery($this->_sp, $this->_params, $this->_trans);
@@ -41,17 +35,12 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_insPermiso"
-                );
-                
-                array_push(
-                    $this->_params,
-                    array(
-                        ":descripcion"     =>  (int)$item->_descripcion
-                    )
-                );
+                array_push($this->_sp, "sp_insPermiso");
+                array_push($this->_params, array(
+                        ':descripcion'  =>  (string)$item->_descripcion,
+                        ':controlador'  =>  (string)$item->_controlador,
+                        ':accion'       =>  (string)$item->_accion,
+                ));
             }
             
             return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
@@ -91,18 +80,13 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_updPermiso"
-                );
-                
-                array_push(
-                    $this->_params,
-                    array(
-                        ":idPermiso"    =>  (int)$item->_idPermiso,
-                        ":descripcion"  =>  (int)$item->_descripcion,
-                    )
-                );
+                array_push($this->_sp, "sp_updPermiso");
+                array_push($this->_params, array(
+                    ":idPermiso"    =>  (int)$item->_idPermiso,
+                    ':controlador'  =>  (string)$item->_controlador,
+                    ':accion'       =>  (string)$item->_accion,
+                    ':descripcion'  =>  (string)$item->_descripcion,
+                ));
             }
             
             Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);

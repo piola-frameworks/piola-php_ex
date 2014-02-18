@@ -426,6 +426,19 @@ namespace CEIT\mvc\controllers
         public function create_perm()
         {
             $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                $modelPermiso = new models\PermisoModel();
+                $modelPermiso->_descripcion = filter_input(INPUT_POST, 'txtDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $modelPermiso->_controlador = filter_input(INPUT_POST, 'txtControlador', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $modelPermiso->_accion = filter_input(INPUT_POST, 'txtAccion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $this->result = $this->_model['Permisos']->Insert(array($modelPermiso));
+                //var_dump($this->result);
+                unset($this->result);
+            }
         }
         
         public function detail_perm($id)
@@ -468,6 +481,29 @@ namespace CEIT\mvc\controllers
         public function update_perm($id)
         {
             $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+            
+            $modelPermiso = new models\PermisoModel();
+            $modelPermiso->_idPermiso = $id;
+            
+            if(!empty($_POST))
+            {    
+                $modelPermiso->_descripcion = filter_input(INPUT_POST, 'txtDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $modelPermiso->_controlador = filter_input(INPUT_POST, 'txtControlador', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $modelPermiso->_accion = filter_input(INPUT_POST, 'txtAccion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+                $this->result = $this->_model['Permisos']->Update(array($modelPermiso));
+                unset($this->result);
+            }
+            
+            $this->result = $this->_model['Permisos']->Select($modelPermiso);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result[0] as $key => $value)
+                {
+                    $this->{$key} = $value;
+                }
+            }
+            unset($this->result);
         }
         
         public function delete_perm($id)

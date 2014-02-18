@@ -66,7 +66,7 @@ namespace CEIT\mvc\models
                 if(array_key_exists("_idUsuario", $model->_data))
                 {
                     $params = array(
-                        ':id'   =>  $model->_idUsuario,
+                        ':id'   =>  (int)$model->_idUsuario,
                     );
 
                     $sp = "sp_selPedidoByIdUsuario";
@@ -74,7 +74,7 @@ namespace CEIT\mvc\models
                 else if(array_key_exists("_idPedido", $model->_data))
                 {
                     $params = array(
-                        ':id'   =>  $model->_idPedido,
+                        ':id'   =>  (int)$model->_idPedido,
                     );
 
                     $sp = "sp_selPedidoByIdPedido";
@@ -102,8 +102,7 @@ namespace CEIT\mvc\models
                 ':id'   =>  $model->_idPedido,
             );
 
-            return Database::getInstance()->DoQuery($this->_sp , $this->_params);
-            
+            return Database::getInstance()->DoQuery($this->_sp , $this->_params);   
         }
         
         public function SelectFinished()
@@ -139,7 +138,10 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                
+                array_push($this->_sp, "sp_updPedido");
+                array_push($this->_params, array(
+                    ''  =>  $item,
+                ));
             }
             
             Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
