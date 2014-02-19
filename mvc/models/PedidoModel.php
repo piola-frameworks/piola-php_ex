@@ -140,7 +140,18 @@ namespace CEIT\mvc\models
             {
                 array_push($this->_sp, "sp_updPedido");
                 array_push($this->_params, array(
-                    ''  =>  $item,
+                    ':idPedido'         =>  (int)$item->_idPedido,
+                    ':idUsuario'        =>  (int)$item->_idUsuario,
+                    ':creado'           =>  (string)$item->_creado,
+                    ':creadoPor'        =>  (int)$item->_creadoPor,
+                    ':modificado'       =>  (string)$item->_modificado,
+                    ':modificadoPor'    =>  (int)$item->_modificadoPor,
+                    ':anillado'         =>  (bool)$item->_anillado,
+                    ':comentario'       =>  (string)$item->_comentario,
+                    ':retiro'           =>  (string)$item->_retiro,
+                    ':idFranja'         =>  (int)$item->_idFranja,
+                    ':pagado'           =>  (bool)$item->_pagado,
+                    ':idEstado'         =>  (int)$item->_idEstado,
                 ));
             }
             

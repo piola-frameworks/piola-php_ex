@@ -16,9 +16,9 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push($this->_sp, "");
+                array_push($this->_sp, "sp_delPedidoEstado");
                 array_push($this->_params, array(
-                    
+                    ''  =>  $item,
                 ));
             }
             
@@ -34,9 +34,9 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push($this->_sp, "");
+                array_push($this->_sp, "sp_insPedidoEstado");
                 array_push($this->_params, array(
-                    
+                    ''  =>  $item,
                 ));
             }
             
@@ -49,7 +49,7 @@ namespace CEIT\mvc\models
             {
                 $this->_sp = "sp_selPedidoEstado";
                 $this->_params = array(
-                    ':idEstado'  =>  $model->_idEstado,
+                    ':idEstado'  =>  (int)$model->_idEstado,
                 );
                 
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);
@@ -70,7 +70,7 @@ namespace CEIT\mvc\models
         {
             $this->_sp = "sp_selPedidoEstadosByIdPedido";
             $this->_params = array(
-                ':idPedido'  =>  $model->_idPedido,
+                ':idPedido'  =>  (int)$model->_idPedido,
             );
             
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
@@ -89,9 +89,9 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push($this->_sp, "");
+                array_push($this->_sp, "sp_updPedidoEstado");
                 array_push($this->_params, array(
-                    
+                    ''  =>  $item,
                 ));
             }
             

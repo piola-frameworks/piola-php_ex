@@ -578,7 +578,7 @@ namespace CEIT\mvc\controllers
             unset($this->result);
             
             $modelEstadoPedido = new models\PedidoEstadosModel();
-            $modelEstadoPedido->_idEstado = $id;
+            $modelEstadoPedido->_idPedido = $id;
             $this->result = $this->_model['PedidoEstados']->SelectByIdPedido($modelEstadoPedido);
             //var_dump($this->result);
             if(count($this->result) > 0)
@@ -709,7 +709,21 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
+                            if($key == 'IdPedido')
+                            {
+                                $id_pedido = $value;
+                            }
+                            
                             $this->table_content = str_replace("{" . $key . "}", htmlentities($value), $this->table_content);
+                            
+                            if($hasFullRead)
+                            {
+                                $file_button = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_button_update.html";
+                                $button = file_get_contents($file_button);
+                                $button = str_replace('{IdPedido}', $id_pedido, $button);
+                                
+                                $this->table_content = str_replace('{button_update}', $button, $this->table_content);
+                            }
                         }
                     }
                 }
@@ -758,13 +772,88 @@ namespace CEIT\mvc\controllers
 
         public function update($id)
         {
+            // indico el template a usar
+            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            
+            $modelPedido = new models\PedidoModel();
+            $modelEstadoPedido = new models\PedidoEstadosModel();
+            $modelFranja = new models\HorarioFranjasModel();
+            
+            
             if(!empty($_POST))
             {
                 var_dump($_POST);
+                
+                /*
+                 *  'txtIdPedido' => string '2' (length=1)
+                    'txtCreado' => string '2014-02-06 16:13:34' (length=19)
+                    'ddlEstado' => string '4' (length=1)
+                    'txtRetiro' => string '2014-02-06' (length=10)
+                    'ddlFranja' => string '5' (length=1)
+                    'txtComentario' => string 'Un pedido simple.' (length=17)
+                 */
+                
+                $modelPedido = new models\PedidoModel();
+                $modelPedido->_idPedido = $id;
+                $modelPedido->_creado = filter_input(INPUT_POST, 'txtCreado', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $modelPedido->_idEstado = filter_input(INPUT_POST, 'ddlEstado', FILTER_SANITIZE_NUMBER_INT);
+                $modelPedido->_retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $modelPedido->_idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
+                $modelPedido->_comentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $modelPedido->_anillado = filter_input(INPUT_POST, 'txtAnillado', FILTER_SANITIZE_STRING) === 'checked' ? true : false;
+                $this->result = $this->_model['Pedidos']->Update(array($modelPedido));
             }
             
-            // indico el template a usar
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            $modelPedido->_idPedido = $id;
+            $this->result = $this->_model['Pedidos']->Select($modelPedido);
+            //var_dump($this->result);
+            foreach($this->result[0] as $key => $value)
+            {
+                $this->{$key} = htmlentities($value);
+            }
+            unset($this->result);
+
+            $modelEstadoPedido->_idPedido = $id;
+            $this->result = $this->_model['PedidoEstados']->SelectByIdPedido($modelEstadoPedido);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/detail_estado_select_option.html";
+                    $this->combo_estado_pedido .= file_get_contents($filename);
+
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+
+            $modelFranja->_idPedido = $id;
+            $this->result = $this->_model['Franjas']->SelectByIdPedido($modelFranja);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/detail_franja_select_option.html";
+                    $this->combo_franja_horario .= file_get_contents($filename);
+
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_franja_horario = str_replace('{' . $key . '}', $value, $this->combo_franja_horario);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
         }
         
         // AJAX actions

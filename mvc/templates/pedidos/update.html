@@ -1,0 +1,55 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Datos</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" name="frmDetalleUsuario" method="POST" role="form">
+            <fieldset>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtIdPedido">N&ordm; de pedido</label>
+                    <div class="col-sm-4">
+                        <input id="txtIdPedido" class="form-control" name="txtIdPedido" type="text" value="{IdPedido}" />
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtCreado">Creado</label>
+                    <div class="col-sm-4">
+                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="ddlEstado">Estado</label>
+                    <div class="col-sm-4">
+                        <select name="ddlEstado" class="form-control">
+                            {combo_estado_pedido}
+                        </select>
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtRetiro">Retiro</label>
+                    <div class="col-sm-2">
+                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" value="{Retiro}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="chkAnillado">Anillado</label>
+                    <div class="col-sm-1">
+                        <div class="checkbox">
+                            <input id="chkAnillado" type="checkbox" name="chkAnillado" value="{Anillado}" />
+                        </div>
+                    </div>
+                    <label class="col-sm-offset-3 col-sm-2 control-label">Franja</label>
+                    <div class="col-sm-2">
+                        <select class="form-control" name="ddlFranja">
+                            {combo_franja_horario}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtComentario">Comentario</label>
+                    <div class="col-lg-10">
+                        <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4">{Comentario}</textarea>
+                    </div>
+                </div>
+            </fieldset>
+            <button class="btn btn-warning" type="submit">Modificar</button>
+            <button class="btn btn-default" type="button">Volver</button>
+        </form>
+    </div>
+</div>
