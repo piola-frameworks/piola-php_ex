@@ -660,11 +660,6 @@ namespace CEIT\mvc\controllers
         
         public function index()
         {
-            if(!empty($_POST))
-            {
-                var_dump($_POST);
-            }
-            
             // indico el template a usar
             $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
             
@@ -686,17 +681,35 @@ namespace CEIT\mvc\controllers
                     break;
                 }
             }
-            // traigo datos de la db.
-            if($hasFullRead)
+            
+            if(!empty($_POST))
             {
-                //echo 'tiene lectura completa';
-                $this->result = $this->_model['Pedidos']->Select();
+                $pedido->_idEstado = filter_input(INPUT_POST, 'ddlEstado', FILTER_SANITIZE_NUMBER_INT);
+                
+                if($hasFullRead)
+                {
+                    $this->result = $this->_model['Pedidos']->SelectByIdEstado($pedido);
+                }
+                else
+                {
+                    $this->result = $this->_model['Pedidos']->SelectByIdEstado($pedido);
+                }
             }
             else
             {
-                //echo 'tiene lectura para sus cosas';
-                $this->result = $this->_model['Pedidos']->Select($pedido);
+                // traigo datos de la db.
+                if($hasFullRead)
+                {
+                    //echo 'tiene lectura completa';
+                    $this->result = $this->_model['Pedidos']->Select();
+                }
+                else
+                {
+                    //echo 'tiene lectura para sus cosas';
+                    $this->result = $this->_model['Pedidos']->Select($pedido);
+                }
             }
+            
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
@@ -718,32 +731,18 @@ namespace CEIT\mvc\controllers
                             
                             if($hasFullRead)
                             {
+                                // Si tiene todos los permisos, agrego el boton
                                 $file_button = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_button_update.html";
                                 $button = file_get_contents($file_button);
                                 $button = str_replace('{IdPedido}', $id_pedido, $button);
                                 
                                 $this->table_content = str_replace('{button_update}', $button, $this->table_content);
                             }
-                        }
-                    }
-                }
-            }
-            unset($this->result);
-            
-            // Cargo el combo de carreras.
-            $this->result = $this->_model['Carreras']->Select();
-            if(count($this->result) > 0)
-            {
-                foreach($this->result as $row)
-                {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/combo_carrera.html";
-                    $this->combo_carreras .= file_get_contents($filename);
-                    
-                    if(is_array($row))
-                    {
-                        foreach($row as $key => $value)
-                        {
-                            $this->combo_carreras = str_replace('{' . $key . '}', htmlentities($value), $this->combo_carreras);
+                            else
+                            {
+                                // Si no, lo quito.
+                                $this->table_content = str_replace('{button_update}', "", $this->table_content);
+                            }
                         }
                     }
                 }
@@ -779,28 +778,28 @@ namespace CEIT\mvc\controllers
             $modelEstadoPedido = new models\PedidoEstadosModel();
             $modelFranja = new models\HorarioFranjasModel();
             
-            
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
-                /*
-                 *  'txtIdPedido' => string '2' (length=1)
-                    'txtCreado' => string '2014-02-06 16:13:34' (length=19)
-                    'ddlEstado' => string '4' (length=1)
-                    'txtRetiro' => string '2014-02-06' (length=10)
-                    'ddlFranja' => string '5' (length=1)
-                    'txtComentario' => string 'Un pedido simple.' (length=17)
-                 */
-                
+                // Traigo el pedido por que me faltan datos.
                 $modelPedido = new models\PedidoModel();
                 $modelPedido->_idPedido = $id;
-                $modelPedido->_creado = filter_input(INPUT_POST, 'txtCreado', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                
+                $pedidoATrabajar = $this->_model['Pedidos']->Select($modelPedido);
+                
+                $modelPedido->_idUsuario = $pedidoATrabajar[0]['IdUsuario'];
+                $modelPedido->_creado = $pedidoATrabajar[0]['Creado'];
+                $modelPedido->_creadoPor = $pedidoATrabajar[0]['CreadoPor'];
+                $modelPedido->_modificado = date("Y-m-d H:i:s");
+                $modelPedido->_modificadoPor = $_SESSION['IdUsuario'];
+                $modelPedido->_anillado = $pedidoATrabajar[0]['Anillado'] == 1 ? true : false;
+                $modelPedido->_comentario = $pedidoATrabajar[0]['Comentario'];
+                $modelPedido->_posicion = filter_input(INPUT_POST, 'txtPosicion', FILTER_SANITIZE_SPECIAL_CHARS);
+                $modelPedido->_retiro = $pedidoATrabajar[0]['Retiro'];
+                $modelPedido->_idFranja = $pedidoATrabajar[0]['IdFranja'];
+                $modelPedido->_pagado = $pedidoATrabajar[0]['Pagado'] == 1 ? true : false;
                 $modelPedido->_idEstado = filter_input(INPUT_POST, 'ddlEstado', FILTER_SANITIZE_NUMBER_INT);
-                $modelPedido->_retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                $modelPedido->_idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
-                $modelPedido->_comentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                $modelPedido->_anillado = filter_input(INPUT_POST, 'txtAnillado', FILTER_SANITIZE_STRING) === 'checked' ? true : false;
                 $this->result = $this->_model['Pedidos']->Update(array($modelPedido));
             }
             
@@ -809,7 +808,7 @@ namespace CEIT\mvc\controllers
             //var_dump($this->result);
             foreach($this->result[0] as $key => $value)
             {
-                $this->{$key} = htmlentities($value);
+                $this->{$key} = $value;
             }
             unset($this->result);
 

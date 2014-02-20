@@ -8,11 +8,11 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="txtIdPedido">N&ordm; de pedido</label>
                     <div class="col-sm-4">
-                        <input id="txtIdPedido" class="form-control" name="txtIdPedido" type="text" value="{IdPedido}" />
+                        <input id="txtIdPedido" class="form-control" name="txtIdPedido" type="text" value="{IdPedido}" disabled="disabled" />
                     </div>
                     <label class="col-sm-2 control-label" for="txtCreado">Creado</label>
                     <div class="col-sm-4">
-                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" />
+                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" disabled="disabled" />
                     </div>
                 </div>
                 <div class="form-group">
@@ -24,27 +24,31 @@
                     </div>
                     <label class="col-sm-2 control-label" for="txtRetiro">Retiro</label>
                     <div class="col-sm-2">
-                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" value="{Retiro}" />
+                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" value="{Retiro}" disabled="disabled" />
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="chkAnillado">Anillado</label>
                     <div class="col-sm-1">
                         <div class="checkbox">
-                            <input id="chkAnillado" type="checkbox" name="chkAnillado" value="{Anillado}" />
+                            <input id="chkAnillado" type="checkbox" name="chkAnillado" value="{Anillado}" disabled="disabled" />
                         </div>
                     </div>
                     <label class="col-sm-offset-3 col-sm-2 control-label">Franja</label>
                     <div class="col-sm-2">
-                        <select class="form-control" name="ddlFranja">
+                        <select class="form-control" name="ddlFranja" disabled="disabled">
                             {combo_franja_horario}
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="txtComentario">Comentario</label>
-                    <div class="col-lg-10">
-                        <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4">{Comentario}</textarea>
+                    <div class="col-sm-4">
+                        <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4" disabled="disabled">{Comentario}</textarea>
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtPosicion">Posicion</label>
+                    <div class="col-sm-4">
+                        <textarea id="txtPosicion" class="form-control" name="txtPosicion" rows="4">{Posicion}</textarea>
                     </div>
                 </div>
             </fieldset>

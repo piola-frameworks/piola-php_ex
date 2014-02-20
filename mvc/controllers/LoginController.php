@@ -38,6 +38,14 @@ namespace CEIT\mvc\controllers
         {
             $this->_template = BASE_DIR . "/mvc/templates/login/{$this->_action}.html";
             
+            if(!empty($_SESSION))
+            {
+                if($_SESSION['user_logged'])
+                {
+                    header("Location: /dashboard/index");
+                }
+            }
+            
             if(!empty($_POST))
             {
                 $user = new models\UsuarioModel();

@@ -57,6 +57,16 @@ namespace CEIT\mvc\controllers
                     array_push($models, $model);
                 }
                 
+                $post = filter_input(INPUT_POST, 'txtLimiteGabinete', FILTER_SANITIZE_NUMBER_INT);
+                if($post !== null)
+                {
+                    $model = new models\WebModel();
+                    $model->_clave = "LimiteGabinete";
+                    $model->_valor = $post;
+                    
+                    array_push($models, $model);
+                }
+                
                 $post = filter_input(INPUT_POST, 'txtPrecioCEIT', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
                 if($post !== null)
                 {
@@ -72,6 +82,16 @@ namespace CEIT\mvc\controllers
                 {
                     $model = new models\WebModel();
                     $model->_clave = "PrecioGabinete";
+                    $model->_valor = $post;
+                    
+                    array_push($models, $model);
+                }
+                
+                $post = filter_input(INPUT_POST, 'txtPrecioAnillado', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
+                if($post !== null)
+                {
+                    $model = new models\WebModel();
+                    $model->_clave = "PrecioAnillado";
                     $model->_valor = $post;
                     
                     array_push($models, $model);

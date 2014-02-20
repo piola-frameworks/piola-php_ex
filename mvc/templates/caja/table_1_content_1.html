@@ -1,9 +1,24 @@
 <tr>
-    <td>{IdItem}</td>
-    <td>{Desc}</td>
-    <td>{PreUnit}</td>
-    <td>{Cantidad}</td>
-    <td>{Importe}</td>
+    <td>
+        {IdItem}
+        <input name="hidIdItem[]" type="hidden" value="{IdItem}" />
+    </td>
+    <td>
+        {Descripcion}
+        <input name="hidDescripcion[{IdItem}]" type="hidden" value="{Descripcion}" />
+    </td>
+    <td>
+        {PrecioUnitario}
+        <input name="hidPrecioUnitario[{IdItem}]" type="hidden" value="{PrecioUnitario}" />
+    </td>
+    <td>
+        {Cantidad}
+        <input name="hidCantidad[{IdItem}]" type="hidden" value="{Cantidad}" />
+    </td>
+    <td>
+        {Importe}
+        <input name="hidImporte[{IdItem}]" type="hidden" value="{Importe}" />
+    </td>
     <td>
         <input name="hidType" type="hidden" value="Item" />
         <button class="btn btn-danger btn-sm" type="submit" name="btnQuitarPedido" value="{IdItem}">

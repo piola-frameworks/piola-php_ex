@@ -44,6 +44,7 @@ namespace CEIT\mvc\models
                     ':modificadoDia'    =>  is_null($item->_modificadoDia) ? null : (string)$item->_creadoDia,
                     ':anillado'         =>  (bool)$item->_anillado,
                     ':comentario'       =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
+                    ':posicion'         =>  is_null($item->_posicion) ? null : (string)$item->_posicion,
                     ':retiro'           =>  (string)$item->_retiro,
                     ':idFranja'         =>  (int)$item->_idFranja,
                     ':pagado'           =>  (bool)$item->_pagado,
@@ -95,6 +96,41 @@ namespace CEIT\mvc\models
             }
         }
 
+        /*
+         * Start custom select
+         */
+        
+        public function SelectByIdEstado(core\AModel $model)
+        {
+            if(array_key_exists("_idUsuario", $model->_data))
+            {
+                $this->_sp = "sp_selPedidosByIdUsuarioAndIdEstado";
+                $this->_params = array(
+                    ':idUsuario'    =>  (int)$model->_idUsuario,
+                    ':idEstado'     =>  (int)$model->_idEstado,
+                );
+            }
+            else
+            {
+                $this->_sp = "sp_selPedidosByIdEstado";
+                $this->_params = array(
+                    ':idEstado' =>  (int)$model->_idEstado,
+                );
+            }
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        public function SelectByIdPedidoOrLegajo(core\AModel $model)
+        {
+            $this->_sp = "sp_selPedidosByIdPedidoOrLegajo";
+            $this->_params = array(
+                ':id'   =>  $model->_id,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function SelectItem(core\AModel $model)
         {
             $this->_sp = "sp_selPedidoItems";
@@ -129,6 +165,10 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp);
         }
         
+        /*
+         * End custom selects
+         */
+        
         public function Update(array $model)
         {
             if(count($model) > 1)
@@ -147,7 +187,8 @@ namespace CEIT\mvc\models
                     ':modificado'       =>  (string)$item->_modificado,
                     ':modificadoPor'    =>  (int)$item->_modificadoPor,
                     ':anillado'         =>  (bool)$item->_anillado,
-                    ':comentario'       =>  (string)$item->_comentario,
+                    ':comentario'       =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
+                    ':posicion'         =>  is_null($item->_posicion) ? null : (string)$item->_posicion,
                     ':retiro'           =>  (string)$item->_retiro,
                     ':idFranja'         =>  (int)$item->_idFranja,
                     ':pagado'           =>  (bool)$item->_pagado,

@@ -67,6 +67,7 @@ namespace CEIT\core
                         $modelUsuario = new \CEIT\mvc\models\UsuarioModel();
                         $modelUsuario->_idUsuario = $_SESSION['IdUsuario'];
                         $result = $modelUsuario->SelectPermissionByIdUsuario($modelUsuario);
+                        //var_dump($result);
                         if(count($result) > 0)
                         {
                             foreach($result as $row)

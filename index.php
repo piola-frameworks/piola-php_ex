@@ -5,7 +5,10 @@ ini_set("display_errors", 1);
 
 require_once '/core/CAutoLoader.php';
 
-//print '<pre>' . htmlspecialchars(print_r(get_defined_vars(), true)) . '</pre>';
+if(!empty($_SESSION))
+{
+    var_dump($_SESSION);
+}
 
 use \CEIT\core;
 
