@@ -573,7 +573,20 @@ namespace CEIT\mvc\controllers
             //var_dump($this->result);
             foreach($this->result[0] as $key => $value)
             {
-                $this->{$key} = htmlentities($value);
+                switch($key)
+                {
+                    case "Pagado":
+                        $this->Pagado = $value ? "checked=\"checked\"" : '';
+                        break;
+
+                    case "Anillado":
+                        $this->Anillado = $value ? "checked=\"checked\"" : "";
+                        break;
+                    
+                    default:
+                        $this->{$key} = htmlentities($value);
+                        break;
+                }
             }
             unset($this->result);
             
