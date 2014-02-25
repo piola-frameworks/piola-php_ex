@@ -177,10 +177,6 @@ namespace CEIT\mvc\controllers
                     $this->result = $this->_model['Pedidos']->SelectByIdPedidoOrLegajo($modelPedido);
                 }
             }
-            else
-            {
-                $this->result = $this->_model['Pedidos']->SelectFinished();
-            }
             
             if(!empty($_COOKIE))
             {
@@ -258,6 +254,7 @@ namespace CEIT\mvc\controllers
                 }
             }
             
+            $this->result = $this->_model['Pedidos']->SelectFinished();
             if(count($this->result) >= 1)
             {
                 foreach($this->result as $row)
