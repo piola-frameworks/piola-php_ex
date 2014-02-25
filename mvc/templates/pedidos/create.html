@@ -130,7 +130,7 @@
     $('#ddlCarrera').change(function() {
         $.ajax({
             type: 'POST',
-            url: './ajax_get_niveles',
+            url: 'index.php?do=/pedidos/ajax_get_niveles',
             data: 'idCarrera=' + $('#ddlCarrera').val(),
             success: function(data, textStatus, jqXHR) {
                 // Limpio los DDL foraneos.
@@ -156,7 +156,7 @@
     $('#ddlNivel').change(function() {
         $.ajax({
             type: 'POST',
-            url: './ajax_get_materias',
+            url: 'index.php?do=/pedidos/ajax_get_materias',
             data: 'idNivel=' + $('#ddlNivel').val(),
             success: function(data, textStatus, jqXHR) {
                 // Limpio el DDL foraneo,

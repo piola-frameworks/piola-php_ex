@@ -299,7 +299,8 @@ namespace CEIT\mvc\controllers
                     $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
                     $modelPedido->_modificadoDia = null;
                     $modelPedido->_modificadoPor = null;
-                    $modelPedido->_anillado = filter_input(INPUT_POST, 'chkAnilladoCompleto', FILTER_SANITIZE_STRING);
+                    $asd = filter_input(INPUT_POST, 'chkAnilladoCompleto', FILTER_SANITIZE_STRING);
+                    $modelPedido->_anillado = empty($asd) ? true : false;
                     $modelPedido->_comentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $modelPedido->_retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_STRING);
                     $modelPedido->_idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
@@ -555,11 +556,6 @@ namespace CEIT\mvc\controllers
                         foreach($row as $key => $value)
                         {
                             $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
-
-                            if($key == "Costo")
-                            {
-                                $this->PrecioTotal += $value;
-                            }
                         }
                     }
                 }
@@ -823,7 +819,14 @@ namespace CEIT\mvc\controllers
             //var_dump($this->result);
             foreach($this->result[0] as $key => $value)
             {
-                $this->{$key} = $value;
+                if($key == 'Anillado')
+                {
+                    $this->Anillado = $value == 1 ? 'checked="checked"' : '';
+                }
+                else
+                {
+                    $this->{$key} = $value;
+                }
             }
             unset($this->result);
 

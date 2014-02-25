@@ -139,23 +139,21 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp , $this->_params);   
         }
         
-        public function SelectForDeliver(core\AModel $model = null)
+        public function SelectForDeliver()
         {
-            if(!empty($model))
-            {
-                $this->_sp = "sp_selPedidoForDeliverByIdPedidoOrLegajo";
-                $this->_params = array(
-                    ':idPedidoOrLegajo'   =>  (string)$model->_id,
-                );
+            $this->_sp = "sp_selPedidoForDeliver";
                 
-                return Database::getInstance()->DoQuery($this->_sp, $this->_params);
-            }
-            else
-            {
-                $this->_sp = "sp_selPedidoForDeliver";
-                
-                return Database::getInstance()->DoQuery($this->_sp);
-            }
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
+        public function SelectForDeliverByIdPedidoOrLegajo(core\AModel $model)
+        {
+            $this->_sp = "sp_selPedidoForDeliverByIdPedidoOrLegajo";
+            $this->_params = array(
+                ':idPedidoOrLegajo'   =>  (string)$model->_idPedidoLegajo,
+            );
+
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
         public function SelectFinished()

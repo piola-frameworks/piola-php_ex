@@ -41,12 +41,10 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
-                
                 $pedido = new models\PedidoModel();
-                $pedido->_id = filter_input(INPUT_POST, 'txtLegajoIdPedido', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $pedido->_idPedidoLegajo = filter_input(INPUT_POST, 'txtLegajoIdPedido', FILTER_SANITIZE_SPECIAL_CHARS);
                 
-                $this->result = $this->_model['Pedidos']->SelectForDeliver($pedido);
+                $this->result = $this->_model['Pedidos']->SelectForDeliverByIdPedidoOrLegajo($pedido);
             }
             else
             {
@@ -54,7 +52,7 @@ namespace CEIT\mvc\controllers
             }
             
             
-            if(count($this->result) > 1)
+            if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
                 {
