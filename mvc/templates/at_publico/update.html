@@ -1,0 +1,23 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Cambiar estado</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" method="POST" role="form">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Estado</label>
+                <div class="col-sm-4">
+                    <select id="ddlEstado" class="form-control" name="ddlEstado" required="required">
+                        {combo_estados}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <button type="submit" class="btn btn-default">Modificar</button>
+                    <a class="btn btn-info" href="index.php?do=/atpublico/index">Volver</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -375,6 +375,9 @@ namespace CEIT\mvc\controllers
                     
                     $this->_model['CajaItems']->Insert($cajaItems);
                     $this->_model['Pedidos']->Update($pedidosAPagar);
+                    
+                    setcookie('Caja', null, -1);
+                    $_COOKIE['Caja'] = null;
                 }
                 
                 $pedidos = array();

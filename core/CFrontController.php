@@ -15,7 +15,8 @@ namespace CEIT\core
             if(session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['user_logged']))
             {
                 // localhost/controller/action/param1/param2/paramN
-                $request = filter_input(INPUT_SERVER, "REQUEST_URI", FILTER_SANITIZE_URL);
+                //$request = filter_input(INPUT_SERVER, "REQUEST_URI", FILTER_SANITIZE_URL);
+                $request = filter_input(INPUT_GET, 'do', FILTER_SANITIZE_URL);
                 $path = trim(parse_url($request, PHP_URL_PATH), "/");
 
                 if(strpos($path, __DIR__) === 0)

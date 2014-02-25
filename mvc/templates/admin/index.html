@@ -18,7 +18,7 @@
 <div class="tab-content">
     <div class="tab-pane" id="users">
         <div class="well well-sm">
-            &iquest;Desea crear un <a href="/admin/create_user/" class="btn btn-success btn-xs" role="button">nuevo usuario</a>?
+            &iquest;Desea crear un <a href="index.php?do=/admin/create_user/" class="btn btn-success btn-xs" role="button">nuevo usuario</a>?
         </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
@@ -47,7 +47,7 @@
     </div>
     <div class="tab-pane" id="roles">
         <div class="well well-sm">
-            &iquest;Desea crear un <a href="/admin/create_role/" class="btn btn-success btn-xs" role="button">nuevo rol</a>?
+            &iquest;Desea crear un <a href="index.php?do=/admin/create_role/" class="btn btn-success btn-xs" role="button">nuevo rol</a>?
         </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
@@ -71,7 +71,7 @@
     </div>
     <div class="tab-pane" id="perms">
         <div class="well well-sm">
-            &iquest;Desea agregar un <a class="btn btn-success btn-xs" href="./create_perm" role="button">nuevo permiso</a>?
+            &iquest;Desea agregar un <a class="btn btn-success btn-xs" href="index.php?do=/admin/create_perm" role="button">nuevo permiso</a>?
         </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
@@ -155,7 +155,7 @@
 
 <script type="text/javascript">
     $('#myTab a').click(function(e) {
-        e.preventDefault()
-        $(this).tab('show')
+        e.preventDefault();
+        $(this).tab('show');
     })
 </script>

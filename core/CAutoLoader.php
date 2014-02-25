@@ -2,18 +2,9 @@
 
 namespace CEIT\core
 {
-    if(!defined('BASE_DIR'))
-    {
-        define('BASE_DIR', filter_input(INPUT_SERVER, 'DOCUMENT_ROOT'));
-    }
-    
     final class CAutoLoader
     {
         private $_dirs = array(
-            'PUBLIC'        =>  '/public/',
-            'CSS'           =>  '/public/css/',
-            'JS'            =>  '/public/js/',
-            'IMG'           =>  '/public/img/',
             'CORE'          =>  '/core/',
             'LIBS'          =>  '/libs/',
             'MODEL'         =>  '/mvc/models/',

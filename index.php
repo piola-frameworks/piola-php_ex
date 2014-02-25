@@ -3,12 +3,12 @@
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
-require_once '/core/CAutoLoader.php';
-
-if(!empty($_SESSION))
+if(!defined('BASE_DIR'))
 {
-    var_dump($_SESSION);
+    define('BASE_DIR', dirname(__FILE__));
 }
+
+require_once BASE_DIR . '/core/CAutoLoader.php';
 
 use \CEIT\core;
 

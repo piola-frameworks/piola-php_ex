@@ -667,6 +667,8 @@ namespace CEIT\mvc\controllers
                         }
                     }
                 }
+                
+                $this->IdPedido = $id;
             }
             unset($this->result);
         }

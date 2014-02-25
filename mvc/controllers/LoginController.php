@@ -42,7 +42,7 @@ namespace CEIT\mvc\controllers
             {
                 if($_SESSION['user_logged'])
                 {
-                    header("Location: /dashboard/index");
+                    header("Location: index.php?do=/dashboard/index");
                 }
             }
             
@@ -87,7 +87,7 @@ namespace CEIT\mvc\controllers
                         //var_dump($_SESSION);
                         
                         // redirecciono
-                        header("Location: /dashboard/index");
+                        header("Location: index.php?do=/dashboard/index");
                     }
                     else
                     {
