@@ -699,6 +699,11 @@ namespace CEIT\mvc\controllers
                 
                 if($hasFullRead)
                 {
+                    if(isset($pedido->_idUsuario))
+                    {
+                        unset($pedido->_idUsuario);
+                    }
+                    
                     $this->result = $this->_model['Pedidos']->SelectByIdEstado($pedido);
                 }
                 else
@@ -711,12 +716,10 @@ namespace CEIT\mvc\controllers
                 // traigo datos de la db.
                 if($hasFullRead)
                 {
-                    //echo 'tiene lectura completa';
                     $this->result = $this->_model['Pedidos']->Select();
                 }
                 else
                 {
-                    //echo 'tiene lectura para sus cosas';
                     $this->result = $this->_model['Pedidos']->Select($pedido);
                 }
             }
