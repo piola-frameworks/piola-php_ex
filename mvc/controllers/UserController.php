@@ -85,7 +85,7 @@ namespace CEIT\mvc\controllers
             }
             
             // redirijo
-            header("Location: /login/index");
+            header("Location: index.php?do=/login/index");
         }
     }
 }
