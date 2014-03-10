@@ -22,7 +22,7 @@ namespace CEIT\mvc\controllers
                     'Carreras'      =>  new models\CarreraModel(),
                     'Niveles'       =>  new models\NivelModel(),
                     'Materias'      =>  new models\MateriaModel(),
-                    'Estados'       =>  new models\PedidoItemEstadosModel(),
+                    'Estados'       =>  new models\PedidoEstadosModel(),
                     'Franjas'       =>  new models\HorarioFranjasModel(),
                 );
             }
@@ -535,15 +535,57 @@ namespace CEIT\mvc\controllers
 
         public function detail($id)
         {
-            // indico el template a usar
             $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                if(isset($_POST['btnTerminar']))
+                {
+                    $pedido = new models\PedidoModel();
+                    $pedido->_idPedido = filter_input(INPUT_POST, "txtIdPedido", FILTER_SANITIZE_NUMBER_INT);
+                    $this->result = $this->_model['Pedidos']->Select($pedido);
+
+                    /*
+                     *  'IdPedido' => int 1
+                        'IdUsuario' => int 1
+                        'Creado' => string '2014-02-06 16:12:05' (length=19)
+                        'CreadoPor' => int 1
+                        'Modificado' => string '2014-03-10 12:50:08' (length=19)
+                        'ModificadoPor' => int 1
+                        'Anillado' => int 0
+                        'Comentario' => string 'Comentario' (length=10)
+                        'Posicion' => string '' (length=0)
+                        'Retiro' => string '2014-02-06' (length=10)
+                        'IdFranja' => int 1
+                        'Pagado' => int 1
+                        'IdEstado' => int 4
+                     */
+
+                    $pedido->_idUsuario = $this->result[0]['IdUsuario'];
+                    $pedido->_creado = $this->result[0]['Creado'];
+                    $pedido->_creadoPor = $this->result[0]['CreadoPor'];
+                    $pedido->_modificado = date("Y-m-d H:i:s");
+                    $pedido->_modificadoPor = $_SESSION['IdUsuario'];
+                    $pedido->_anillado = $this->result[0]['Anillado'];
+                    $pedido->_comentario = $this->result[0]['Comentario'];
+                    $pedido->_posicion = filter_input(INPUT_POST, "txtPosicion", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $pedido->_retiro = $this->result[0]['Retiro'];
+                    $pedido->_idFranja = $this->result[0]['IdFranja'];
+                    $pedido->_idPagado = $this->result[0]['Pagado'];
+                    $pedido->_idEstado = 4;
+
+                    $this->result = $this->_model['Pedidos']->Update(array($pedido));
+                }
+            }
             
             // seteo el modelo para trabajar con los items del pedido
             $pedidosItems = new models\PedidoModel();
             $pedidosItems->_idPedido = $id;
             $this->result = $this->_model['Pedidos']->SelectItem($pedidosItems);
             //var_dump($this->result, $id);
-            // este foreach arma las files de la tabla.
+            
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
@@ -555,7 +597,16 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
+                            switch($key)
+                            {
+                                case 'IdEstadoItem':
+                                    $this->table_rows = str_replace("{Impreso}", $value == 3 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+
+                                default:
+                                    $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
+                                    break;
+                            }
                         }
                     }
                 }
@@ -594,14 +645,21 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_estado_select_option.html";
-                    $this->combo_estado_pedido .= file_get_contents($filename);
-                    
-                    if(is_array($row))
+                    if($row['Descripcion'] == "Entregado" || $row['Descripcion'] == "Cancelado")
                     {
-                        foreach($row as $key => $value)
+                        break;
+                    }
+                    else
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_estado_select_option.html";
+                        $this->combo_estado_pedido .= file_get_contents($filename);
+
+                        if(is_array($row))
                         {
-                            $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                            foreach($row as $key => $value)
+                            {
+                                $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                            }
                         }
                     }
                 }
@@ -630,7 +688,7 @@ namespace CEIT\mvc\controllers
             }
             unset($this->result);
         }
-
+        
         public function detail_item($id)
         {
             $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
@@ -659,7 +717,20 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->combo_estado_item = str_replace('{' . $key . '}', $value, $this->combo_estado_item);
+                            switch($key)
+                            {
+                                case "Entregado":
+                                    // Esta opcion no debe aparecer.
+                                    break;
+                                
+                                case "Cancelado":
+                                    // Esta opcion no debe aparecer.
+                                    break;
+                                
+                                default:
+                                    $this->combo_estado_item = str_replace('{' . $key . '}', $value, $this->combo_estado_item);
+                                    break;
+                            }
                         }
                     }
                 }
@@ -785,7 +856,6 @@ namespace CEIT\mvc\controllers
 
         public function update($id)
         {
-            // indico el template a usar
             $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
             
             $modelPedido = new models\PedidoModel();
@@ -817,6 +887,11 @@ namespace CEIT\mvc\controllers
                 $this->result = $this->_model['Pedidos']->Update(array($modelPedido));
             }
             
+            if(isset($modelPedido->_idUsuario))
+            {
+                unset($modelPedido->_idUsuario);
+            }
+            
             $modelPedido->_idPedido = $id;
             $this->result = $this->_model['Pedidos']->Select($modelPedido);
             //var_dump($this->result);
@@ -840,14 +915,21 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/detail_estado_select_option.html";
-                    $this->combo_estado_pedido .= file_get_contents($filename);
-
                     if(is_array($row))
                     {
-                        foreach($row as $key => $value)
+                        if($row['Descripcion'] == "Entregado" || $row['Descripcion'] == "Cancelado")
                         {
-                            $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                            break;
+                        }
+                        else
+                        {
+                            $filename = BASE_DIR . "/mvc/templates/pedidos/detail_estado_select_option.html";
+                            $this->combo_estado_pedido .= file_get_contents($filename);
+                            
+                            foreach($row as $key => $value)
+                            {
+                                $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                            }
                         }
                     }
                 }
@@ -898,6 +980,20 @@ namespace CEIT\mvc\controllers
                 $materiaModel = new models\MateriaModel();
                 $materiaModel->_idNivel = filter_input(INPUT_POST, 'idNivel', FILTER_SANITIZE_NUMBER_INT);
                 $this->result = $this->_model['Materias']->SelectByIdNivel($materiaModel);
+            }
+        }
+        
+        public function ajax_detail_item_change_status()
+        {
+            if(!empty($_POST))
+            {
+                $this->ajaxRequest = true;
+                
+                $modelPedidoItem = new models\PedidoItemModel();
+                $modelPedidoItem->_idItem = filter_input(INPUT_POST, "idItem", FILTER_SANITIZE_NUMBER_INT);
+                $modelPedidoItem->_idEstado = filter_input(INPUT_POST, "toValue", FILTER_SANITIZE_STRING) == "true" ? 3 : 2;
+                
+                $this->result = $this->_model['PedidoItems']->UpdateEstado(array($modelPedidoItem));
             }
         }
     }

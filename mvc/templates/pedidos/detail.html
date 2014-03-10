@@ -1,48 +1,58 @@
-<div class="panel panel-primary">
+<div id="pnlPedidoDatos" class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">Datos</h3>
     </div>
     <div class="panel-body">
-        <form class="form-horizontal" name="frmDetalleUsuario" role="form">
-            <fieldset disabled="disabled">
+        <form class="form-horizontal" name="frmDetalleUsuario" method="POST" role="form">
+            <fieldset>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtLegajo">Legajo</label>
+                    <div class="col-sm-4">
+                        <input id="txtLegajo" class="form-control" name="txtLegajo" type="text" value="{Legajo}" readonly="readonly" />
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtDNI">DNI</label>
+                    <div class="col-sm-4">
+                        <input id="txtDNI" class="form-control" name="txtDNI" type="number" value="{DNI}" readonly="readonly" />
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="txtIdPedido">N&ordm; de pedido</label>
                     <div class="col-sm-4">
-                        <input id="txtIdPedido" class="form-control" name="txtIdPedido" type="text" value="{IdPedido}" />
+                        <input id="txtIdPedido" class="form-control" name="txtIdPedido" type="text" value="{IdPedido}" readonly="readonly" />
                     </div>
                     <label class="col-sm-2 control-label" for="txtCreado">Creado</label>
                     <div class="col-sm-4">
-                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" />
+                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" readonly="readonly" />
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="ddlEstado">Estado</label>
                     <div class="col-sm-4">
-                        <select name="ddlEstado" class="form-control">
+                        <select id="ddlEstado" class="form-control" name="ddlEstado" disabled="disabled">
                             {combo_estado_pedido}
                         </select>
                     </div>
                     <label class="col-sm-2 control-label" for="txtRetiro">Retiro</label>
                     <div class="col-sm-2">
-                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" value="{Retiro}" />
+                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" value="{Retiro}" readonly="readonly" />
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="txtAnillado">Anillado</label>
                     <div class="col-sm-1">
                         <div class="checkbox">
-                            <input id="txtApellido" type="checkbox" name="txtAnillado" {Anillado} />
+                            <input id="txtApellido" type="checkbox" name="txtAnillado" {Anillado} disabled="disabled" />
                         </div>
                     </div>
                     <label class="col-sm-2 control-label" for="txtPagado">Pagado</label>
                     <div class="col-sm-1">
                         <div class="checkbox">
-                            <input id="txtApellido" type="checkbox" name="txtPagado" {Pagado} />
+                            <input id="txtApellido" type="checkbox" name="txtPagado" {Pagado} disabled="disabled" />
                         </div>
                     </div>
                     <label class="col-sm-2 control-label">Franja</label>
                     <div class="col-sm-2">
-                        <select class="form-control" name="ddlFranja">
+                        <select id="ddlFranja" class="form-control" name="ddlFranja" disabled="disabled">
                             {combo_franja_horario}
                         </select>
                     </div>
@@ -50,7 +60,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="txtComentario">Comentario</label>
                     <div class="col-sm-4">
-                        <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4">{Comentario}</textarea>
+                        <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4" readonly="readonly">{Comentario}</textarea>
                     </div>
                     <label class="col-sm-2 control-label" for="txtPosicion">Posici&oacute;n</label>
                     <div class="col-sm-4">
@@ -58,10 +68,14 @@
                     </div>
                 </div>
             </fieldset>
+            <div class="col-sm-offset-10 col-sm-2">
+                <button class="btn btn-warning" type="submit" name="btnTerminar" onclick="PrintThisDiv();">Terminar</button>
+                <a class="btn btn-default" href="index.php?do=/pedidos/index">Volver</a>
+            </div>
         </form>
     </div>
 </div>
-<div class="panel panel-primary">
+<div id="pnlPedidoItems" class="panel panel-primary">
     <div class="panel-heading">
         <h2 class="panel-title">Items</h2>
     </div>
@@ -69,16 +83,15 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>N&ordm;</th>
                     <th>Cantidad</th>
                     <th>Codigo</th>
                     <th>Nombre</th>
-                    <th>Docente</th>
                     <th>Materia</th>
                     <th>Hojas</th>
                     <th>Simple Faz</th>
                     <th>Anillado</th>
-                    <th>Acciones</th>
+                    <th>&iquest;Impreso?</th>
+                    <th>Imprimir</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,3 +100,58 @@
         </table>
     </div>
 </div>
+<script type="text/javascript">
+    function PrintThisDiv() {
+        var divDatos = document.getElementById('pnlPedidoDatos');
+        var divItems = document.getElementById('pnlPedidoItems');
+        var popup = window.open('about:blank', 'Datos del pedido', 'width=1170,height=500');
+        var htmlContent = '<html lang="es-AR">\n\
+        <head>\n\
+        <meta charset="UTF-8">\n\
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">\n\
+        <meta name="viewport" content="width=device-width, initial-scale=1">\n\
+        \n\
+        <link rel="stylesheet" type="text/css" href="/webs/ceit/public/css/bootstrap.min.css">\n\
+        <!--[if lt IE 9]>\n\
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"><\/script>\n\
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"><\/script>\n\
+        <![endif]-->\n\
+        <link rel="stylesheet" type="text/css" href="/webs/ceit/public/css/smoothness/jquery-ui-1.10.4.custom.min.css">\n\
+        \n\
+        <script type="text/javascript" src="/webs/ceit/public/js/jquery-2.1.0.min.js"><\/script>\n\
+        <script type="text/javascript" src="/webs/ceit/public/js/jquery-ui-1.10.4.custom.min.js"><\/script>\n\
+        </head>\n\
+        <body>\n\
+            <div class="container">\n\
+                ' + divDatos.innerHTML + '\n\
+                ' + divItems.innerHTML + '\n\
+                <a class="btn btn-success" href="javascript:;" onclick="window.print();" role="button"><span class="glyphicon glyphicon-print"></span> Imprimir</a>\n\
+            </div>\n\
+            </body>\n\
+        </html>';
+        
+        popup.document.write(htmlContent);
+        popup.document.close();
+        popup.focus();
+    }
+    
+    function postChangeItemStatus(item, value){
+        $.post(
+            "index.php?do=/pedidos/ajax_detail_item_change_status",
+            {
+                idItem: item,
+                toValue: value
+            }
+        ).fail(function(){
+            alert("error");
+        });
+    }
+    
+    $(".chkImpreso").change(function() {
+        if (this.checked) {
+            postChangeItemStatus(this.value, true);
+        } else {
+            postChangeItemStatus(this.value, false);
+        }
+    });
+</script>
