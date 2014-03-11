@@ -13,8 +13,6 @@ namespace CEIT\core
         public function __construct()
         {
             $this->_dataCollection['page_title'] = 'ApunTec';
-            //$this->_dataCollection['header_img_src'] = '/public/img/header.png';
-            //$this->_dataCollection['header_img_alt'] = 'Header CEIT';
             $this->_dataCollection['copyright'] = 'ApunTec - Sistema Integral de Gesti&oacute;n de Apuntes.';
         }
         

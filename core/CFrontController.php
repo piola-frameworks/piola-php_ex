@@ -60,7 +60,7 @@ namespace CEIT\core
                     $controller = new $this->_controller();
                     $controller->_action = $this->_action;
                     $controller->_params = $this->_params;
-
+                    
                     if(method_exists($controller, $this->_action))
                     {
                         $flagHasPermission = false;

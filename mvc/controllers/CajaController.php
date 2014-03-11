@@ -38,23 +38,28 @@ namespace CEIT\mvc\controllers
         {
             $this->_template = $this->_template = BASE_DIR . "/mvc/templates/caja/{$this->_action}.html";
 
-            if(!empty($_POST))
+            $reloadFlag = false;
+            
+            if(!isset($_COOKIE['Caja']))
             {
-                var_dump($_POST);
-                
                 $tmpArray = array(
                     'Pedidos'   =>  array(),
                     'Items'     =>  array(),
                 );
                 
+                setcookie('Caja', serialize($tmpArray), time() + 3600);
+            }
+            
+            if(!empty($_POST))
+            {
+                var_dump($_POST);
+                
+                $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'Caja'));
+                
                 // Si se apreto el boton de Agregar un item del sistema.
                 if(isset($_POST['btnAgregarPedido']))
                 {
-                    $cookie = filter_input(INPUT_COOKIE, 'Caja');
-                    if(!empty($cookie))
-                    {
-                        $tmpArray = unserialize($cookie);
-                    }
+                    $reloadFlag = true;
                     
                     $pedidoItem = filter_input(INPUT_POST, 'btnAgregarPedido', FILTER_SANITIZE_NUMBER_INT);
                     
@@ -83,21 +88,17 @@ namespace CEIT\mvc\controllers
                 
                 if(isset($_POST['btnAgregarItem']))
                 {
-                    $cookie = filter_input(INPUT_COOKIE, 'Caja');
-                    if(!empty($cookie))
-                    {
-                        $tmpArray = unserialize($cookie);
-                    }
+                    $reloadFlag = true;
                     
-                    $variosIdItem = filter_input(INPUT_POST, 'txtIdItem', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $variosDesc = filter_input(INPUT_POST, 'txtDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $variosPU = filter_input(INPUT_POST, 'txtPrecioUnitario', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                    $variosIdItem = filter_input(INPUT_POST, 'ddlItemTipo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $variosDesc =  $variosIdItem == "LIB" ? "Art(s) de Libreria" : "Fotocopia(s) Suelta(s)"; //filter_input(INPUT_POST, 'txtDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $variosPU = filter_input(INPUT_POST, 'txtImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
                     $variosCant = filter_input(INPUT_POST, 'txtCantidad', FILTER_SANITIZE_NUMBER_INT);
                     $variosImp = filter_input(INPUT_POST, 'txtImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
                     
                     if(!empty($variosIdItem) && !empty($variosDesc) && !empty($variosPU) && !empty($variosCant) && !empty($variosImp))
                     {
-                        $flagExist = false;
+                        /*$flagExist = false;
                         
                         foreach($tmpArray['Items'] as $item)
                         {
@@ -117,7 +118,15 @@ namespace CEIT\mvc\controllers
                                 'Cantidad'  =>  (int)$variosCant,
                                 'Importe'   =>  (float)$variosImp,
                             );
-                        }
+                        }*/
+                        
+                        $tmpArray['Items'][] = array(
+                            'IdItem'    =>  (string)$variosIdItem,
+                            'Descripcion'      =>  (string)$variosDesc,
+                            'PrecioUnitario'   =>  (float)$variosPU,
+                            'Cantidad'  =>  (int)$variosCant,
+                            'Importe'   =>  (float)$variosImp,
+                        );
                     }
                     
                     $_COOKIE['Caja'] = serialize($tmpArray);
@@ -126,11 +135,7 @@ namespace CEIT\mvc\controllers
                 
                 if(isset($_POST['btnQuitarPedido']))
                 {
-                    $cookie = filter_input(INPUT_COOKIE, 'Caja');
-                    if(!empty($cookie))
-                    {
-                        $tmpArray = unserialize($cookie);
-                    }
+                    $reloadFlag = true;
                     
                     $btnValor = filter_input(INPUT_POST, 'btnQuitarPedido', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $hidType = filter_input(INPUT_POST, 'hidType', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -171,7 +176,8 @@ namespace CEIT\mvc\controllers
                 
                 if(isset($_POST['btnFiltrar']))
                 {
-                    echo '0';
+                    //$reloadFlag = true;
+                    
                     $modelPedido = new models\PedidoModel();
                     $modelPedido->_id = filter_input(INPUT_POST, 'txtLegajo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $this->result = $this->_model['Pedidos']->SelectByIdPedidoOrLegajo($modelPedido);
@@ -180,81 +186,81 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_COOKIE))
             {
-                $cookie = filter_input(INPUT_COOKIE, 'Caja');
-                if(!empty($cookie))
-                {
-                    $tmpArray = unserialize($cookie);
-                    $this->Total = 0;
-                    
-                    if(count($tmpArray['Pedidos']) >= 1)
-                    {
-                        foreach($tmpArray['Pedidos'] as $item)
-                        {
-                            $model = new models\PedidoModel();
-                            $model->_idPedido = $item;
-                            $this->result2 = $this->_model['Pedidos']->SelectItemCaja($model);
-                            if(count($this->result2) == 1)
-                            {
-                                $filename = BASE_DIR . "/mvc/templates/caja/table_1_content.html";
-                                $this->table_1_content .= file_get_contents($filename);
+                $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'Caja'));
+                $this->Total = 0;
 
-                                foreach($this->result2[0] as $key => $value)
+                if(count($tmpArray['Pedidos']) >= 1)
+                {
+                    foreach($tmpArray['Pedidos'] as $item)
+                    {
+                        $model = new models\PedidoModel();
+                        $model->_idPedido = $item;
+                        $this->result2 = $this->_model['Pedidos']->SelectItemCaja($model);
+                        if(count($this->result2) == 1)
+                        {
+                            $filename = BASE_DIR . "/mvc/templates/caja/table_1_content.html";
+                            $this->table_1_content .= file_get_contents($filename);
+
+                            foreach($this->result2[0] as $key => $value)
+                            {
+                                $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
+
+                                if($key == 'Importe')
                                 {
-                                    $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
-                                    
-                                    if($key == 'Importe')
-                                    {
-                                        $this->Total += floatval($value);
-                                    }
+                                    $this->Total += floatval($value);
                                 }
                             }
                         }
-                        unset($this->result2);
                     }
-                    else
+                    unset($this->result2);
+                }
+                else
+                {
+                    $filename = BASE_DIR . "/mvc/templates/caja/table_1_content.html";
+                    $this->table_1_content .= file_get_contents($filename);
+
+                    $default = array(
+                        'IdPedido'  =>  '',
+                        'Descripcion'   =>  '',
+                        'PrecioUnitario'    =>  '',
+                        'Cantidad'  =>  '',
+                        'Importe'   =>  '',
+                    );
+
+                    foreach($default as $key => $value)
                     {
-                        $filename = BASE_DIR . "/mvc/templates/caja/table_1_content.html";
+                        $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
+                    }
+                }
+
+                if(count($tmpArray['Items']) >= 1)
+                {
+                    foreach($tmpArray['Items'] as $row)
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/caja/table_1_content_1.html";
                         $this->table_1_content .= file_get_contents($filename);
 
-                        $default = array(
-                            'IdPedido'  =>  '',
-                            'Descripcion'   =>  '',
-                            'PrecioUnitario'    =>  '',
-                            'Cantidad'  =>  '',
-                            'Importe'   =>  '',
-                        );
-                        
-                        foreach($default as $key => $value)
+                        if(is_array($row))
                         {
-                            $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
-                        }
-                    }
-                    
-                    if(count($tmpArray['Items']) >= 1)
-                    {
-                        foreach($tmpArray['Items'] as $row)
-                        {
-                            $filename = BASE_DIR . "/mvc/templates/caja/table_1_content_1.html";
-                            $this->table_1_content .= file_get_contents($filename);
-                            
-                            if(is_array($row))
+                            foreach($row as $key => $value)
                             {
-                                foreach($row as $key => $value)
+                                $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
+
+                                if($key == 'Importe')
                                 {
-                                    $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
-                                    
-                                    if($key == 'Importe')
-                                    {
-                                        $this->Total += floatval($value);
-                                    }
-                                } 
-                            }
+                                    $this->Total += floatval($value);
+                                }
+                            } 
                         }
                     }
                 }
             }
             
-            $this->result = $this->_model['Pedidos']->SelectFinished();
+            if(empty($this->result))
+            {
+                $this->result = $this->_model['Pedidos']->SelectFinished();
+            }
+            
             if(count($this->result) >= 1)
             {
                 foreach($this->result as $row)
@@ -272,6 +278,11 @@ namespace CEIT\mvc\controllers
                 }
             }
             unset($this->result);
+            
+            if($reloadFlag)
+            {
+                header("Location: index.php?do=/caja/index");
+            }
         }
         
         public function index_confirm()
@@ -375,6 +386,8 @@ namespace CEIT\mvc\controllers
                     
                     setcookie('Caja', null, -1);
                     $_COOKIE['Caja'] = null;
+                    
+                    header("Location: index.php?do=/caja/index");
                 }
                 
                 $pedidos = array();

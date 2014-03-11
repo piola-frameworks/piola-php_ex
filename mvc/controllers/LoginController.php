@@ -57,13 +57,13 @@ namespace CEIT\mvc\controllers
                     if($this->result[0]['Contrasena'] == filter_input(INPUT_POST, 'txtPassword', FILTER_SANITIZE_FULL_SPECIAL_CHARS))
                     {
                         // inicio sesion
-                        $lifeTime = 600;
+                        $lifeTime = 0;
                         if(filter_input(INPUT_POST, 'chkRememberMe', FILTER_SANITIZE_STRING) == 'checked')
                         {
-                            $lifeTime = 3600;
+                            $lifeTime = time() + 3600;
                         }
                         
-                        setcookie(session_name(), session_id(), time() + $lifeTime);
+                        setcookie(session_name(), session_id(), $lifeTime);
                         
                         // pongo inicio de session
                         $_SESSION['user_logged'] = true;

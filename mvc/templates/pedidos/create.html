@@ -146,6 +146,9 @@
 
                 // Habilito el DDL hijo.
                 $('#ddlNivel').removeAttr('disabled');
+                
+                // Coloco el indice por fuera del rango.
+                $('#ddlNivel').attr('selectedIndex', -1);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert('error');
@@ -170,6 +173,9 @@
 
                 // Habilito el DDL hijo.
                 $('#ddlMateria').removeAttr('disabled');
+                
+                // Coloco el indice por fuera del rango.
+                $('#ddlMateria').attr('selectedIndex', -1);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert('error');

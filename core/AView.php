@@ -10,20 +10,84 @@ namespace CEIT\core
         }
         
         public function render($template = null, array $dataCollection)
-        {            
+        {
             // construyo la barra de navegacion
-            $filename = BASE_DIR . "/mvc/templates/nav_menu.html";
-            $dataCollection['nav_links'] = file_get_contents($filename);
+            /*$filename = BASE_DIR . "/mvc/templates/nav_menu.html";
+            $dataCollection['nav_links'] = file_get_contents($filename);*/
+            
+            $navArray = array(
+                'Pedidos'           =>  '<li><a href="index.php?do=/pedidos/index">Pedidos</a></li>',
+                'Textos'            =>  '<li><a href="index.php?do=/textos/index">Textos</a></li>',
+                'Gabinete'          =>  '<li><a href="index.php?do=/gabinete/index">Gabinete</a></li>',
+                'AtPublico'         =>  '<li><a href="index.php?do=/atpublico/index">At. Publico</a></li>',
+                'Caja'              =>  '<li><a href="index.php?do=/caja/index">Caja</a></li>',
+                'Reportes'          =>  '<li><a href="index.php?do=/reportes/index">Reportes</a></li>',
+                'Administracion'    =>  '<li><a href="index.php?do=/admin/index">Administraci&oacute;n</a></li>'
+            );
+            
+            if(isset($_SESSION['Roles']))
+            {
+                foreach($_SESSION['Roles'] as $role)
+                {
+                    switch($role)
+                    {
+                        case "Preparador":
+                            $dataCollection['nav_links'] = $navArray['Pedidos'] . "\n";
+                            break;
+                        case "Administrador":
+                            $dataCollection['nav_links'] = $navArray['Pedidos'] . "\n" . 
+                                                            $navArray['Textos'] . "\n" . 
+                                                            $navArray['Gabinete'] . "\n" . 
+                                                            $navArray['AtPublico'] . "\n" . 
+                                                            $navArray['Caja'] . "\n" .
+                                                            $navArray['Reportes'] . "\n" .
+                                                            $navArray['Administracion'] . "\n";
+                            break;
+                        case "Encargado de catalogo":
+                            $dataCollection['nav_links'] = $navArray['Textos'] . "\n";
+                            break;
+                        case "Gabinete":
+                            $dataCollection['nav_links'] = $navArray['Gabinete'] . "\n";
+                            break;
+                        case "Cajero":
+                            $dataCollection['nav_links'] = $navArray['Caja'] . "\n";
+                            break;
+                        case "Atencion al publico":
+                            $dataCollection['nav_links'] = $navArray['AtPublico'] . "\n";
+                            break;
+                        case "Docente":
+                            $dataCollection['nav_links'] = $navArray['Pedidos'] . "\n" .
+                                                            $navArray['Textos'] . "\n";
+                            break;
+                        case "Estudiante":
+                            $dataCollection['nav_links'] = $navArray['Pedidos'] . "\n";
+                            break;
+                        
+                    }
+                }    
+            }
+            else
+            {
+                $dataCollection['nav_links'] = "";
+            }
             
             // hago la parte del logeo del usuario
             if(!empty($_SESSION['Usuario']))
             {
                 $dataCollection['Usuario'] = $_SESSION['Usuario'];
             }
+            else
+            {
+                $dataCollection['Usuario'] = "Visitante";
+            }
             
             if(!empty($_SESSION['IdUsuario']))
             {
                 $dataCollection['IdUsuario'] = $_SESSION['IdUsuario'];
+            }
+            else
+            {
+                $dataCollection['IdUsuario'] = null;
             }
             
             $filename = BASE_DIR . "/mvc/templates/index.html";

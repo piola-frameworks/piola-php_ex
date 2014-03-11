@@ -69,26 +69,28 @@ namespace CEIT\mvc\controllers
              * 
              */
             
-            if(!empty($_POST))
+            // Si la cookie no esta, creo un cookie esqueleto.
+            if(!isset($_COOKIE['TextosAgregados']))
             {
-                // Creo un array temporal para trabajar.
                 $tmpArray = array(
                     'AnilladoCompleto'  =>  false,
                     'Comentario'        =>  null,
                     'Items'             =>  array(),
                 );
                 
+                setcookie('TextosAgregados', serialize($tmpArray), time() + 3600);
+            }
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                // Creo un array temporal para trabajar.
+                $tmpArray = unserialize(filter_input(INPUT_COOKIE, "TextosAgregados"));
+                
                 // Si se agrego un texto, va a parar a la cookie.
                 if(isset($_POST['btnAgregarTexto']))
                 {
-                    // Saco los datos de la cookie.
-                    $cookie = filter_input(INPUT_COOKIE, 'TextosAgregados');
-                    if(!empty($cookie))
-                    {
-                        // Deserializo y lo guardo en el array temporal.
-                        $tmpArray = unserialize($cookie);
-                    }
-                    
                     // Saco el dato de interes del POST.
                     $postIdTexto = filter_input(INPUT_POST, 'btnAgregarTexto', FILTER_SANITIZE_NUMBER_INT);
                     
@@ -119,21 +121,13 @@ namespace CEIT\mvc\controllers
                     }
                     
                     // Serializo el array temporal y lo guardo en la cookie.
-                    $_COOKIE['TextosAgregados'] = serialize($tmpArray);
+                    //$_COOKIE['TextosAgregados'] = serialize($tmpArray);
                     setcookie('TextosAgregados', serialize($tmpArray), time() + 3600);
                 }
                 
                 // Si se quita un detalle, lo quito de la cookie.
                 if(isset($_POST['btnQuitarDetalle']))
                 {
-                    // Saco los datos de la cookie.
-                    $cookie = filter_input(INPUT_COOKIE, 'TextosAgregados');
-                    if(!empty($cookie))
-                    {
-                        // Deserializo y lo guardo en el array temporal.
-                        $tmpArray = unserialize($cookie);
-                    }
-                    
                     // Saco el dato de interes del POST.
                     $postIdTexto = filter_input(INPUT_POST, 'btnQuitarDetalle', FILTER_SANITIZE_NUMBER_INT);
                     if(!empty($postIdTexto))
@@ -149,7 +143,7 @@ namespace CEIT\mvc\controllers
                     }
                     
                     // Serializo el array temporal y lo guardo en la cookie.
-                    $_COOKIE['TextosAgregados'] = serialize($tmpArray);
+                    //$_COOKIE['TextosAgregados'] = serialize($tmpArray);
                     setcookie('TextosAgregados', serialize($tmpArray), time() + 3600);
                 }
             }
@@ -157,6 +151,8 @@ namespace CEIT\mvc\controllers
             // Me fijo si la cookie esta vacia.
             if(!empty($_COOKIE))
             {
+                //var_dump($_COOKIE);
+                
                 $cookie = filter_input(INPUT_COOKIE, 'TextosAgregados');
                 if(!empty($cookie))
                 {
@@ -334,6 +330,9 @@ namespace CEIT\mvc\controllers
                     
                     // Quito la seleccion de la pagina previa.
                     setcookie('TextosAgregados', null, -1);
+                    
+                    // Redirecciono para ir al inicio de la seccion.
+                    header("Location: index.php?do=/pedidos/index");
                 }
             }
             
@@ -814,7 +813,8 @@ namespace CEIT\mvc\controllers
                             
                             $this->table_content = str_replace("{" . $key . "}", htmlentities($value), $this->table_content);
                             
-                            if($hasFullRead)
+                            // BOTON ACTUALIZAR PEDIDO
+                            /*if($hasFullRead)
                             {
                                 // Si tiene todos los permisos, agrego el boton
                                 $file_button = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_button_update.html";
@@ -827,6 +827,28 @@ namespace CEIT\mvc\controllers
                             {
                                 // Si no, lo quito.
                                 $this->table_content = str_replace('{button_update}', "", $this->table_content);
+                            }*/
+                            
+                            // BOTON BORRAR PEDIDO
+                            if(in_array($_SESSION['Roles']['Nombre'], array('Administrador')))
+                            {
+                                $file_button_delete = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_button_delete.html";
+                                $button = file_get_contents($file_button_delete);
+                                $button = str_replace('{IdPedido}', $id_pedido, $button);
+                                
+                                $this->table_content = str_replace('{button_delete}', $button, $this->table_content);
+                            }
+                            elseif(in_array($_SESSION['Roles']['Nombre'], array('Estudiante', 'Docente')) && $row['Estado'] == 'Pendiente')
+                            {
+                                $file_button_delete = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_button_delete.html";
+                                $button = file_get_contents($file_button_delete);
+                                $button = str_replace('{IdPedido}', $id_pedido, $button);
+                                
+                                $this->table_content = str_replace('{button_delete}', $button, $this->table_content);
+                            }
+                            else
+                            {
+                                $this->table_content = str_replace('{button_delete}', "", $this->table_content);
                             }
                         }
                     }

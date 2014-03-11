@@ -77,6 +77,16 @@ namespace CEIT\mvc\controllers
                     array_push($models, $model);
                 }
                 
+                $post = filter_input(INPUT_POST, 'txtPrecioSimpleFaz', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
+                if($post !== null)
+                {
+                    $model = new models\WebModel();
+                    $model->_clave = "PrecioSimpleFaz";
+                    $model->_valor = $post;
+                    
+                    array_push($models, $model);
+                }
+                
                 $post = filter_input(INPUT_POST, 'txtPrecioGabinete', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
                 if($post !== null)
                 {

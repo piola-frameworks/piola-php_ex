@@ -88,10 +88,10 @@
                         <thead>
                             <tr>
                                 <th>Id Item</th>
-                                <th>Descripcion</th>
+                                <!-- <th>Descripcion</th>
                                 <th>
                                     <abbr title="Precio Unitario">PU</abbr>
-                                </th>
+                                </th> -->
                                 <th>Cantidad</th>
                                 <th>Importe</th>
                                 <th>Acciones</th>
@@ -100,19 +100,23 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <input class="form-control" name="txtIdItem" type="text" required="required" />
+                                    <select class="form-control" name="ddlItemTipo">
+                                        <option value="LIB">Art. de Libreria</option>
+                                        <option value="FOS">Fotocopias Sueltas</option>
+                                    </select>
+                                    <!-- <input class="form-control" name="txtIdItem" type="text" required="required" /> -->
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <input class="form-control" name="txtDescripcion" type="text" required="required" />
                                 </td>
                                 <td>
                                     <input class="form-control" name="txtPrecioUnitario" type="number" min="0" step="0.05" required="required" />
+                                </td> -->
+                                <td>
+                                    <input class="form-control" name="txtCantidad" type="number" min="1" step="1" value="1" required="required" readonly="readonly" />
                                 </td>
                                 <td>
-                                    <input class="form-control" name="txtCantidad" type="number" min="1" step="1" required="required" />
-                                </td>
-                                <td>
-                                    <input class="form-control" name="txtImporte" type="number" min="0" step="0.05" readonly="readonly" />
+                                    <input class="form-control" name="txtImporte" type="number" min="0" step="0.05" />
                                 </td>
                                 <td>
                                     <button class="btn btn-success btn-sm" name="btnAgregarItem" type="submit">
@@ -128,7 +132,16 @@
     </div>
 </div>
 <script type="text/javascript">
-    $('input[name=txtPrecioUnitario]').change(function() {
+    $('select[name=ddlItemTipo]').change(function() {
+        if($('select[name=ddlItemTipo]').val() === "LIB") {
+            $('input[name=txtCantidad]').val(1);
+            $('input[name=txtCantidad]').attr("readonly", "readonly");
+        } else {
+            $('input[name=txtCantidad]').removeAttr("readonly");
+        }
+    });
+    
+    /*$('input[name=txtPrecioUnitario]').change(function() {
         var precio = $('input[name=txtPrecioUnitario]').val();
         var cant = $('input[name=txtCantidad]').val();
         var importe = precio * cant;
@@ -142,5 +155,5 @@
         var importe = precio * cant;
 
         $('input[name=txtImporte]').val(importe.toFixed(2));
-    });
+    });*/
 </script>
