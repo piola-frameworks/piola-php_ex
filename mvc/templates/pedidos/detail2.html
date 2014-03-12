@@ -1,0 +1,96 @@
+<div id="pnlPedidoDatos" class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Datos</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" name="frmDetalleUsuario" method="POST" role="form">
+            <fieldset>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtLegajo">Legajo</label>
+                    <div class="col-sm-4">
+                        <input id="txtLegajo" class="form-control" name="txtLegajo" type="text" value="{Legajo}" readonly="readonly" />
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtDNI">DNI</label>
+                    <div class="col-sm-4">
+                        <input id="txtDNI" class="form-control" name="txtDNI" type="number" value="{DNI}" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtIdPedido">N&ordm; de pedido</label>
+                    <div class="col-sm-4">
+                        <input id="txtIdPedido" class="form-control" name="txtIdPedido" type="text" value="{IdPedido}" readonly="readonly" />
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtCreado">Creado</label>
+                    <div class="col-sm-4">
+                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="ddlEstado">Estado</label>
+                    <div class="col-sm-4">
+                        <select id="ddlEstado" class="form-control" name="ddlEstado" disabled="disabled">
+                            {combo_estado_pedido}
+                        </select>
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtRetiro">Retiro</label>
+                    <div class="col-sm-2">
+                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" value="{Retiro}" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtAnillado">Anillado</label>
+                    <div class="col-sm-1">
+                        <div class="checkbox">
+                            <input id="txtApellido" type="checkbox" name="txtAnillado" {Anillado} disabled="disabled" />
+                        </div>
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtPagado">Pagado</label>
+                    <div class="col-sm-1">
+                        <div class="checkbox">
+                            <input id="txtApellido" type="checkbox" name="txtPagado" {Pagado} disabled="disabled" />
+                        </div>
+                    </div>
+                    <label class="col-sm-2 control-label">Franja</label>
+                    <div class="col-sm-2">
+                        <select id="ddlFranja" class="form-control" name="ddlFranja" disabled="disabled">
+                            {combo_franja_horario}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtComentario">Comentario</label>
+                    <div class="col-sm-10">
+                        <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4" readonly="readonly">{Comentario}</textarea>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="col-sm-offset-11 col-sm-1">
+                <a class="btn btn-default" href="index.php?do=/pedidos/index">Volver</a>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="pnlPedidoItems" class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Items</h2>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Codigo</th>
+                    <th>Nombre</th>
+                    <th>Materia</th>
+                    <th>Hojas</th>
+                    <th>Simple Faz</th>
+                    <th>Anillado</th>
+                    <th>&iquest;Impreso?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {table_rows}
+            </tbody>
+        </table>
+    </div>
+</div>

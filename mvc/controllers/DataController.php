@@ -24,11 +24,6 @@ namespace CEIT\mvc\controllers
             parent::__destruct();
         }
         
-        public function getpreview($param)
-        {
-            echo $param;
-        }
-        
         public function getpdf($param1, $param2, $param3, $param4)
         {
             /*$item = explode("/", $param);

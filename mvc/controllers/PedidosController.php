@@ -69,8 +69,7 @@ namespace CEIT\mvc\controllers
              * 
              */
             
-            // Si la cookie no esta, creo un cookie esqueleto.
-            if(!isset($_COOKIE['TextosAgregados']))
+            if(!isset($_COOKIE['TextosAgregados'])) // Si la cookie no esta, creo un cookie esqueleto.
             {
                 $tmpArray = array(
                     'AnilladoCompleto'  =>  false,
@@ -79,6 +78,40 @@ namespace CEIT\mvc\controllers
                 );
                 
                 setcookie('TextosAgregados', serialize($tmpArray), time() + 3600);
+            }
+            else // Si esta la cookie, la leo.
+            {
+                $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'TextosAgregados'));
+                
+                if(count($tmpArray['Items']) > 0)
+                {
+                    foreach($tmpArray['Items'] as $item)
+                    {
+                        $modelTexto = new models\TextoModel();
+                        $modelTexto->_idTexto = $item['IdTexto'];
+                        $this->result = $this->_model['Textos']->Select($modelTexto);
+                        //var_dump($this->result);
+                        if(count($this->result) == 1)
+                        {
+                            $filename = BASE_DIR . "/mvc/templates/pedidos/table_text_added_row.html";
+                            $this->table_text_added .= file_get_contents($filename);
+                            
+                            foreach($this->result[0] as $key => $value)
+                            {
+                                $this->table_text_added = str_replace('{' . $key . '}', htmlentities($value), $this->table_text_added);
+                            }
+                        }
+                        else
+                        {
+                            $this->table_text_added = "";
+                        }
+                        unset($this->result);
+                    }
+                }
+                else
+                {
+                    $this->table_text_added = "";
+                }
             }
             
             if(!empty($_POST))
@@ -148,39 +181,6 @@ namespace CEIT\mvc\controllers
                 }
             }
             
-            // Me fijo si la cookie esta vacia.
-            if(!empty($_COOKIE))
-            {
-                //var_dump($_COOKIE);
-                
-                $cookie = filter_input(INPUT_COOKIE, 'TextosAgregados');
-                if(!empty($cookie))
-                {
-                    // Obtengo el valor de la cookie.
-                    $tmpArray = unserialize($cookie);
-                    
-                    // Recorro los valores de la cookie.
-                    foreach($tmpArray['Items'] as $item)
-                    {
-                        $modelTexto = new models\TextoModel();
-                        $modelTexto->_idTexto = $item['IdTexto'];
-                        $this->result = $this->_model['Textos']->Select($modelTexto);
-                        //var_dump($this->result);
-                        if(count($this->result) == 1)
-                        {
-                            $filename = BASE_DIR . "/mvc/templates/pedidos/table_text_added_row.html";
-                            $this->table_text_added .= file_get_contents($filename);
-                            
-                            foreach($this->result[0] as $key => $value)
-                            {
-                                $this->table_text_added = str_replace('{' . $key . '}', htmlentities($value), $this->table_text_added);
-                            }
-                        }
-                        unset($this->result);
-                    }
-                }
-            }
-            
             // Cargo las carreras.
             $this->result = $this->_model['Carreras']->Select();
             if(count($this->result) > 1)
@@ -198,6 +198,10 @@ namespace CEIT\mvc\controllers
                         }
                     }
                 }
+            }
+            else
+            {
+                $this->combo_carrera = "";
             }
             unset($this->result);
             
@@ -228,6 +232,10 @@ namespace CEIT\mvc\controllers
                         }
                     }
                 }
+            }
+            else
+            {
+                $this->table_content = "";
             }
             unset($this->result);
         }
@@ -572,7 +580,7 @@ namespace CEIT\mvc\controllers
                     $pedido->_posicion = filter_input(INPUT_POST, "txtPosicion", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $pedido->_retiro = $this->result[0]['Retiro'];
                     $pedido->_idFranja = $this->result[0]['IdFranja'];
-                    $pedido->_idPagado = $this->result[0]['Pagado'];
+                    $pedido->_pagado = $this->result[0]['Pagado'];
                     $pedido->_idEstado = 4;
 
                     $this->result = $this->_model['Pedidos']->Update(array($pedido));
@@ -674,6 +682,124 @@ namespace CEIT\mvc\controllers
                 foreach($this->result as $row)
                 {
                     $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_franja_select_option.html";
+                    $this->combo_franja_horario .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_franja_horario = str_replace('{' . $key . '}', $value, $this->combo_franja_horario);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+        }
+        
+        public function detail2($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            
+            // seteo el modelo para trabajar con los items del pedido
+            $pedidosItems = new models\PedidoModel();
+            $pedidosItems->_idPedido = $id;
+            $this->result = $this->_model['Pedidos']->SelectItem($pedidosItems);
+            //var_dump($this->result, $id);
+            
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/detail2_table_row.html";
+                    $this->table_rows .= file_get_contents($filename);
+
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case 'IdEstadoItem':
+                                    $this->table_rows = str_replace("{Impreso}", $value == 3 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'SimpleFaz':
+                                    $this->table_rows = str_replace("{SimpleFaz}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'Anillado':
+                                    $this->table_rows = str_replace("{Anillado}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                default:
+                                    $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            // elaboro el parametro y traigo los datos
+            $pedido = new models\PedidoModel();
+            $pedido->_idPedido = $id;
+            $this->result = $this->_model['Pedidos']->Select($pedido);
+            //var_dump($this->result);
+            foreach($this->result[0] as $key => $value)
+            {
+                switch($key)
+                {
+                    case "Pagado":
+                        $this->Pagado = $value ? "checked=\"checked\"" : '';
+                        break;
+
+                    case "Anillado":
+                        $this->Anillado = $value ? "checked=\"checked\"" : "";
+                        break;
+                    
+                    default:
+                        $this->{$key} = htmlentities($value);
+                        break;
+                }
+            }
+            unset($this->result);
+            
+            $modelEstadoPedido = new models\PedidoEstadosModel();
+            $modelEstadoPedido->_idPedido = $id;
+            $this->result = $this->_model['PedidoEstados']->SelectByIdPedido($modelEstadoPedido);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if($row['Descripcion'] == "Entregado" || $row['Descripcion'] == "Cancelado")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/pedidos/detail_estado_select_option.html";
+                        $this->combo_estado_pedido .= file_get_contents($filename);
+
+                        if(is_array($row))
+                        {
+                            foreach($row as $key => $value)
+                            {
+                                $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            $modelFranja = new models\HorarioFranjasModel();
+            $modelFranja->_idPedido = $id;
+            $this->result = $this->_model['Franjas']->SelectByIdPedido($modelFranja);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/detail_franja_select_option.html";
                     $this->combo_franja_horario .= file_get_contents($filename);
                     
                     if(is_array($row))
@@ -794,6 +920,17 @@ namespace CEIT\mvc\controllers
                 }
             }
             
+            if(in_array($_SESSION['Roles']['Nombre'], array('Estudiante', 'Docente', 'Administrador')))
+            {
+                $file_create_panel = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_create_panel.html";
+                $panel = file_get_contents($file_create_panel);
+                $this->create_panel = $panel;
+            }
+            else
+            {
+                $this->create_panel = "";
+            }
+            
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
@@ -850,9 +987,23 @@ namespace CEIT\mvc\controllers
                             {
                                 $this->table_content = str_replace('{button_delete}', "", $this->table_content);
                             }
+                            
+                            // Modo "solo lectura" segun rol
+                            if(in_array($_SESSION['Roles']['Nombre'], array('Estudiante', 'Docente')))
+                            {
+                                $this->table_content = str_replace('{SoloLectura}', "2", $this->table_content);
+                            }
+                            else
+                            {
+                                $this->table_content = str_replace('{SoloLectura}', "", $this->table_content);
+                            }
                         }
                     }
                 }
+            }
+            else
+            {
+                $this->table_content = "";
             }
             unset($this->result);
             
@@ -873,6 +1024,10 @@ namespace CEIT\mvc\controllers
                         }
                     }
                 }
+            }
+            else
+            {
+                $this->combo_estados = "";
             }
         }
 

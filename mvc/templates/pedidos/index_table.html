@@ -1,12 +1,14 @@
 <tr>
     <td>{IdPedido}</td>
-    <td>{Comentario}</td>
-    <td>{Retiro}</td>
+    <!-- <td>{Comentario}</td> -->
     <td>{Estado}</td>
-    <td>{Creado}</td>
+    <!-- <td>{Creado}</td> -->
+    <td>{Retiro}</td>
+    <td>{FranjaHoraria}</td>
+    <td>{Precio}</td>
     <td>
         <div class="btn-group">
-            <a href="index.php?do=/pedidos/detail/{IdPedido}" class="btn btn-default btn-sm" role="button">
+            <a href="index.php?do=/pedidos/detail{SoloLectura}/{IdPedido}" class="btn btn-default btn-sm" role="button">
                 <span class="glyphicon glyphicon-eye-open"></span>
             </a>
             <!-- {button_update} -->
