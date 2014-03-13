@@ -2,56 +2,63 @@
     <div class="panel-heading">
         <h3 class="panel-title">Mi pedido</h3>
     </div>
-    <div class="panel-body">
-        <form class="form-horizontal" name="frmDetallePedido" method="POST" role="form">
-            <div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Opciones</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label for="txtComentario" class="col-sm-2 control-label">Comentario</label>
-                            <div class="col-sm-10">
-                                <textarea id="txtComentario" class="form-control" name="txtComentario" rows="3" placeholder="Alguna anotacion al respecto del pedido..."></textarea>
-                            </div>
+    <form class="form-horizontal" name="frmDetallePedido" method="POST" role="form">
+        <!-- <div class="panel-body">
+            <form class="form-horizontal" name="frmDetallePedido" method="POST" role="form">
+                <div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Opciones</h3>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-5">
-                                <div class="checkbox">
-                                    <label>
-                                        <input id="chkAnilladoCompleto" type="checkbox" name="chkAnilladoCompleto"> Anillado completo
-                                    </label>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="txtComentario" class="col-sm-2 control-label">Comentario</label>
+                                <div class="col-sm-10">
+                                    <textarea id="txtComentario" class="form-control" name="txtComentario" rows="3" placeholder="Alguna anotacion al respecto del pedido..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-5">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input id="chkAnilladoCompleto" type="checkbox" name="chkAnilladoCompleto"> Anillado completo
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+    
                     </div>
                 </div>
-            </div>
+            </form>
+        </div> -->
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Codigo</th>
+                    <th>Titulo</th>
+                    <th>Anillado</th>
+                    <th>Simple Faz</th>
+                    <th>Paginas</th>
+                    <th>Precio</th>
+                    <!-- <th>Cantidad</th> -->
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {table_text_added}
+            </tbody>
+        </table>
+        <div class="panel-footer">
             <div class="form-group">
-                <div class="col-sm-12">
-                    <p class="lead">Items</p>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Codigo</th>
-                                <th>Titulo</th>
-                                <th>Anillado</th>
-                                <th>Simple Faz</th>
-                                <th>Paginas</th>
-                                <th>Precio</th>
-                                <th>Cantidad</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {table_text_added}
-                        </tbody>
-                    </table>
+                <div class="col-sm-offset-7 col-sm-2">
+                    <div class="checkbox">
+                        <label>
+                            <input id="chkAnilladoCompleto" type="checkbox" name="chkAnilladoCompleto"> Anillado completo
+                        </label>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="txtSubTotal" class="col-sm-offset-9 col-sm-1 control-label">Subtotal</label>
+                <label for="txtSubTotal" class="col-sm-1 control-label">Subtotal</label>
                 <div class="col-sm-2">
                     <input type="number" class="form-control" id="txtSubTotal" readonly="readonly" placeholder="Subtotal">
                 </div>
@@ -61,12 +68,12 @@
                     <button id="btnConfirmar" class="btn btn-success" type="submit" formaction="index.php?do=/pedidos/create_confirm">Enviar</button>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h3 class="panel-title">Filtros</h3>
+        <h3 class="panel-title">Busqueda</h3>
     </div>
     <div class="panel-body">
         <form class="form-inline" name="frmFiltroPedido" method="POST" role="form">
@@ -89,6 +96,13 @@
                 <select id="ddlMateria" class="form-control" name="ddlMateria">
                     <option selected="selected" disabled="disabled">Materias</option>
                     {combo_materia}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="sr-only" for="ddlMateria">Contenidos</label>
+                <select id="ddlContenido" class="form-control" name="ddlContenido">
+                    <option selected="selected" disabled="disabled">Contenidos</option>
+                    {combo_contenido}
                 </select>
             </div>
             <button id="btnFiltrar" class="btn btn-success" type="submit">Filtrar</button>
@@ -138,10 +152,21 @@
     </div>
 </div>
 <script type="text/javascript">
-    // Desactivo los controles al principio para despues habilitarlos.
-    $.ready(function() {
+    $(document).ready(function() {
+        // Desactivo los controles al principio para despues habilitarlos.
         $('#ddlNivel').attr('disabled', true);
         $('#ddlMateria').attr('disabled', true);
+        
+        // Muestro el subtotal
+        var subTotal = 0;
+
+        $('tr.itemPedidoDetalle').each(function(index, item) {
+            var value = $('.itemPrecio', item).text();
+            //var quantity = $('.itemCantidad', item).val();
+            subTotal += value * 1/*quantity*/;
+        });
+
+        $('#txtSubTotal').val(subTotal.toFixed(2));
     });
 
     $('#btnPreview').click(function() {
@@ -205,7 +230,7 @@
         });
     });
 
-    $('.itemCantidad').change(function() {
+    /*$('.itemCantidad').change(function() {
         var subTotal = 0;
 
         $('tr.itemPedidoDetalle').each(function(index, item) {
@@ -214,8 +239,8 @@
             subTotal += value * quantity;
         });
 
-        $('#txtSubTotal').val(subTotal);
-    });
+        $('#txtSubTotal').val(subTotal.toFixed(2));
+    });*/
 
     $('#chkAnilladoCompleto').change(function() {
         if (this.checked)

@@ -19,6 +19,7 @@ namespace CEIT\mvc\controllers
                     'PedidoItems'   =>  new models\PedidoItemModel(),
                     'PedidoEstados' =>  new models\PedidoEstadosModel(),
                     'Textos'        =>  new models\TextoModel(),
+                    'Contenidos'    =>  new models\TipoContenidoModel(),
                     'Carreras'      =>  new models\CarreraModel(),
                     'Niveles'       =>  new models\NivelModel(),
                     'Materias'      =>  new models\MateriaModel(),
@@ -116,7 +117,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                //var_dump($_POST);
+                var_dump($_POST);
                 
                 // Creo un array temporal para trabajar.
                 $tmpArray = unserialize(filter_input(INPUT_COOKIE, "TextosAgregados"));
@@ -205,39 +206,72 @@ namespace CEIT\mvc\controllers
             }
             unset($this->result);
             
-            // Cargo la tabla de los resultados.
-            if(isset($_POST['ddlMateria']))
-            {
-                $modelTexto = new models\TextoModel();
-                $modelTexto->_idMateria = filter_input(INPUT_POST, 'ddlMateria', FILTER_SANITIZE_NUMBER_INT);
-                $this->result = $this->_model['Textos']->SelectByIdMateria($modelTexto);
-            }
-            else
-            {
-                $this->result = $this->_model['Textos']->Select();
-            }
-            
+            // Cargo los tipos de contenido
+            $this->result = $this->_model['Contenidos']->Select();
             if(count($this->result) > 1)
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
-                    $this->table_content .= file_get_contents($filename);
+                    $filename = BASE_DIR . "/mvc/templates/pedidos/combo_contenido.html";
+                    $this->combo_contenido .= file_get_contents($filename);
                     
                     if(is_array($row))
                     {
                         foreach($row as $key => $value)
                         {
-                            $this->table_content = str_replace('{' . $key . '}', htmlentities($value), $this->table_content);
+                            $this->combo_contenido = str_replace('{' . $key .'}', htmlentities($value), $this->combo_contenido);
                         }
                     }
                 }
             }
             else
             {
-                $this->table_content = "";
+                $this->combo_contenido = "";
             }
             unset($this->result);
+            
+            // Cargo la tabla de los resultados.
+            if(isset($_POST['ddlMateria']))
+            {
+                $modelTexto = new models\TextoModel();
+                $modelTexto->_idMateria = filter_input(INPUT_POST, 'ddlMateria', FILTER_SANITIZE_NUMBER_INT);
+                
+                if(isset($_POST['ddlContenido']))
+                {
+                    $modelTexto->_idContenido = filter_input(INPUT_POST, 'ddlContenido', FILTER_SANITIZE_NUMBER_INT);
+                    $this->result = $this->_model['Textos']->SelectByIdMateriaAndContenido($modelTexto);
+                }
+                else
+                {
+                    $this->result = $this->_model['Textos']->SelectByIdMateria($modelTexto);
+                }
+                
+                if(count($this->result) > 1)
+                {
+                    foreach($this->result as $row)
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
+                        $this->table_content .= file_get_contents($filename);
+
+                        if(is_array($row))
+                        {
+                            foreach($row as $key => $value)
+                            {
+                                $this->table_content = str_replace('{' . $key . '}', htmlentities($value), $this->table_content);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    $this->table_content = "";
+                }
+                unset($this->result);
+            }
+            else
+            {
+                $this->table_content = "";
+            }
         }
 
         public function create_confirm()
@@ -248,22 +282,22 @@ namespace CEIT\mvc\controllers
             {
                 //var_dump($_POST);
                 
-                if(isset($_POST['IdTexto']) && isset($_POST['txtCantidadCopias']))
+                if(isset($_POST['IdTexto']))
                 {
                     // Agarro las variables del POST.
                     $postIdTexto = filter_input(INPUT_POST, 'IdTexto', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                     $postSimpleFaz = filter_input(INPUT_POST, 'chkSimpleFaz', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
                     $postAnillado = filter_input(INPUT_POST, 'chkAnillado', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
-                    $postCantCopias = filter_input(INPUT_POST, 'txtCantidadCopias', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+                    //$postCantCopias = filter_input(INPUT_POST, 'txtCantidadCopias', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                     $postTodoAnillado = filter_input(INPUT_POST, 'chkAnilladoCompleto', FILTER_SANITIZE_STRING);
-                    $postComentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    //$postComentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
                     // Verifico que existan
-                    if(!empty($postIdTexto) && !empty($postCantCopias))
+                    if(!empty($postIdTexto))
                     {
-                        // Y que tengan la misma cantidad
+                        /*// Y que tengan la misma cantidad
                         if(count($postCantCopias) == count($postIdTexto))
-                        {
+                        {*/
                             for($index = 0; $index < count($postIdTexto); $index++)
                             {
                                 $modelTexto = new models\TextoModel();
@@ -280,16 +314,16 @@ namespace CEIT\mvc\controllers
                                     }
                                     $this->table_detail = str_replace('{SimpleFaz}', empty($postSimpleFaz[$postIdTexto[$index]]) ? '' : 'checked', $this->table_detail);
                                     $this->table_detail = str_replace('{Anillado}', empty($postAnillado[$postIdTexto[$index]]) ? '' : 'checked', $this->table_detail);
-                                    $this->table_detail = str_replace('{Cantidad}', $postCantCopias[$postIdTexto[$index]], $this->table_detail);
+                                    //$this->table_detail = str_replace('{Cantidad}', $postCantCopias[$postIdTexto[$index]], $this->table_detail);
                                     
                                 }
                                 
-                                $this->Comentario = empty($postComentario) ? '' : $postComentario;
+                                //$this->Comentario = empty($postComentario) ? '' : $postComentario;
                                 $this->TodoAnillado = empty($postTodoAnillado) ? '' : 'checked';
                                 
                                 unset($this->result);
                             }
-                        }
+                        /*}*/
                     }
                 }
 
@@ -305,7 +339,7 @@ namespace CEIT\mvc\controllers
                     $modelPedido->_modificadoPor = null;
                     $asd = filter_input(INPUT_POST, 'chkAnilladoCompleto', FILTER_SANITIZE_STRING);
                     $modelPedido->_anillado = empty($asd) ? true : false;
-                    $modelPedido->_comentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $modelPedido->_comentario = null; //filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $modelPedido->_retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_STRING);
                     $modelPedido->_idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
                     $modelPedido->_pagado = false;
@@ -317,12 +351,12 @@ namespace CEIT\mvc\controllers
                     $items = filter_input(INPUT_POST, 'hidIdTexto', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                     $simpleFaz_items = filter_input(INPUT_POST, 'hidSimpleFaz', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
                     $anillado_items = filter_input(INPUT_POST, 'hidAnillado', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
-                    $canttext_items = filter_input(INPUT_POST, 'hidCantidadText', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
+                    //$canttext_items = filter_input(INPUT_POST, 'hidCantidadText', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                     foreach($items as $item)
                     {
                         $tmpItem = new models\PedidoItemModel();
                         $tmpItem->_idPedido = $this->lastId;
-                        $tmpItem->_cantidad = $canttext_items[$item];
+                        $tmpItem->_cantidad = 1; //$canttext_items[$item];
                         $tmpItem->_idTexto = $item;
                         $tmpItem->_anillado = empty($anillado_items[$item]) ? false : true;
                         $tmpItem->_simpleFaz = empty($simpleFaz_items[$item]) ? false : true;
@@ -409,7 +443,8 @@ namespace CEIT\mvc\controllers
                         $modelTP->_modificadoDia = null;
                         $modelTP->_codInterno = null;
                         $modelTP->_idMateria = null;
-                        $modelTP->_idTipo = 4;
+                        $modelTP->_idTipoTexto = 4;
+                        $modelTP->_idTipoContenido = 2;
                         $modelTP->_nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                         $modelTP->_autor = null;
                         $modelTP->_docente = null;

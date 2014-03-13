@@ -22,7 +22,6 @@ namespace CEIT\mvc\models
             foreach($model as $item)
             {
                 array_push($this->_sp, "sp_insTexto");
-                
                 array_push($this->_params, array(
                     ':creadoPor'        =>  (int)$item->_creadoPor,
                     ':creadoDia'        =>  (string)$item->_creadoDia,
@@ -30,7 +29,8 @@ namespace CEIT\mvc\models
                     ':modificadoDia'    =>  is_null($item->_modificadoDia) ? null : (string)$item->_modificadoDia,
                     ':codInterno'       =>  is_null($item->_codInterno) ? null : (string)$item->_codInterno,
                     ':idMateria'        =>  is_null($item->_idMateria) ? null : (int)$item->_idMateria,
-                    ':idTipo'           =>  (int)$item->_idTipo,
+                    ':idTipoTexto'      =>  (int)$item->_idTipoTexto,
+                    ':idTipoContenido'  =>  (int)$item->_idTipoContenido,
                     ':nombre'           =>  (string)$item->_nombre,
                     ':autor'            =>  is_null($item->_autor) ? null : (string)$item->_autor,
                     ':docente'          =>  is_null($item->_docente) ? null : (string)$item->_docente,
@@ -38,8 +38,6 @@ namespace CEIT\mvc\models
                     ':activo'           =>  (bool)$item->_activo,
                 ));
             }
-            
-            var_dump($this->_sp, $this->_params, $this->_trans);
             
             return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
@@ -63,6 +61,10 @@ namespace CEIT\mvc\models
             }
         }
         
+        /*
+         * Start custom selects
+         */
+        
         public function SelectByIdMateria(core\AModel $model)
         {
             $this->_sp = "sp_selTextosByIdMateria";
@@ -72,7 +74,22 @@ namespace CEIT\mvc\models
             
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
-
+        
+        public function SelectByIdMateriaAndContenido(core\AModel $model)
+        {
+            $this->_sp = "sp_selTextosByIdMateriaAndIdTipoContenido";
+            $this->_params = array(
+                ':idMateria'        =>  $model->_idMateria,
+                ':idTipoContenido'  =>  $model->_idTipoContenido
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        /*
+         * End custom selects
+         */
+        
         public function Update(array $model)
         {
             

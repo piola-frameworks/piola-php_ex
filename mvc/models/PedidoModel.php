@@ -68,7 +68,7 @@ namespace CEIT\mvc\models
                         ':id'   =>  (int)$model->_idUsuario,
                     );
 
-                    $sp = "sp_selPedidoByIdUsuario";
+                    $sp = "sp_selPedidosByIdUsuario";
                 }
                 else if(array_key_exists("_idPedido", $model->_data))
                 {
