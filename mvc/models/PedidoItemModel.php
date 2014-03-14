@@ -22,7 +22,7 @@ namespace CEIT\mvc\models
                 ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Insert(array $model)
@@ -40,6 +40,7 @@ namespace CEIT\mvc\models
                     ':cantidad'     =>  (int)$item->_cantidad,
                     ':idTexto'      =>  (int)$item->_idTexto,
                     ':anillado'     =>  (bool)$item->_anillado,
+                    ':abrochado'    =>  (bool)$item->_abrochado,
                     ':simpleFaz'    =>  (bool)$item->_simpleFaz,
                     ':idEstado'     =>  (int)$item->_idEstado,
                 ));
@@ -95,12 +96,23 @@ namespace CEIT\mvc\models
             {
                 array_push($this->_sp, "sp_updPedidoItem");
                 array_push($this->_params, array(
-                    ':idItem'  =>  (int)$item->_idItem,
+                    ':idPedido'     =>  (int)$item->_idPedido,
+                    ':idItem'       =>  (int)$item->_idItem,
+                    ':cantidad'     =>  (int)$item->_cantidad,
+                    ':idTexto'      =>  (int)$item->_idTexto,
+                    ':anillado'     =>  (bool)$item->_anillado,
+                    ':abrochado'    =>  (bool)$item->_abrochado,
+                    ':simpleFaz'    =>  (bool)$item->_simpleFaz,
+                    ':idEstado'     =>  (int)$item->_idEstado,
                 ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
+        
+        /*
+         * Start custom updates
+         */
         
         public function UpdateEstado(array $model)
         {
@@ -118,8 +130,12 @@ namespace CEIT\mvc\models
                 ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
         }
+        
+        /*
+         * End custom updates
+         */
     }
 }
 

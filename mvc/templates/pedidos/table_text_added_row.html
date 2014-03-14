@@ -1,17 +1,20 @@
 <tr class="itemPedidoDetalle">
+    <!-- <td>
+        <input class="form-control itemCantidad" type="number" name="txtCantidadCopias[{IdTexto}]" value="1" min="1" max="100" step="1" readonly="readonly">
+    </td> -->
     <td>{CodigoInterno}</td>
     <td>{Titulo}</td>
     <td>
         <input class="chkAnillado" type="checkbox" name="chkAnillado[{IdTexto}]">
     </td>
     <td>
-        <input type="checkbox" name="chkSimpleFaz[{IdTexto}]">
+        <input class="chkAbrochado" type="checkbox" name="chkAbrochado[{IdTexto}]">
+    </td>
+    <td>
+        <input class="chkSimpleFaz" type="checkbox" name="chkSimpleFaz[{IdTexto}]">
     </td>
     <td>{Paginas}</td>
     <td class="itemPrecio">{Precio}</td>
-    <!-- <td>
-        <input class="form-control itemCantidad" type="number" name="txtCantidadCopias[{IdTexto}]" value="1" min="1" max="100" step="1" readonly="readonly">
-    </td> -->
     <td>
         <button class="btn btn-danger btn-sm" type="submit" name="btnQuitarDetalle" value="{IdTexto}">
             <span class="glyphicon glyphicon-minus"></span>

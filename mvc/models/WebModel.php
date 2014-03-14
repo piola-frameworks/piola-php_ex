@@ -16,17 +16,10 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_delConfiguracion"
-                );
-                
-                array_push(
-                    $this->_params,
-                    array(
-                        ':clave'    =>  (string)$item->_clave,
-                    )
-                );
+                array_push($this->_sp, "sp_delConfiguracion");
+                array_push($this->_params, array(
+                    ':clave'    =>  (string)$item->_clave,
+                ));
             }
             
             return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
@@ -45,21 +38,12 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_insConfiguracion"
-                );
-                
-                array_push(
-                    $this->_params,
-                    array(
-                        ':clave'    =>  (string)$item->_clave,
-                        ':valor'    =>  (float)$item->_valor,
-                    )
-                );
+                array_push($this->_sp, "sp_insConfiguracion");
+                array_push($this->_params, array(
+                    ':clave'    =>  (string)$item->_clave,
+                    ':valor'    =>  (float)$item->_valor,
+                ));
             }
-            
-            
             
             return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
@@ -69,7 +53,6 @@ namespace CEIT\mvc\models
             if($model != null)
             {
                 $this->_sp = "sp_selConfiguracion";
-                
                 $this->_params = array(
                     ':clave'   =>  (string)$model->_clave,
                 );
@@ -93,10 +76,7 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_updConfiguracion"
-                );
+                array_push($this->_sp, "sp_updConfiguracion");
                 
                 array_push(
                     $this->_params,

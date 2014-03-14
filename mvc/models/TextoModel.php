@@ -9,7 +9,20 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
             
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_delTexto");
+                array_push($this->_params, array(
+                    ':idTexto'        =>  (int)$item->_idTexto,
+                ));
+            }
+            
+            return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Insert(array $model)
@@ -92,7 +105,33 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
             
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_insTexto");
+                array_push($this->_params, array(
+                    ':idTexto'          =>  (int)$item->_idTexto,
+                    ':creadoPor'        =>  (int)$item->_creadoPor,
+                    ':creadoDia'        =>  (string)$item->_creadoDia,
+                    ':modificadoPor'    =>  is_null($item->_modificadoPor) ? null : (int)$item->_modificadoPor,
+                    ':modificadoDia'    =>  is_null($item->_modificadoDia) ? null : (string)$item->_modificadoDia,
+                    ':codInterno'       =>  is_null($item->_codInterno) ? null : (string)$item->_codInterno,
+                    ':idMateria'        =>  is_null($item->_idMateria) ? null : (int)$item->_idMateria,
+                    ':idTipoTexto'      =>  (int)$item->_idTipoTexto,
+                    ':idTipoContenido'  =>  (int)$item->_idTipoContenido,
+                    ':nombre'           =>  (string)$item->_nombre,
+                    ':autor'            =>  is_null($item->_autor) ? null : (string)$item->_autor,
+                    ':docente'          =>  is_null($item->_docente) ? null : (string)$item->_docente,
+                    ':cantPaginas'      =>  (int)$item->_cantPaginas,
+                    ':activo'           =>  (bool)$item->_activo,
+                ));
+            }
+            
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
     }
 }

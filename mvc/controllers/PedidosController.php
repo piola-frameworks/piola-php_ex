@@ -25,6 +25,7 @@ namespace CEIT\mvc\controllers
                     'Materias'      =>  new models\MateriaModel(),
                     'Estados'       =>  new models\PedidoEstadosModel(),
                     'Franjas'       =>  new models\HorarioFranjasModel(),
+                    'Web'           =>  new models\WebModel(),
                 );
             }
             
@@ -117,7 +118,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 // Creo un array temporal para trabajar.
                 $tmpArray = unserialize(filter_input(INPUT_COOKIE, "TextosAgregados"));
@@ -180,6 +181,54 @@ namespace CEIT\mvc\controllers
                     //$_COOKIE['TextosAgregados'] = serialize($tmpArray);
                     setcookie('TextosAgregados', serialize($tmpArray), time() + 3600);
                 }
+                
+                // Cargo la tabla de los resultados.
+                if(isset($_POST['ddlMateria']))
+                {
+                    $modelTexto = new models\TextoModel();
+                    $modelTexto->_idMateria = filter_input(INPUT_POST, 'ddlMateria', FILTER_SANITIZE_NUMBER_INT);
+
+                    if(isset($_POST['ddlContenido']))
+                    {
+                        $modelTexto->_idTipoContenido = filter_input(INPUT_POST, 'ddlContenido', FILTER_SANITIZE_NUMBER_INT);
+                        $this->result = $this->_model['Textos']->SelectByIdMateriaAndContenido($modelTexto);
+                    }
+                    else
+                    {
+                        $this->result = $this->_model['Textos']->SelectByIdMateria($modelTexto);
+                    }
+                    //var_dump($this->result);
+
+                    if(count($this->result) > 1)
+                    {
+                        foreach($this->result as $row)
+                        {
+                            $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
+                            $this->table_content .= file_get_contents($filename);
+
+                            if(is_array($row))
+                            {
+                                foreach($row as $key => $value)
+                                {
+                                    $this->table_content = str_replace('{' . $key . '}', htmlentities($value), $this->table_content);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        $this->table_content = "";
+                    }
+                    unset($this->result);
+                }
+                else
+                {
+                    $this->table_content = "";
+                }
+            }
+            else
+            {
+                $this->table_content = "";
             }
             
             // Cargo las carreras.
@@ -206,6 +255,20 @@ namespace CEIT\mvc\controllers
             }
             unset($this->result);
             
+            // Cargo el precio del anillado.
+            $modelConf = new models\WebModel();
+            $modelConf->_clave = "PrecioAnillado";
+            $this->result = $this->_model['Web']->Select($modelConf);
+            $this->PrecioAnillado = $this->result[0]['Valor'];
+            unset($this->result);
+            
+            // Cargo el precio del Simple Faz.
+            $modelConf = new models\WebModel();
+            $modelConf->_clave = "PrecioSimpleFaz";
+            $this->result = $this->_model['Web']->Select($modelConf);
+            $this->PrecioSimpleFaz = $this->result[0]['Valor'];
+            unset($this->result);
+            
             // Cargo los tipos de contenido
             $this->result = $this->_model['Contenidos']->Select();
             if(count($this->result) > 1)
@@ -228,50 +291,7 @@ namespace CEIT\mvc\controllers
             {
                 $this->combo_contenido = "";
             }
-            unset($this->result);
-            
-            // Cargo la tabla de los resultados.
-            if(isset($_POST['ddlMateria']))
-            {
-                $modelTexto = new models\TextoModel();
-                $modelTexto->_idMateria = filter_input(INPUT_POST, 'ddlMateria', FILTER_SANITIZE_NUMBER_INT);
-                
-                if(isset($_POST['ddlContenido']))
-                {
-                    $modelTexto->_idContenido = filter_input(INPUT_POST, 'ddlContenido', FILTER_SANITIZE_NUMBER_INT);
-                    $this->result = $this->_model['Textos']->SelectByIdMateriaAndContenido($modelTexto);
-                }
-                else
-                {
-                    $this->result = $this->_model['Textos']->SelectByIdMateria($modelTexto);
-                }
-                
-                if(count($this->result) > 1)
-                {
-                    foreach($this->result as $row)
-                    {
-                        $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
-                        $this->table_content .= file_get_contents($filename);
-
-                        if(is_array($row))
-                        {
-                            foreach($row as $key => $value)
-                            {
-                                $this->table_content = str_replace('{' . $key . '}', htmlentities($value), $this->table_content);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    $this->table_content = "";
-                }
-                unset($this->result);
-            }
-            else
-            {
-                $this->table_content = "";
-            }
+            unset($this->result);   
         }
 
         public function create_confirm()
@@ -288,9 +308,11 @@ namespace CEIT\mvc\controllers
                     $postIdTexto = filter_input(INPUT_POST, 'IdTexto', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                     $postSimpleFaz = filter_input(INPUT_POST, 'chkSimpleFaz', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
                     $postAnillado = filter_input(INPUT_POST, 'chkAnillado', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
+                    $postAbrochado = filter_input(INPUT_POST, 'chkAbrochado', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
                     //$postCantCopias = filter_input(INPUT_POST, 'txtCantidadCopias', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                     $postTodoAnillado = filter_input(INPUT_POST, 'chkAnilladoCompleto', FILTER_SANITIZE_STRING);
                     //$postComentario = filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $postSubTotal = filter_input(INPUT_POST, 'txtSubTotal', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
 
                     // Verifico que existan
                     if(!empty($postIdTexto))
@@ -314,12 +336,14 @@ namespace CEIT\mvc\controllers
                                     }
                                     $this->table_detail = str_replace('{SimpleFaz}', empty($postSimpleFaz[$postIdTexto[$index]]) ? '' : 'checked', $this->table_detail);
                                     $this->table_detail = str_replace('{Anillado}', empty($postAnillado[$postIdTexto[$index]]) ? '' : 'checked', $this->table_detail);
+                                    $this->table_detail = str_replace('{Abrochado}', empty($postAbrochado[$postIdTexto[$index]]) ? '' : 'checked', $this->table_detail);
                                     //$this->table_detail = str_replace('{Cantidad}', $postCantCopias[$postIdTexto[$index]], $this->table_detail);
                                     
                                 }
                                 
                                 //$this->Comentario = empty($postComentario) ? '' : $postComentario;
                                 $this->TodoAnillado = empty($postTodoAnillado) ? '' : 'checked';
+                                $this->SubTotal = $postSubTotal;
                                 
                                 unset($this->result);
                             }
@@ -351,6 +375,7 @@ namespace CEIT\mvc\controllers
                     $items = filter_input(INPUT_POST, 'hidIdTexto', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                     $simpleFaz_items = filter_input(INPUT_POST, 'hidSimpleFaz', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
                     $anillado_items = filter_input(INPUT_POST, 'hidAnillado', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
+                    $abrochado_items = filter_input(INPUT_POST, 'hidAbrochado', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
                     //$canttext_items = filter_input(INPUT_POST, 'hidCantidadText', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                     foreach($items as $item)
                     {
@@ -359,6 +384,7 @@ namespace CEIT\mvc\controllers
                         $tmpItem->_cantidad = 1; //$canttext_items[$item];
                         $tmpItem->_idTexto = $item;
                         $tmpItem->_anillado = empty($anillado_items[$item]) ? false : true;
+                        $tmpItem->_abrochado = empty($abrochado_items[$item]) ? false : true;
                         $tmpItem->_simpleFaz = empty($simpleFaz_items[$item]) ? false : true;
                         $tmpItem->_idEstado = 1;
                         
@@ -626,7 +652,7 @@ namespace CEIT\mvc\controllers
             $pedidosItems = new models\PedidoModel();
             $pedidosItems->_idPedido = $id;
             $this->result = $this->_model['Pedidos']->SelectItem($pedidosItems);
-            //var_dump($this->result, $id);
+            //var_dump($this->result);
             
             if(count($this->result) > 0)
             {
@@ -641,10 +667,18 @@ namespace CEIT\mvc\controllers
                         {
                             switch($key)
                             {
+                                case 'Anillado':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'Abrochado':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'SimpleFaz':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
                                 case 'IdEstadoItem':
                                     $this->table_rows = str_replace("{Impreso}", $value == 3 ? "checked=\"checked\"" : "", $this->table_rows);
                                     break;
-
                                 default:
                                     $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
                                     break;
@@ -757,11 +791,14 @@ namespace CEIT\mvc\controllers
                                 case 'IdEstadoItem':
                                     $this->table_rows = str_replace("{Impreso}", $value == 3 ? "checked=\"checked\"" : "", $this->table_rows);
                                     break;
-                                case 'SimpleFaz':
-                                    $this->table_rows = str_replace("{SimpleFaz}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
-                                    break;
                                 case 'Anillado':
-                                    $this->table_rows = str_replace("{Anillado}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'Abrochado':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'SimpleFaz':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
                                     break;
                                 default:
                                     $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);

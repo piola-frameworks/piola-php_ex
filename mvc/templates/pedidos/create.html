@@ -38,6 +38,7 @@
                     <th>Codigo</th>
                     <th>Titulo</th>
                     <th>Anillado</th>
+                    <th>Abrochado</th>
                     <th>Simple Faz</th>
                     <th>Paginas</th>
                     <th>Precio</th>
@@ -51,16 +52,31 @@
         </table>
         <div class="panel-footer">
             <div class="form-group">
-                <div class="col-sm-offset-7 col-sm-2">
+                <div class="col-sm-3">
+                <div class="well well-sm">
+                    <p class="lead">Precios:</p>
+                    <ul>
+                        <li>
+                            <strong>Anillado:</strong> {PrecioAnillado}
+                        </li>
+                        <li>
+                            <strong>Simple Faz:</strong> {PrecioSimpleFaz}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+                <div class="col-sm-offset-3 col-sm-3">
                     <div class="checkbox">
                         <label>
-                            <input id="chkAnilladoCompleto" type="checkbox" name="chkAnilladoCompleto"> Anillado completo
+                            <input id="chkAnilladoCompleto" type="checkbox" name="chkAnilladoCompleto"> Anillado completo ({PrecioAnillado})
+                            <input id="hidPrecioAnillado" type="hidden" value="{PrecioAnillado}" />
+                            <input id="hidPrecioSimpleFaz" type="hidden" value="{PrecioSimpleFaz}" />
                         </label>
                     </div>
                 </div>
                 <label for="txtSubTotal" class="col-sm-1 control-label">Subtotal</label>
                 <div class="col-sm-2">
-                    <input type="number" class="form-control" id="txtSubTotal" readonly="readonly" placeholder="Subtotal">
+                    <input id="txtSubTotal" class="form-control" type="number" name="txtSubTotal" readonly="readonly" placeholder="Subtotal">
                 </div>
             </div>
             <div class="form-group">
@@ -156,22 +172,49 @@
         // Desactivo los controles al principio para despues habilitarlos.
         $('#ddlNivel').attr('disabled', true);
         $('#ddlMateria').attr('disabled', true);
-        
+
         // Muestro el subtotal
+        /*var subTotal = 0;
+         
+         $('tr.itemPedidoDetalle').each(function(index, item) {
+         var value = $('.itemPrecio', item).text();
+         //var quantity = $('.itemCantidad', item).val();
+         subTotal += value * 1; //quantity;
+         });
+         
+         $('#txtSubTotal').val(subTotal.toFixed(2));*/
+        var countAnillado = 0;
+        var countSimpleFaz = 0;
+        var anillado = $('#hidPrecioAnillado').val();
+        var simpleFaz = $('#hidPrecioSimpleFaz').val();
         var subTotal = 0;
+
+        $('.chkAnillado').each(function(index, value) {
+            if (value.checked) {
+                countAnillado++;
+                $('#chkAnilladoCompleto').prop('checked', false);
+            }
+        });
+
+        $('.chkSimpleFaz').each(function(index, value) {
+            if (value.checked) {
+                countSimpleFaz++;
+            }
+        });
 
         $('tr.itemPedidoDetalle').each(function(index, item) {
             var value = $('.itemPrecio', item).text();
-            //var quantity = $('.itemCantidad', item).val();
-            subTotal += value * 1/*quantity*/;
+            subTotal += parseFloat(value);
         });
 
-        $('#txtSubTotal').val(subTotal.toFixed(2));
+        $('#txtSubTotal').val((subTotal + (countAnillado * anillado) + (countSimpleFaz * simpleFaz)).toFixed(2));
     });
 
-    $('#btnPreview').click(function() {
-        $('#modalImage').attr('src', this.value);
-        $('#myModal').modal('show');
+    $('.btnPreview').each(function(index, value) {
+        $(value).click(function() {
+            $('#modalImage').attr('src', this.value);
+            $('#myModal').modal('show');
+        });
     });
 
     $('#ddlCarrera').change(function() {
@@ -231,23 +274,69 @@
     });
 
     /*$('.itemCantidad').change(function() {
-        var subTotal = 0;
-
-        $('tr.itemPedidoDetalle').each(function(index, item) {
-            var value = $('.itemPrecio', item).text();
-            var quantity = $('.itemCantidad', item).val();
-            subTotal += value * quantity;
-        });
-
-        $('#txtSubTotal').val(subTotal.toFixed(2));
-    });*/
+     var subTotal = 0;
+     
+     $('tr.itemPedidoDetalle').each(function(index, item) {
+     var value = $('.itemPrecio', item).text();
+     var quantity = $('.itemCantidad', item).val();
+     subTotal += value * quantity;
+     });
+     
+     $('#txtSubTotal').val(subTotal.toFixed(2));
+     });*/
 
     $('#chkAnilladoCompleto').change(function() {
-        if (this.checked)
-        {
+        if (this.checked) {
             $('.chkAnillado').each(function(index, item) {
                 $(item).prop('checked', false);
             });
+
+            var subTotal = 0;
+            var anillado = $('#hidPrecioAnillado').val();
+
+            $('tr.itemPedidoDetalle').each(function(index, item) {
+                var value = $('.itemPrecio', item).text();
+                subTotal += parseFloat(value);
+            });
+
+            $('#txtSubTotal').val((subTotal + parseInt(anillado)).toFixed(2));
+        } else {
+            var subTotal = 0;
+
+            $('tr.itemPedidoDetalle').each(function(index, item) {
+                var value = $('.itemPrecio', item).text();
+                subTotal += parseFloat(value);
+            });
+
+            $('#txtSubTotal').val(subTotal.toFixed(2));
         }
+    });
+
+    $('.chkAnillado, .chkSimpleFaz').change(function() {
+        var countAnillado = 0;
+        var countSimpleFaz = 0;
+        var anillado = $('#hidPrecioAnillado').val();
+        var simpleFaz = $('#hidPrecioSimpleFaz').val();
+        var subTotal = 0;
+
+        $('.chkAnillado').each(function(index, value) {
+            if (value.checked) {
+                countAnillado++;
+                $('#chkAnilladoCompleto').prop('checked', false);
+            }
+        });
+
+        $('.chkSimpleFaz').each(function(index, value) {
+            if (value.checked) {
+                countSimpleFaz++;
+            }
+        });
+
+        $('tr.itemPedidoDetalle').each(function(index, item) {
+            var value = $('.itemPrecio', item).text();
+            subTotal += parseFloat(value);
+        });
+
+        $('#txtSubTotal').val((subTotal + (countAnillado * anillado) + (countSimpleFaz * simpleFaz)).toFixed(2));
     });
 </script>
