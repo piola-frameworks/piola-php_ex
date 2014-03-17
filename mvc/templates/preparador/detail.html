@@ -38,10 +38,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="txtAnillado">Anillado</label>
+                    <label class="col-sm-2 control-label" for="chkAnilladoCompleto">Anillado Completo</label>
                     <div class="col-sm-1">
                         <div class="checkbox">
-                            <input id="txtApellido" type="checkbox" name="txtAnillado" {Anillado} disabled="disabled" />
+                            <input id="chkAnilladoCompleto" type="checkbox" name="chkAnilladoCompleto" {Anillado} disabled="disabled" />
                         </div>
                     </div>
                     <label class="col-sm-2 control-label" for="txtPagado">Pagado</label>
@@ -63,14 +63,23 @@
                         <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4" readonly="readonly">{Comentario}</textarea>
                     </div> -->
                     <label class="col-sm-2 control-label" for="txtPosicion">Posici&oacute;n</label>
-                    <div class="col-sm-4">
-                        <textarea id="txtPosicion" class="form-control" name="txtPosicion" rows="4">{Posicion}</textarea>
+                    <div class="col-sm-2">
+                        <select id="ddlPosicionX" class="form-control" name="ddlPosicionX" disabled="disabled">
+                            <option>Ninguna</option>
+                            {combo_posicion_x}
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <select id="ddlPosicionY" class="form-control" name="ddlPosicionY" disabled="disabled">
+                            <option>Ninguna</option>
+                            {combo_posicion_y}
+                        </select>
                     </div>
                 </div>
             </fieldset>
             <div class="col-sm-offset-10 col-sm-2">
                 <button class="btn btn-warning" type="submit" name="btnTerminar" onclick="PrintThisDiv();">Terminar</button>
-                <a class="btn btn-default" href="index.php?do=/pedidos/index">Volver</a>
+                <a class="btn btn-default" href="index.php?do=/preparador/index">Volver</a>
             </div>
         </form>
     </div>
@@ -136,9 +145,26 @@
         popup.focus();
     }
     
+    $(document).ready(function(){
+        var countChk = 0;
+        var countChkTrue = 0;
+        
+        $(".chkImpreso").each(function(index, value){
+            countChk++;
+            if(value.checked) {
+                countChkTrue++;
+            }
+        });
+        
+        if(countChk == countChkTrue) {
+            $("#ddlPosicionX").removeAttr("disabled");
+            $("#ddlPosicionY").removeAttr("disabled");
+        }
+    });
+    
     function postChangeItemStatus(item, value){
         $.post(
-            "index.php?do=/pedidos/ajax_detail_item_change_status",
+            "index.php?do=/preparador/ajax_detail_item_change_status",
             {
                 idItem: item,
                 toValue: value

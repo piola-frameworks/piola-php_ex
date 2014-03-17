@@ -6,7 +6,7 @@ namespace CEIT\mvc\controllers
     use \CEIT\mvc\models;
     use \CEIT\mvc\views;
     
-    final class PedidosController extends core\AController implements core\ICrud
+    final class EstudianteController extends core\AController implements core\ICrud
     {
         public function __construct()
         {
@@ -53,7 +53,7 @@ namespace CEIT\mvc\controllers
         
         public function create()
         {
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
             
             /*
              * Formato del cookie
@@ -95,7 +95,7 @@ namespace CEIT\mvc\controllers
                         //var_dump($this->result);
                         if(count($this->result) == 1)
                         {
-                            $filename = BASE_DIR . "/mvc/templates/pedidos/table_text_added_row.html";
+                            $filename = BASE_DIR . "/mvc/templates/estudiantes/table_text_added_row.html";
                             $this->table_text_added .= file_get_contents($filename);
                             
                             foreach($this->result[0] as $key => $value)
@@ -203,7 +203,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($this->result as $row)
                         {
-                            $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
+                            $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table_row.html";
                             $this->table_content .= file_get_contents($filename);
 
                             if(is_array($row))
@@ -237,7 +237,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/combo_carrera.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/combo_carrera.html";
                     $this->combo_carrera .= file_get_contents($filename);
                     
                     if(is_array($row))
@@ -275,7 +275,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/combo_contenido.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/combo_contenido.html";
                     $this->combo_contenido .= file_get_contents($filename);
                     
                     if(is_array($row))
@@ -296,7 +296,7 @@ namespace CEIT\mvc\controllers
 
         public function create_confirm()
         {
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
             
             if(!empty($_POST))
             {
@@ -327,7 +327,7 @@ namespace CEIT\mvc\controllers
                                 $this->result = $this->_model['Textos']->Select($modelTexto);
                                 if(count($this->result) == 1)
                                 {
-                                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
+                                    $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table_row.html";
                                     $this->table_detail .= file_get_contents($filename);
 
                                     foreach($this->result[0] as $key => $value)
@@ -400,7 +400,7 @@ namespace CEIT\mvc\controllers
                     setcookie('TextosAgregados', null, -1);
                     
                     // Redirecciono para ir al inicio de la seccion.
-                    header("Location: index.php?do=/pedidos/index");
+                    header("Location: index.php?do=/estudiantes/index");
                 }
             }
             
@@ -410,7 +410,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/combo_franja.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/combo_franja.html";
                     $this->combo_franja .= file_get_contents($filename);
                     
                     if(is_array($row))
@@ -433,7 +433,7 @@ namespace CEIT\mvc\controllers
         public function create_tp()
         {
             // indico el template a usar
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
             
             if(!empty($_POST) && !empty($_FILES))
             {
@@ -598,12 +598,12 @@ namespace CEIT\mvc\controllers
             }
             
             // indico el template a usar
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
         }
 
         public function detail($id)
         {
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
             
             if(!empty($_POST))
             {
@@ -658,7 +658,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_row.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table_row.html";
                     $this->table_rows .= file_get_contents($filename);
 
                     if(is_array($row))
@@ -727,7 +727,7 @@ namespace CEIT\mvc\controllers
                     }
                     else
                     {
-                        $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_estado_select_option.html";
+                        $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_estado_select_option.html";
                         $this->combo_estado_pedido .= file_get_contents($filename);
 
                         if(is_array($row))
@@ -750,7 +750,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_franja_select_option.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_franja_select_option.html";
                     $this->combo_franja_horario .= file_get_contents($filename);
                     
                     if(is_array($row))
@@ -767,7 +767,7 @@ namespace CEIT\mvc\controllers
         
         public function detail2($id)
         {
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
             
             // seteo el modelo para trabajar con los items del pedido
             $pedidosItems = new models\PedidoModel();
@@ -779,7 +779,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/detail2_table_row.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/detail2_table_row.html";
                     $this->table_rows .= file_get_contents($filename);
 
                     if(is_array($row))
@@ -848,7 +848,7 @@ namespace CEIT\mvc\controllers
                     }
                     else
                     {
-                        $filename = BASE_DIR . "/mvc/templates/pedidos/detail_estado_select_option.html";
+                        $filename = BASE_DIR . "/mvc/templates/estudiantes/detail_estado_select_option.html";
                         $this->combo_estado_pedido .= file_get_contents($filename);
 
                         if(is_array($row))
@@ -871,7 +871,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/detail_franja_select_option.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/detail_franja_select_option.html";
                     $this->combo_franja_horario .= file_get_contents($filename);
                     
                     if(is_array($row))
@@ -888,7 +888,7 @@ namespace CEIT\mvc\controllers
         
         public function detail_item($id)
         {
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
             
             $modelPedidoItem = new models\PedidoItemModel();
             $modelPedidoItem->_idItem = $id;
@@ -907,7 +907,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_select_option.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_select_option.html";
                     $this->combo_estado_item .= file_get_contents($filename);
                     
                     if(is_array($row))
@@ -940,7 +940,7 @@ namespace CEIT\mvc\controllers
         public function index()
         {
             // indico el template a usar
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
             
             // elaboro el parametro
             $pedido = new models\PedidoModel();
@@ -964,50 +964,18 @@ namespace CEIT\mvc\controllers
             if(!empty($_POST))
             {
                 $pedido->_idEstado = filter_input(INPUT_POST, 'ddlEstado', FILTER_SANITIZE_NUMBER_INT);
-                
-                if($hasFullRead)
-                {
-                    if(isset($pedido->_idUsuario))
-                    {
-                        unset($pedido->_idUsuario);
-                    }
-                    
-                    $this->result = $this->_model['Pedidos']->SelectByIdEstado($pedido);
-                }
-                else
-                {
-                    $this->result = $this->_model['Pedidos']->SelectByIdEstado($pedido);
-                }
+                $this->result = $this->_model['Pedidos']->SelectByIdEstado($pedido);
             }
             else
             {
-                // traigo datos de la db.
-                if($hasFullRead)
-                {
-                    $this->result = $this->_model['Pedidos']->Select();
-                }
-                else
-                {
-                    $this->result = $this->_model['Pedidos']->Select($pedido);
-                }
-            }
-            
-            if(in_array($_SESSION['Roles']['Nombre'], array('Estudiante', 'Docente', 'Administrador')))
-            {
-                $file_create_panel = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_create_panel.html";
-                $panel = file_get_contents($file_create_panel);
-                $this->create_panel = $panel;
-            }
-            else
-            {
-                $this->create_panel = "";
+                $this->result = $this->_model['Pedidos']->Select($pedido);
             }
             
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table.html";
                     $this->table_content .= file_get_contents($filename);
 
                     // verifico si trajo 1 o muchos resultados.
@@ -1026,7 +994,7 @@ namespace CEIT\mvc\controllers
                             /*if($hasFullRead)
                             {
                                 // Si tiene todos los permisos, agrego el boton
-                                $file_button = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_button_update.html";
+                                $file_button = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table_button_update.html";
                                 $button = file_get_contents($file_button);
                                 $button = str_replace('{IdPedido}', $id_pedido, $button);
                                 
@@ -1041,7 +1009,7 @@ namespace CEIT\mvc\controllers
                             // BOTON BORRAR PEDIDO
                             if(in_array($_SESSION['Roles']['Nombre'], array('Administrador')))
                             {
-                                $file_button_delete = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_button_delete.html";
+                                $file_button_delete = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table_button_delete.html";
                                 $button = file_get_contents($file_button_delete);
                                 $button = str_replace('{IdPedido}', $id_pedido, $button);
                                 
@@ -1049,7 +1017,7 @@ namespace CEIT\mvc\controllers
                             }
                             elseif(in_array($_SESSION['Roles']['Nombre'], array('Estudiante', 'Docente')) && $row['Estado'] == 'Pendiente')
                             {
-                                $file_button_delete = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}_table_button_delete.html";
+                                $file_button_delete = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table_button_delete.html";
                                 $button = file_get_contents($file_button_delete);
                                 $button = str_replace('{IdPedido}', $id_pedido, $button);
                                 
@@ -1058,16 +1026,6 @@ namespace CEIT\mvc\controllers
                             else
                             {
                                 $this->table_content = str_replace('{button_delete}', "", $this->table_content);
-                            }
-                            
-                            // Modo "solo lectura" segun rol
-                            if(in_array($_SESSION['Roles']['Nombre'], array('Estudiante', 'Docente')))
-                            {
-                                $this->table_content = str_replace('{SoloLectura}', "2", $this->table_content);
-                            }
-                            else
-                            {
-                                $this->table_content = str_replace('{SoloLectura}', "", $this->table_content);
                             }
                         }
                     }
@@ -1085,7 +1043,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/combo_estado.html";
+                    $filename = BASE_DIR . "/mvc/templates/estudiantes/combo_estado.html";
                     $this->combo_estados .= file_get_contents($filename);
                     
                     if(is_array($row))
@@ -1105,106 +1063,7 @@ namespace CEIT\mvc\controllers
 
         public function update($id)
         {
-            $this->_template = BASE_DIR . "/mvc/templates/pedidos/{$this->_action}.html";
-            
-            $modelPedido = new models\PedidoModel();
-            $modelEstadoPedido = new models\PedidoEstadosModel();
-            $modelFranja = new models\HorarioFranjasModel();
-            
-            if(!empty($_POST))
-            {
-                //var_dump($_POST);
-                
-                // Traigo el pedido por que me faltan datos.
-                $modelPedido = new models\PedidoModel();
-                $modelPedido->_idPedido = $id;
-                
-                $pedidoATrabajar = $this->_model['Pedidos']->Select($modelPedido);
-                
-                $modelPedido->_idUsuario = $pedidoATrabajar[0]['IdUsuario'];
-                $modelPedido->_creado = $pedidoATrabajar[0]['Creado'];
-                $modelPedido->_creadoPor = $pedidoATrabajar[0]['CreadoPor'];
-                $modelPedido->_modificado = date("Y-m-d H:i:s");
-                $modelPedido->_modificadoPor = $_SESSION['IdUsuario'];
-                $modelPedido->_anillado = $pedidoATrabajar[0]['Anillado'] == 1 ? true : false;
-                $modelPedido->_comentario = $pedidoATrabajar[0]['Comentario'];
-                $modelPedido->_posicion = filter_input(INPUT_POST, 'txtPosicion', FILTER_SANITIZE_SPECIAL_CHARS);
-                $modelPedido->_retiro = $pedidoATrabajar[0]['Retiro'];
-                $modelPedido->_idFranja = $pedidoATrabajar[0]['IdFranja'];
-                $modelPedido->_pagado = $pedidoATrabajar[0]['Pagado'] == 1 ? true : false;
-                $modelPedido->_idEstado = filter_input(INPUT_POST, 'ddlEstado', FILTER_SANITIZE_NUMBER_INT);
-                $this->result = $this->_model['Pedidos']->Update(array($modelPedido));
-            }
-            
-            if(isset($modelPedido->_idUsuario))
-            {
-                unset($modelPedido->_idUsuario);
-            }
-            
-            $modelPedido->_idPedido = $id;
-            $this->result = $this->_model['Pedidos']->Select($modelPedido);
-            //var_dump($this->result);
-            foreach($this->result[0] as $key => $value)
-            {
-                if($key == 'Anillado')
-                {
-                    $this->Anillado = $value == 1 ? 'checked="checked"' : '';
-                }
-                else
-                {
-                    $this->{$key} = $value;
-                }
-            }
-            unset($this->result);
-
-            $modelEstadoPedido->_idPedido = $id;
-            $this->result = $this->_model['PedidoEstados']->SelectByIdPedido($modelEstadoPedido);
-            //var_dump($this->result);
-            if(count($this->result) > 0)
-            {
-                foreach($this->result as $row)
-                {
-                    if(is_array($row))
-                    {
-                        if($row['Descripcion'] == "Entregado" || $row['Descripcion'] == "Cancelado")
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            $filename = BASE_DIR . "/mvc/templates/pedidos/detail_estado_select_option.html";
-                            $this->combo_estado_pedido .= file_get_contents($filename);
-                            
-                            foreach($row as $key => $value)
-                            {
-                                $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
-                            }
-                        }
-                    }
-                }
-            }
-            unset($this->result);
-
-            $modelFranja->_idPedido = $id;
-            $this->result = $this->_model['Franjas']->SelectByIdPedido($modelFranja);
-            //var_dump($this->result);
-            if(count($this->result) > 0)
-            {
-                foreach($this->result as $row)
-                {
-                    $filename = BASE_DIR . "/mvc/templates/pedidos/detail_franja_select_option.html";
-                    $this->combo_franja_horario .= file_get_contents($filename);
-
-                    if(is_array($row))
-                    {
-                        foreach($row as $key => $value)
-                        {
-                            $this->combo_franja_horario = str_replace('{' . $key . '}', $value, $this->combo_franja_horario);
-                        }
-                    }
-                }
-            }
-            unset($this->result);
+            // Un estudiante o docente no puede modificar el pedido realizado.
         }
         
         // AJAX actions
@@ -1229,20 +1088,6 @@ namespace CEIT\mvc\controllers
                 $materiaModel = new models\MateriaModel();
                 $materiaModel->_idNivel = filter_input(INPUT_POST, 'idNivel', FILTER_SANITIZE_NUMBER_INT);
                 $this->result = $this->_model['Materias']->SelectByIdNivel($materiaModel);
-            }
-        }
-        
-        public function ajax_detail_item_change_status()
-        {
-            if(!empty($_POST))
-            {
-                $this->ajaxRequest = true;
-                
-                $modelPedidoItem = new models\PedidoItemModel();
-                $modelPedidoItem->_idItem = filter_input(INPUT_POST, "idItem", FILTER_SANITIZE_NUMBER_INT);
-                $modelPedidoItem->_idEstado = filter_input(INPUT_POST, "toValue", FILTER_SANITIZE_STRING) == "true" ? 3 : 2;
-                
-                $this->result = $this->_model['PedidoItems']->UpdateEstado(array($modelPedidoItem));
             }
         }
     }

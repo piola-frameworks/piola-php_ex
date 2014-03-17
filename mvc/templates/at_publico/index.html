@@ -22,11 +22,12 @@
                 <tr>
                     <th>Id</th>
                     <th>Legajo</th>
-                    <th>Descripcion</th>
+                    <th>Apellido</th>
+                    <!-- <th>Descripcion</th> -->
                     <th>Posicion</th>
-                    <th>Retiro</th>
+                    <th>Fecha</th>
                     <th>Franja</th>
-                    <th>Acciones</th>
+                    <th>&iquest;Entregado?</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,3 +36,24 @@
         </table>
     </div>
 </div>
+<script type="text/javascript">
+    function postChangeItemStatus(item, value){
+        $.post(
+            "index.php?do=/atpublico/ajax_detail_item_change_status",
+            {
+                idPedido: item,
+                toValue: value
+            }
+        ).fail(function(){
+            alert("error");
+        });
+    }
+    
+    $(".chkEntregado").change(function(){
+        if(this.checked) {
+            postChangeItemStatus(this.value, true);
+        } else {
+            postChangeItemStatus(this.value, false);
+        }
+    });
+</script>

@@ -28,9 +28,16 @@ namespace CEIT\mvc\controllers
         
         public function __destruct()
         {
-            unset($this->result);
+            if($this->ajaxRequest)
+            {
+                $this->_view->json($this->result);
+            }
+            else 
+            {
+                $this->_view->render($this->_template, $this->_dataCollection);
+            }
             
-            $this->_view->render($this->_template, $this->_dataCollection);
+            unset($this->result);
             
             parent::__destruct();
         }
@@ -67,6 +74,10 @@ namespace CEIT\mvc\controllers
                         }
                     }
                 }
+            }
+            else
+            {
+                $this->table_content = "";
             }
             unset($this->result);
         }
@@ -115,6 +126,21 @@ namespace CEIT\mvc\controllers
                 
                 $this->_model['Pedidos']->Update(array($pedido));
                 unset($this->result1);
+            }
+        }
+        
+        // AJAX actions        
+        public function ajax_detail_item_change_status()
+        {
+            if(!empty($_POST))
+            {
+                $this->ajaxRequest = true;
+                
+                $modelPedido = new models\PedidoModel();
+                $modelPedido->_idPedido = filter_input(INPUT_POST, "idPedido", FILTER_SANITIZE_NUMBER_INT);
+                $modelPedido->_idEstado = filter_input(INPUT_POST, "toValue", FILTER_SANITIZE_STRING) == "true" ? 5 : 4;
+                
+                $this->result = $this->_model['Pedidos']->UpdateEstado(array($modelPedido));
             }
         }
     }

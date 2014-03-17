@@ -16,7 +16,8 @@ namespace CEIT\core
             $dataCollection['nav_links'] = file_get_contents($filename);*/
             
             $navArray = array(
-                'Pedidos'           =>  '<li><a href="index.php?do=/pedidos/index">Pedidos</a></li>',
+                'Estudiante'        =>  '<li><a href="index.php?do=/estudiante/index">Pedidos</a></li>',
+                'Preparador'        =>  '<li><a href="index.php?do=/preparador/index">Pedidos</a></li>',
                 'Textos'            =>  '<li><a href="index.php?do=/textos/index">Textos</a></li>',
                 'Gabinete'          =>  '<li><a href="index.php?do=/gabinete/index">Gabinete</a></li>',
                 'AtPublico'         =>  '<li><a href="index.php?do=/atpublico/index">At. Publico</a></li>',
@@ -32,10 +33,11 @@ namespace CEIT\core
                     switch($role)
                     {
                         case "Preparador":
-                            $dataCollection['nav_links'] = $navArray['Pedidos'] . "\n";
+                            $dataCollection['nav_links'] = $navArray['Preparador'] . "\n";
                             break;
                         case "Administrador":
-                            $dataCollection['nav_links'] = $navArray['Pedidos'] . "\n" . 
+                            $dataCollection['nav_links'] = $navArray['Estudiante'] . "\n" . 
+                                                            $navArray['Preparador'] . "\n" . 
                                                             $navArray['Textos'] . "\n" . 
                                                             $navArray['Gabinete'] . "\n" . 
                                                             $navArray['AtPublico'] . "\n" . 
@@ -56,11 +58,11 @@ namespace CEIT\core
                             $dataCollection['nav_links'] = $navArray['AtPublico'] . "\n";
                             break;
                         case "Docente":
-                            $dataCollection['nav_links'] = $navArray['Pedidos'] . "\n" .
+                            $dataCollection['nav_links'] = $navArray['Estudiante'] . "\n" .
                                                             $navArray['Textos'] . "\n";
                             break;
                         case "Estudiante":
-                            $dataCollection['nav_links'] = $navArray['Pedidos'] . "\n";
+                            $dataCollection['nav_links'] = $navArray['Estudiante'] . "\n";
                             break;
                         
                     }

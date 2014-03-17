@@ -22,7 +22,7 @@ namespace CEIT\mvc\models
                 ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Insert(array $model)
@@ -44,7 +44,8 @@ namespace CEIT\mvc\models
                     ':modificadoDia'    =>  is_null($item->_modificadoDia) ? null : (string)$item->_creadoDia,
                     ':anillado'         =>  (bool)$item->_anillado,
                     ':comentario'       =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
-                    ':posicion'         =>  is_null($item->_posicion) ? null : (string)$item->_posicion,
+                    ':posicionX'        =>  is_null($item->_posicionX) ? 1 : (int)$item->_posicionX,
+                    ':posicionY'        =>  is_null($item->_posicionY) ? 1 : (int)$item->_posicionY,
                     ':retiro'           =>  (string)$item->_retiro,
                     ':idFranja'         =>  (int)$item->_idFranja,
                     ':pagado'           =>  (bool)$item->_pagado,
@@ -203,7 +204,8 @@ namespace CEIT\mvc\models
                     ':modificadoPor'    =>  (int)$item->_modificadoPor,
                     ':anillado'         =>  (bool)$item->_anillado,
                     ':comentario'       =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
-                    ':posicion'         =>  is_null($item->_posicion) ? null : (string)$item->_posicion,
+                    ':posicionX'        =>  is_null($item->_posicionX) ? 1 : (int)$item->_posicionX,
+                    ':posicionY'        =>  is_null($item->_posicionY) ? 1 : (int)$item->_posicionY,
                     ':retiro'           =>  (string)$item->_retiro,
                     ':idFranja'         =>  (int)$item->_idFranja,
                     ':pagado'           =>  (bool)$item->_pagado,
@@ -211,7 +213,26 @@ namespace CEIT\mvc\models
                 ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+        }
+        
+        public function UpdateEstado(array $model)
+        {
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
+            
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_updPedidoEstado");
+                array_push($this->_params, array(
+                    ':idPedido'         =>  (int)$item->_idPedido,
+                    ':idEstado'         =>  (int)$item->_idEstado,
+                ));
+            }
+            
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
     }
 }

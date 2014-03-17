@@ -62,9 +62,14 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Legajo/Usuario</th>
+                                <th>DNI</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Fecha</th>
+                                <th>Franja</th>
+                                <!-- <th>Legajo/Usuario</th>
                                 <th>Comentario</th>
-                                <th>Anillado</th>
+                                <th>Anillado</th> -->
                                 <!-- <th>Retiro</th>
                                 <th>Horario</th>
                                 <th>Estado</th> -->
@@ -103,6 +108,7 @@
                                     <select class="form-control" name="ddlItemTipo">
                                         <option value="LIB">Art. de Libreria</option>
                                         <option value="FOS">Fotocopias Sueltas</option>
+                                        <option value="ANI">Anillado</option>
                                     </select>
                                     <!-- <input class="form-control" name="txtIdItem" type="text" required="required" /> -->
                                 </td>
@@ -132,14 +138,14 @@
     </div>
 </div>
 <script type="text/javascript">
-    $('select[name=ddlItemTipo]').change(function() {
+    /*$('select[name=ddlItemTipo]').change(function() {
         if($('select[name=ddlItemTipo]').val() === "LIB") {
             $('input[name=txtCantidad]').val(1);
             $('input[name=txtCantidad]').attr("readonly", "readonly");
         } else {
             $('input[name=txtCantidad]').removeAttr("readonly");
         }
-    });
+    });*/
     
     /*$('input[name=txtPrecioUnitario]').change(function() {
         var precio = $('input[name=txtPrecioUnitario]').val();
@@ -147,7 +153,7 @@
         var importe = precio * cant;
 
         $('input[name=txtImporte]').val(importe.toFixed(2));
-    });
+    });estas a fill
 
     $('input[name=txtCantidad]').change(function() {
         var precio = $('input[name=txtPrecioUnitario]').val();

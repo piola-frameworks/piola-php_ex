@@ -277,6 +277,10 @@ namespace CEIT\mvc\controllers
                     }
                 }
             }
+            else
+            {
+                $this->table_2_content = "";
+            }
             unset($this->result);
             
             if($reloadFlag)
