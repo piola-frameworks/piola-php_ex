@@ -1,0 +1,116 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Mi perfil</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" method="POST" role="form">
+            <fieldset>
+                <div class="form-group">
+                    <label for="txtLegajo" class="col-sm-2 control-label">Legajo</label>
+                    <div class="col-sm-4">
+                        <input id="txtLegajo" class="form-control" name="txtLegajo" type="text" value="{Legajo}" placeholder="Legajo" readonly="readonly" />
+                    </div>
+                    <label for="txtDNI" class="col-sm-2 control-label">DNI</label>
+                    <div class="col-sm-4">
+                        <input id="txtDNI" class="form-control" name="txtDNI" type="number" value="{DNI}" min="1" max="99999999" step="1" placeholder="DNI" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="ddlCarrera" class="col-sm-2 control-label">Carrera</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name="ddlCarrera" required="required">
+                            {combo_carrera}
+                        </select>
+                    </div>
+                </div>
+                <div id="pnlUsuario" class="form-group">
+                    <label for="txtUsuario" class="col-sm-2 control-label">Usuario</label>
+                    <div class="col-sm-10">
+                        <input id="txtUsuario" class="form-control" name="txtUsuario" type="text" value="{Usuario}" maxlength="20" placeholder="Usuario" required="required">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtContrasena1" class="col-sm-2 control-label">Contrase&ntilde;a</label>
+                    <div class="col-sm-4">
+                        <input id="txtContrasena1" class="form-control" name="txtContrasena1" type="password" value="{Contrasena}" placeholder="Contrase&ntilde;a" required="required">
+                    </div>
+                    <label for="txtContrasena1" class="col-sm-2 control-label">Verificacion</label>
+                    <div class="col-sm-4">
+                        <input id="txtContrasena2" class="form-control" name="txtContrasena2" type="password" placeholder="Verificacion contrase&ntilde;a" required="required">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtNombre" class="col-sm-2 control-label">Nombre</label>
+                    <div class="col-sm-4">
+                        <input id="txtNombre" class="form-control" name="txtNombre" type="text" placeholder="Nombre" required="required">
+                    </div>
+                    <label for="txtApellido" class="col-sm-2 control-label">Apellido</label>
+                    <div class="col-sm-4">
+                        <input id="txtApellido" class="form-control" name="txtApellido" type="text" placeholder="Apellido" required="required">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtEmail" class="col-sm-2 control-label">Email</label>
+                    <div class="col-sm-10">
+                        <input id="txtEmail" class="form-control" name="txtEmail" type="email" placeholder="Correo electronico" required="required">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txtTelefono" class="col-sm-2 control-label">Telefono</label>
+                    <div class="col-sm-4">
+                        <input id="txtTelefono" class="form-control" name="txtTelefono" type="tel" placeholder="Telefono" value="{Telefono}" required="required">
+                    </div>
+                    <label for="txtCelular" class="col-sm-2 control-label">Celular</label>
+                    <div class="col-sm-4">
+                        <input id="txtCelular" class="form-control" name="txtCelular" type="tel" placeholder="Celular" value="{Celular}">
+                    </div>
+                </div>
+            </fieldset>
+            <button class="btn btn-success" name="btnGuardar" type="submit">Guardar</button>
+            <button class="btn btn-default" type="reset">Limpiar</button>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#txtUsuario").change(function() {
+        $("#pnlUsuario").removeClass("has-success has-feedback");
+        $("#pnlUsuario").removeClass("has-error has-feedback");
+        
+        console.debug($("#txtUsuario").parent().has("span"));
+        if($("#txtUsuario").parent().has("span").length > 0) {    
+            $("#txtUsuario").parent().remove("span");
+        }
+        
+        $.ajax({
+            "url": "index.php?do=/user/ajax_check_available_user",
+            "type": "POST",
+            "async": true,
+            "data": {
+                usuario: $(this).val()
+            },
+            "success": function(result) {
+                //console.log(result);
+                switch(result) {
+                    case "[false]":
+                        $("#pnlUsuario").addClass("has-error has-feedback");
+                        if($("#txtUsuario").parent().has("span").length == 0) {
+                            $("#txtUsuario").parent().append("<span class=\"glyphicon glyphicon-remove form-control-feedback\"></span>");
+                        }
+                        break;
+                    case "[true]":
+                        $("#pnlUsuario").addClass("has-success has-feedback");
+                        if($("#txtUsuario").parent().has("span").length == 0) {
+                            $("#txtUsuario").parent().append("<span class=\"glyphicon glyphicon-ok form-control-feedback\"></span>");
+                        }
+                        break;
+                    default:
+                        console.error("La logica del sistema fallo.", result);
+                        break;
+                }
+            },
+            "error": function(result) {
+                //console.error(result);
+            }
+         });
+    });
+</script>

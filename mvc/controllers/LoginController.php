@@ -54,15 +54,81 @@ namespace CEIT\mvc\controllers
                 
                 if(count($this->result) == 1)
                 {
-                    if($this->result[0]['Contrasena'] == filter_input(INPUT_POST, 'txtPassword', FILTER_SANITIZE_FULL_SPECIAL_CHARS))
+                    var_dump($this->result);
+                    
+                    $contrasena = filter_input(INPUT_POST, 'txtPassword', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    if(!empty($contrasena) && $this->result[0]['Contrasena'] == $contrasena)
                     {
+                        $filledData = true;
+                        
+                        foreach($this->result[0] as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case 'Usuario':
+                                    if(empty($value))
+                                    {
+                                        $filledData = false;
+                                    }
+                                    break;
+                                case 'Contraseña':
+                                    if(empty($value))
+                                    {
+                                        $filledData = false;
+                                    }
+                                    break;
+                                case 'Nombre':
+                                    if(empty($value))
+                                    {
+                                        $filledData = false;
+                                    }
+                                    break;
+                                case 'Apellido':
+                                    if(empty($value))
+                                    {
+                                        $filledData = false;
+                                    }
+                                    break;
+                                case 'DNI':
+                                    if(empty($value))
+                                    {
+                                        $filledData = false;
+                                    }
+                                    break;
+                                case 'Legajo':
+                                    if(empty($value))
+                                    {
+                                        $filledData = false;
+                                    }
+                                    break;
+                                case 'IdCarrera':
+                                    if(empty($value))
+                                    {
+                                        $filledData = false;
+                                    }
+                                    break;
+                                case 'Email':
+                                    if(empty($value))
+                                    {
+                                        $filledData = false;
+                                    }
+                                    break;
+                            }
+                            
+                            // Salgo del bucle apenas encuentro un dato no encontrado.
+                            if(!$filledData)
+                            {
+                                break;
+                            }
+                        }
+                        
                         // inicio sesion
                         $lifeTime = 0;
-                        if(filter_input(INPUT_POST, 'chkRememberMe', FILTER_SANITIZE_STRING) == 'checked')
+                        $checked = filter_input(INPUT_POST, 'chkRememberMe', FILTER_SANITIZE_STRING);
+                        if(!empty($checked) && $checked == 'checked')
                         {
                             $lifeTime = time() + 3600;
                         }
-                        
                         setcookie(session_name(), session_id(), $lifeTime);
                         
                         // pongo inicio de session
@@ -83,22 +149,44 @@ namespace CEIT\mvc\controllers
                         {
                             // Desde cuando un usuario puede tener mas de un rol?
                         }
-                        
-                        //var_dump($_SESSION);
+                        unset($this->result2);
                         
                         // redirecciono
-                        header("Location: index.php?do=/dashboard/index");
+                        if(!$filledData)
+                        {
+                            switch($this->result[0]['TipoUsuario'])
+                            {
+                                case 'Estudiante':
+                                    header("Location: index.php?do=/user/fill_estudiante/" . $this->result[0]['IdUsuario']);
+                                    break;
+                                case 'Docente':
+                                    header("Location: index.php?do=/user/fill_docente/" . $this->result[0]['IdUsuario']);
+                                    break;
+                                case 'Operario':
+                                    header("Location: index.php?do=/user/fill_operador/" . $this->result[0]['IdUsuario']);
+                                    break;
+                                default:
+                                    //trigger_error("Es otro tipo de operador que no estaba contemplado?", E_USER_ERROR);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            header("Location: index.php?do=/dashboard/index");
+                        }
                     }
                     else
                     {
                         // no coincidio la contrasena
                         // trigger_error("No coincidio la contrasena del usuario ingresado.", E_USER_NOTICE);
+                        $this->_template = BASE_DIR . "/mvc/templates/login/wrongpass.html";
                     }
                 }
                 else
                 {
                     // no encontro a ningun usuario
                     // trigger_error("No ningun usuario con ese nombre.", E_USER_NOTICE);
+                    $this->_template = BASE_DIR . "/mvc/templates/login/wronguser.html";
                 }
             }
             else

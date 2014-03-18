@@ -6,58 +6,80 @@ namespace CEIT\mvc\models
     
     final class DocenteModel extends core\AModel
     {
-        public function Delete(core\AModel $model)
+        public function Delete(array $model)
         {
-            $params = array(
-                ':id'   =>  $model->_idUsuario,
-            );
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
             
-            $this->_gdb->DoQuery("sp_delUsuarios", $params);
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_delDocente");
+                array_push($this->_params, array(
+                    ':idDocente' =>  (int)$item->_idDocente,
+                ));
+            }
+            
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
 
-        public function Insert(core\AModel $model)
+        public function Insert(array $model)
         {
-            $params = array(
-                ":idAlumno"     =>  $model->_idAlumno,
-                ":nombre"       =>  $model->_nombre,
-                ":apellido"     =>  $model->_apellido,
-                ":contrasena"   =>  $model->_contrasena,
-                ":comentario"   =>  $model->_comentario,
-                ":privilegio"   =>  $model->_privilegio,
-            );
-
-            $this->_gdb->DoScalar("sp_insUsuario", $params);
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
+            
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_insDocente");
+                array_push($this->_params, array(
+                    ':idPersona'    =>  (int)$item->_idPersona,
+                    ':legajo'       =>  (string)$item->_legajo,
+                ));
+            }
+            
+            return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Select(core\AModel $model = null)
         {
             if($model != null)
             {
-                $params = array(
-                    ':id'   =>  $model->_data["_idUsuario"],
+                $this->_sp = "sp_selDocente";
+                $this->_params = array(
+                    ':idDocente'   =>  (int)$model->_idDocente,
                 );
 
-                return $this->_gdb->DoQuery("sp_selUsuario", $params);
+                return Database::getInstance()->DoQuery($this->_sp, $this->_params);
             }
             else
             {
-                return $this->_gdb->DoQuery("sp_selUsuarios");
+                $this->_sp = "sp_selDocentes";
+                
+                return Database::getInstance()->DoQuery($this->_sp);
             }
         }
 
-        public function Update(core\AModel $model)
+        public function Update(array $model)
         {
-            $params = array(
-                ":idUsuario"    =>  $model->_idUsuario,
-                ":idAlumno"     =>  $model->_idAlumno,
-                ":nombre"       =>  $model->_nombre,
-                ":apellido"     =>  $model->_apellido,
-                ":contrasena"   =>  $model->_contrasena,
-                ":comentario"   =>  $model->_comentario,
-                ":privilegio"   =>  $model->_privilegio,
-            );
-
-            $this->_gdb->DoNonQuery("sp_updUsuario", $params);
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
+            
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_updEstudiante");
+                array_push($this->_params, array(
+                    ':idDocente'    =>  (int)$item->_idDocente,
+                    ':idPersona'    =>  (int)$item->_idPersona,
+                    ':legajo'       =>  (string)$item->_legajo,
+                ));
+            }
+            
+            return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
     }
 }

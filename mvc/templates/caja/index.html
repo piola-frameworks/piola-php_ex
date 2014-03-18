@@ -106,9 +106,9 @@
                             <tr>
                                 <td>
                                     <select class="form-control" name="ddlItemTipo">
+                                        <option value="ANI">Anillado</option>
                                         <option value="LIB">Art. de Libreria</option>
                                         <option value="FOS">Fotocopias Sueltas</option>
-                                        <option value="ANI">Anillado</option>
                                     </select>
                                     <!-- <input class="form-control" name="txtIdItem" type="text" required="required" /> -->
                                 </td>
@@ -138,14 +138,14 @@
     </div>
 </div>
 <script type="text/javascript">
-    /*$('select[name=ddlItemTipo]').change(function() {
-        if($('select[name=ddlItemTipo]').val() === "LIB") {
+    $('select[name=ddlItemTipo]').change(function() {
+        if($('select[name=ddlItemTipo]').val() === "ANI") {
             $('input[name=txtCantidad]').val(1);
             $('input[name=txtCantidad]').attr("readonly", "readonly");
         } else {
             $('input[name=txtCantidad]').removeAttr("readonly");
         }
-    });*/
+    });
     
     /*$('input[name=txtPrecioUnitario]').change(function() {
         var precio = $('input[name=txtPrecioUnitario]').val();

@@ -55,6 +55,8 @@ namespace CEIT\mvc\controllers
         {
             $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
             
+            $reloadFlag = false;
+            
             /*
              * Formato del cookie
              * 
@@ -126,6 +128,8 @@ namespace CEIT\mvc\controllers
                 // Si se agrego un texto, va a parar a la cookie.
                 if(isset($_POST['btnAgregarTexto']))
                 {
+                    $reloadFlag = true;
+                    
                     // Saco el dato de interes del POST.
                     $postIdTexto = filter_input(INPUT_POST, 'btnAgregarTexto', FILTER_SANITIZE_NUMBER_INT);
                     
@@ -163,6 +167,8 @@ namespace CEIT\mvc\controllers
                 // Si se quita un detalle, lo quito de la cookie.
                 if(isset($_POST['btnQuitarDetalle']))
                 {
+                    $reloadFlag = true;
+                    
                     // Saco el dato de interes del POST.
                     $postIdTexto = filter_input(INPUT_POST, 'btnQuitarDetalle', FILTER_SANITIZE_NUMBER_INT);
                     if(!empty($postIdTexto))
@@ -291,7 +297,12 @@ namespace CEIT\mvc\controllers
             {
                 $this->combo_contenido = "";
             }
-            unset($this->result);   
+            unset($this->result);
+            
+            if($reloadFlag)
+            {
+                header("Location: index.php?do=/estudiante/create");
+            }
         }
 
         public function create_confirm()
@@ -400,7 +411,7 @@ namespace CEIT\mvc\controllers
                     setcookie('TextosAgregados', null, -1);
                     
                     // Redirecciono para ir al inicio de la seccion.
-                    header("Location: index.php?do=/estudiantes/index");
+                    header("Location: index.php?do=/estudiante/index");
                 }
             }
             

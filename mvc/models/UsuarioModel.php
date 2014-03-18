@@ -57,7 +57,7 @@ namespace CEIT\mvc\models
         
         public function SelectByUsername(core\AModel $model)
         {
-            $this->_sp = "sp_selUsuarioByLegajoOrUsername";
+            $this->_sp = "sp_selUsuarioByUsernameOrDNI";
             $this->_params = array(
                 ':username'   =>  $model->_username,
             );

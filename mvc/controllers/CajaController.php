@@ -52,7 +52,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'Caja'));
                 
@@ -91,7 +91,21 @@ namespace CEIT\mvc\controllers
                     $reloadFlag = true;
                     
                     $variosIdItem = filter_input(INPUT_POST, 'ddlItemTipo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $variosDesc =  $variosIdItem == "LIB" ? "Art(s) de Libreria" : "Fotocopia(s) Suelta(s)"; //filter_input(INPUT_POST, 'txtDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    switch($variosIdItem)
+                    {
+                        case 'LIB':
+                            $variosDesc = "Art(s) de Libreria";
+                            break;
+                        case 'ART':
+                            $variosDesc = "Fotocopia(s) Suelta(s)";
+                            break;
+                        case 'ANI':
+                            $variosDesc = "Anillado";
+                        
+                        default:
+                            //filter_input(INPUT_POST, 'txtDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                            break;
+                    }
                     $variosPU = filter_input(INPUT_POST, 'txtImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
                     $variosCant = filter_input(INPUT_POST, 'txtCantidad', FILTER_SANITIZE_NUMBER_INT);
                     $variosImp = filter_input(INPUT_POST, 'txtImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);

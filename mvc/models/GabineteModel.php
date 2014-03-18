@@ -16,20 +16,13 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_delGabinetePedido"
-                );
-                
-                array_push(
-                    $this->_params,
-                    array(
-                        ':idGabinetePedido' =>  (int)$item->_idGabinetePedido,
-                    )
-                );
+                array_push($this->_sp, "sp_delGabinetePedido");
+                array_push($this->_params, array(
+                    ':idGabinetePedido' =>  (int)$item->_idGabinetePedido,
+                ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Insert(array $model)
@@ -41,20 +34,13 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_insGabinetePedido"
-                );
-                
-                array_push(
-                    $this->_params,
-                    array(
-                        ':idGabinetePedido' =>  (int)$item->_idGabinetePedido,
-                    )
-                );
+                array_push($this->_sp, "sp_insGabinetePedido");
+                array_push($this->_params, array(
+                    ':idGabinetePedido' =>  (int)$item->_idGabinetePedido,
+                ));
             }
             
-            Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Select(core\AModel $model = null)
@@ -85,20 +71,14 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_updGabinetePedido"
-                );
+                array_push($this->_sp, "sp_updGabinetePedido");
                 
-                array_push(
-                    $this->_params,
-                    array(
-                        ':idGabinetePedido' =>  (int)$item->_idGabinetePedido,
-                    )
-                );
+                array_push($this->_params, array(
+                    ':idGabinetePedido' =>  (int)$item->_idGabinetePedido,
+                ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
     }
 }
