@@ -9,27 +9,45 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
-            $this->_sp = "sp_delUsuarios";
-            $this->_params = array(
-                ':id'   =>  $model->_idUsuario,
-            );
-
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
+            
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_delUsuarios");
+                array_push($this->_params, array(
+                    ':idUsuario'   =>  (int)$item->_idUsuario,
+                ));
+            }
+            
+            
+            
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Insert(array $model)
         {
-            $this->_sp = "sp_insUsuario";
-            $this->_params = array(
-                ":idAlumno"     =>  $model->_idAlumno,
-                ":nombre"       =>  $model->_nombre,
-                ":apellido"     =>  $model->_apellido,
-                ":contrasena"   =>  $model->_contrasena,
-                ":comentario"   =>  $model->_comentario,
-                ":privilegio"   =>  $model->_privilegio,
-            );
-
-            Database::getInstance()->DoScalar($this->_sp, $this->_params);
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
+            
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_insUsuario");
+                array_push($this->_params, array(
+                    ":idPersona"    =>  is_null($item->_idPersona) ? null : $model->_idPersona,
+                    ":nombre"       =>  is_null($item->_nombre) ? null : (string)$model->_nombre,
+                    ":apellido"     =>  is_null($item->_apellido) ? null : (string)$model->_apellido,
+                    ":contrasena"   =>  is_null($item->_contrasena) ? null : (string)$model->_contrasena,
+                    ":comentario"   =>  is_null($item->_comentario) ? null : (string)$model->_comentario,
+                    ":email"        =>  (bool)$model->_email,
+                ));
+            }
+            
+            return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Select(core\AModel $model = null)
@@ -60,6 +78,16 @@ namespace CEIT\mvc\models
             $this->_sp = "sp_selUsuarioByUsernameOrDNI";
             $this->_params = array(
                 ':username'   =>  $model->_username,
+            );
+
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        public function SelectByEmail(core\AModel $model)
+        {
+            $this->_sp = "sp_selUsuarioByEmail";
+            $this->_params = array(
+                ':username'   =>  $model->_email,
             );
 
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
@@ -111,18 +139,25 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
-            $this->_sp = "sp_updUsuario";
-            $this->_params = array(
-                ":idUsuario"    =>  $model->_idUsuario,
-                ":idAlumno"     =>  $model->_idAlumno,
-                ":nombre"       =>  $model->_nombre,
-                ":apellido"     =>  $model->_apellido,
-                ":contrasena"   =>  $model->_contrasena,
-                ":comentario"   =>  $model->_comentario,
-                ":privilegio"   =>  $model->_privilegio,
-            );
+            if(count($model) > 1)
+            {
+                $this->_trans = true;
+            }
+            
+            foreach($model as $item)
+            {
+                array_push($this->_sp, "sp_updUsuario");
+                array_push($this->_params, array(
+                    ":idUsuario"    =>  (int)$item->_idUsuario,
+                    ":idPersona"    =>  is_null($item->_idPersona) ? null : (int)$model->_idPersona,
+                    ":usuario"      =>  is_null($item->_usuario) ? null : (string)$model->_usuario,
+                    ":contrasena"   =>  is_null($item->_contrasena) ? null : (string)$model->_contrasena,
+                    ":comentario"   =>  is_null($item->_comentario) ? null : (string)$model->_comentario,
+                    ":email"        =>  (bool)$model->_emailValidado,
+                ));
+            }
 
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
     }
 }

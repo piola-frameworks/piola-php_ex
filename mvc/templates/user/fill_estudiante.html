@@ -5,16 +5,9 @@
     <div class="panel-body">
         <form class="form-horizontal" method="POST" role="form">
             <fieldset>
-                <div class="form-group">
-                    <label for="txtLegajo" class="col-sm-2 control-label">Legajo</label>
-                    <div class="col-sm-4">
-                        <input id="txtLegajo" class="form-control" name="txtLegajo" type="text" value="{Legajo}" placeholder="Legajo" readonly="readonly" />
-                    </div>
-                    <label for="txtDNI" class="col-sm-2 control-label">DNI</label>
-                    <div class="col-sm-4">
-                        <input id="txtDNI" class="form-control" name="txtDNI" type="number" value="{DNI}" min="1" max="99999999" step="1" placeholder="DNI" readonly="readonly">
-                    </div>
-                </div>
+                <input name="hidIdPersona" type="hidden" value="{IdPersona}" />
+                <input name="hidLegajo" type="hidden" value="{Legajo}" />
+                <input name="hidDNI" type="hidden" value="{DNI}" />
                 <div class="form-group">
                     <label for="ddlCarrera" class="col-sm-2 control-label">Carrera</label>
                     <div class="col-sm-10">
@@ -23,46 +16,46 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="txtNombre" class="col-sm-2 control-label">Nombre</label>
+                    <div class="col-sm-4">
+                        <input id="txtNombre" class="form-control" name="txtNombre" type="text" maxlength="50" value="{Nombre}" placeholder="Nombre" required="required">
+                    </div>
+                    <label for="txtApellido" class="col-sm-2 control-label">Apellido</label>
+                    <div class="col-sm-4">
+                        <input id="txtApellido" class="form-control" name="txtApellido" type="text" maxlength="50" value="{Apellido}" placeholder="Apellido" required="required">
+                    </div>
+                </div>
                 <div id="pnlUsuario" class="form-group">
                     <label for="txtUsuario" class="col-sm-2 control-label">Usuario</label>
                     <div class="col-sm-10">
                         <input id="txtUsuario" class="form-control" name="txtUsuario" type="text" value="{Usuario}" maxlength="20" placeholder="Usuario" required="required">
                     </div>
                 </div>
-                <div class="form-group">
+                <div id="pnlContrasena" class="form-group">
                     <label for="txtContrasena1" class="col-sm-2 control-label">Contrase&ntilde;a</label>
                     <div class="col-sm-4">
-                        <input id="txtContrasena1" class="form-control" name="txtContrasena1" type="password" value="{Contrasena}" placeholder="Contrase&ntilde;a" required="required">
+                        <input id="txtContrasena1" class="form-control" name="txtContrasena1" type="password" value="{Contrasena}" maxlength="20" placeholder="Contrase&ntilde;a" required="required">
                     </div>
                     <label for="txtContrasena1" class="col-sm-2 control-label">Verificacion</label>
                     <div class="col-sm-4">
-                        <input id="txtContrasena2" class="form-control" name="txtContrasena2" type="password" placeholder="Verificacion contrase&ntilde;a" required="required">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="txtNombre" class="col-sm-2 control-label">Nombre</label>
-                    <div class="col-sm-4">
-                        <input id="txtNombre" class="form-control" name="txtNombre" type="text" placeholder="Nombre" required="required">
-                    </div>
-                    <label for="txtApellido" class="col-sm-2 control-label">Apellido</label>
-                    <div class="col-sm-4">
-                        <input id="txtApellido" class="form-control" name="txtApellido" type="text" placeholder="Apellido" required="required">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="txtEmail" class="col-sm-2 control-label">Email</label>
-                    <div class="col-sm-10">
-                        <input id="txtEmail" class="form-control" name="txtEmail" type="email" placeholder="Correo electronico" required="required">
+                        <input id="txtContrasena2" class="form-control" name="txtContrasena2" type="password" maxlength="20" placeholder="Verificacion contrase&ntilde;a" required="required">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="txtTelefono" class="col-sm-2 control-label">Telefono</label>
                     <div class="col-sm-4">
-                        <input id="txtTelefono" class="form-control" name="txtTelefono" type="tel" placeholder="Telefono" value="{Telefono}" required="required">
+                        <input id="txtTelefono" class="form-control" name="txtTelefono" type="tel" placeholder="Telefono" value="{Telefono}">
                     </div>
                     <label for="txtCelular" class="col-sm-2 control-label">Celular</label>
                     <div class="col-sm-4">
                         <input id="txtCelular" class="form-control" name="txtCelular" type="tel" placeholder="Celular" value="{Celular}">
+                    </div>
+                </div>
+                <div id="pnlEmail" class="form-group">
+                    <label for="txtEmail" class="col-sm-2 control-label">Email</label>
+                    <div class="col-sm-10">
+                        <input id="txtEmail" class="form-control" name="txtEmail" type="email" maxlength="100" value="{Email}" placeholder="Correo electronico" required="required">
                     </div>
                 </div>
             </fieldset>
@@ -72,36 +65,27 @@
     </div>
 </div>
 <script type="text/javascript">
-    $("#txtUsuario").change(function() {
+    function validateUserName(username) {
         $("#pnlUsuario").removeClass("has-success has-feedback");
         $("#pnlUsuario").removeClass("has-error has-feedback");
-        
-        console.debug($("#txtUsuario").parent().has("span"));
-        if($("#txtUsuario").parent().has("span").length > 0) {    
-            $("#txtUsuario").parent().remove("span");
-        }
+        $("#icoUsuario").remove();
         
         $.ajax({
             "url": "index.php?do=/user/ajax_check_available_user",
             "type": "POST",
             "async": true,
             "data": {
-                usuario: $(this).val()
+                usuario: username
             },
             "success": function(result) {
-                //console.log(result);
-                switch(result) {
+                switch (result) {
                     case "[false]":
                         $("#pnlUsuario").addClass("has-error has-feedback");
-                        if($("#txtUsuario").parent().has("span").length == 0) {
-                            $("#txtUsuario").parent().append("<span class=\"glyphicon glyphicon-remove form-control-feedback\"></span>");
-                        }
+                        $("#txtUsuario").parent().append("<span id=\"icoUsuario\" class=\"glyphicon glyphicon-remove form-control-feedback\"></span>");
                         break;
                     case "[true]":
                         $("#pnlUsuario").addClass("has-success has-feedback");
-                        if($("#txtUsuario").parent().has("span").length == 0) {
-                            $("#txtUsuario").parent().append("<span class=\"glyphicon glyphicon-ok form-control-feedback\"></span>");
-                        }
+                        $("#txtUsuario").parent().append("<span id=\"icoUsuario\" class=\"glyphicon glyphicon-ok form-control-feedback\"></span>");
                         break;
                     default:
                         console.error("La logica del sistema fallo.", result);
@@ -109,8 +93,141 @@
                 }
             },
             "error": function(result) {
-                //console.error(result);
+                console.error(result);
             }
-         });
+        });
+    }
+
+    // Restringo lo que pueden ingresar a los fields.
+    $("#txtUsuario").keypress(function(event) {
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-z0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    });
+    $("#txtUsuario").change(function() {
+        if(this.value.length > 2) {
+            validateUserName($(this).val());
+        }
+    });
+
+    $("#txtNombre").keypress(function(event) {
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    });
+    $("#txtNombre").change(function(event) {
+        var username = new String($("#txtNombre").val().substring(0, 1).toLowerCase() + $("#txtApellido").val().toLowerCase());
+        var maxlen = parseInt($("#txtUsuario").attr('maxLength'));
+        var hasValue = $("#txtUsuario").val().length == 0 ? false : true;
+        console.debug(hasValue);
+        if (username.length >= 2 && username.length <= maxlen && !hasValue) {
+            $("#txtUsuario").val(username.toString());
+            validateUserName(username.toString());
+        }
+    });
+
+    $("#txtApellido").keypress(function(event) {
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    });
+    $("#txtApellido").change(function(event) {
+        var username = new String($("#txtNombre").val().substring(0, 1).toLowerCase() + $("#txtApellido").val().toLowerCase());
+        var maxlen = parseInt($("#txtUsuario").attr('maxLength'));
+        var hasValue = $("#txtUsuario").val().length == 0 ? false : true;
+        console.debug(hasValue);
+        if (username.length >= 2 && username.length <= maxlen && !hasValue) {
+            $("#txtUsuario").val(username.toString());
+            validateUserName(username.toString());
+        }
+    });
+
+    $("#txtContrasena1").keypress(function(event) {
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    });
+    $("#txtContrasena1").change(function() {
+        $("#pnlContrasena").removeClass("has-success has-feedback");
+        $("#pnlContrasena").removeClass("has-error has-feedback");
+
+        if ($("#txtContrasena2").val().length > 0) {
+            $("#txtContrasena2").val("");
+        }
+    });
+
+    $("#txtContrasena2").keypress(function(event) {
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    });
+    $("#txtContrasena2").change(function() {
+        $("#pnlContrasena").removeClass("has-success has-feedback");
+        $("#pnlContrasena").removeClass("has-error has-feedback");
+
+        if ($("#txtContrasena1").val() == $("#txtContrasena2").val()) {
+            $("#pnlContrasena").addClass("has-success has-feedback");
+        } else {
+            $("#pnlContrasena").addClass("has-error has-feedback");
+        }
+    });
+
+    $("#txtEmail").focus(function() {
+        $("#pnlEmail").removeClass("has-success has-feedback");
+        $("#pnlEmail").removeClass("has-error has-feedback");
+        $("#icoEmail").remove();
+    });
+    $("#txtEmail").change(function() {
+        $.ajax({
+            "url": "index.php?do=/user/ajax_check_available_email",
+            "type": "POST",
+            "async": true,
+            "data": {
+                email: $(this).val()
+            },
+            "success": function(result) {
+                switch (result) {
+                    case "[false]":
+                        $("#pnlEmail").addClass("has-error has-feedback");
+                        $("#txtEmail").parent().append("<span id=\"icoEmail\" class=\"glyphicon glyphicon-remove form-control-feedback\"></span>");
+                        break;
+                    case "[true]":
+                        $("#pnlEmail").addClass("has-success has-feedback");
+                        $("#txtEmail").parent().append("<span id=\"icoEmail\" class=\"glyphicon glyphicon-ok form-control-feedback\"></span>");
+                        break;
+                    default:
+                        console.error("La logica del sistema fallo.", result);
+                        break;
+                }
+            },
+            "error": function(result) {
+                console.error(result);
+            }
+        });
     });
 </script>

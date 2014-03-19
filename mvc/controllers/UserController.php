@@ -15,8 +15,10 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
+                    'Personas'      =>  new models\PersonaModel(),
+                    'Estudiantes'   =>  new models\EstudianteModel(),
+                    'Docentes'      =>  new models\DocenteModel(),
                     'Usuarios'      =>  new models\UsuarioModel(),
-                    'Estudiante'    =>   new models\EstudianteModel(),
                     'Carreras'      =>  new models\CarreraModel(),
                 );
             }
@@ -107,17 +109,42 @@ namespace CEIT\mvc\controllers
                 
                 if(isset($_POST['btnGuardar']))
                 {
-                    $legajo = filter_input(INPUT_POST, 'txtLegajo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $dni = filter_input(INPUT_POST, 'txtDNI', FILTER_SANITIZE_NUMBER_INT);
+                    $persona = filter_input(INPUT_POST, 'hidIdPersona', FILTER_SANITIZE_NUMBER_INT);
+                    $legajo = filter_input(INPUT_POST, 'hidLegajo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $dni = filter_input(INPUT_POST, 'hidDNI', FILTER_SANITIZE_NUMBER_INT);
                     $carrera = filter_input(INPUT_POST, 'ddlCarrera', FILTER_SANITIZE_NUMBER_INT);
                     $usuario = filter_input(INPUT_POST, 'txtUsuario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $contrasena1 = filter_input(INPUT_POST, 'txtContrasena1', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $contrasena2 = filter_input(INPUT_POST, 'txtContrasena2', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    //$contrasena2 = filter_input(INPUT_POST, 'txtContrasena2', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $apellido = filter_input(INPUT_POST, 'txtApellido', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $email = filter_input(INPUT_POST, 'txtEmail', FILTER_SANITIZE_EMAIL);
                     $telefono = filter_input(INPUT_POST, 'txtTelefono', FILTER_SANITIZE_NUMBER_INT);
                     $celular = filter_input(INPUT_POST, 'txtCelular', FILTER_SANITIZE_NUMBER_INT);
+                    
+                    $modelPersona = new models\PersonaModel();
+                    $modelPersona->_idPersona = $persona;
+                    $modelPersona->_nombre = $nombre;
+                    $modelPersona->_apellido = $apellido;
+                    $modelPersona->_dni = $dni;
+                    $modelPersona->_telefono = $telefono;
+                    $modelPersona->_celular = $celular;
+                    $modelPersona->_email = $email;
+                    $this->result = $this->_model['Personas']->Update(array($modelPersona));
+                    
+                    $modelEstudiante = new models\EstudianteModel();
+                    $modelEstudiante->_idPersona = $persona;
+                    $modelEstudiante->_legajo = $legajo;
+                    $modelEstudiante->_idCarrera = $carrera;
+                    //$this->result = $this->_model['Estudiantes']->UpdateByIdPersona($modelEstudiante);
+                    
+                    $modelUsuario = new models\UsuarioModel();
+                    $modelUsuario->_idUsuario = $_SESSION['IdUsuario'];
+                    $modelUsuario->_idPersona = $persona;
+                    $modelUsuario->_usuario = $usuario;
+                    $modelUsuario->_contrasena = $contrasena1; //crypt($contrasena1);
+                    $modelUsuario->_emailValidado = false;
+                    $this->result = $this->_model['Usuarios']->Update(array($modelUsuario));
                     
                     //header("Location: index.php?do=/dashboard/index");
                 }
@@ -126,7 +153,7 @@ namespace CEIT\mvc\controllers
             // Cargo los pocos datos del usuario.
             $modelEstudiante = new models\EstudianteModel();
             $modelEstudiante->_idUsuario = (int)$id;
-            $this->result = $this->_model['Estudiante']->SelectByIdUsuario($modelEstudiante);
+            $this->result = $this->_model['Estudiantes']->SelectByIdUsuario($modelEstudiante);
             //var_dump($this->result);
             if(count($this->result) == 1)
             {
@@ -217,6 +244,36 @@ namespace CEIT\mvc\controllers
                 else
                 {
                     $this->result = array(true);
+                }
+            }
+        }
+        
+        public function ajax_check_available_email()
+        {
+            $this->ajaxRequest = true;
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                $modelUsuario = new models\UsuarioModel();
+                $modelUsuario->_email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+                if(filter_var($modelUsuario->_email, FILTER_VALIDATE_EMAIL))
+                {
+                    $this->result = $this->_model['Usuarios']->SelectByEmail($modelUsuario);
+                    //var_dump($this->result);
+                    if(count($this->result) > 0)
+                    {
+                        $this->result = array(false);
+                    }
+                    else
+                    {
+                        $this->result = array(true);
+                    }
+                }
+                else
+                {
+                    $this->result = array(false);
                 }
             }
         }

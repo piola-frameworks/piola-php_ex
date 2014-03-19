@@ -100,8 +100,28 @@ namespace CEIT\mvc\models
                 ));
             }
             
-            return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
+        
+        /*
+         * Start custom updates
+         */
+        
+        public function UpdateByIdPersona(core\AModel $model)
+        {
+            array_push($this->_sp, "sp_updEstudianteByIdPersona");
+            array_push($this->_params, array(
+                ':idPersona'    =>  (int)$model->_idPersona,
+                ':legajo'       =>  (string)$model->_legajo,
+                ':idCarrera'    =>  is_null($model->_idCarrera) ? null : (int)$model->_idCarrera,
+            ));
+            
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
+        }
+        
+        /*
+         * End custom updates
+         */
     }
 }
 
