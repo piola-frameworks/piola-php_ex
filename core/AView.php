@@ -16,7 +16,7 @@ namespace CEIT\core
             $dataCollection['nav_links'] = file_get_contents($filename);*/
             
             $navArray = array(
-                'Estudiante'        =>  '<li><a href="index.php?do=/estudiante/index">Pedidos</a></li>',
+                'Estudiante'        =>  '<li><a href="index.php?do=/estudiante/index">Mis pedidos</a></li>',
                 'Preparador'        =>  '<li><a href="index.php?do=/preparador/index">Pedidos</a></li>',
                 'Textos'            =>  '<li><a href="index.php?do=/textos/index">Textos</a></li>',
                 'Gabinete'          =>  '<li><a href="index.php?do=/gabinete/index">Gabinete</a></li>',

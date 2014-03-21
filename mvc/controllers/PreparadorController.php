@@ -324,12 +324,12 @@ namespace CEIT\mvc\controllers
         
         public function index()
         {
-            // indico el template a usar
             $this->_template = BASE_DIR . "/mvc/templates/preparador/{$this->_action}.html";
             
             if(!empty($_POST))
             {
-                // elaboro el parametro
+                var_dump($_POST);
+                
                 $pedido = new models\PedidoModel();   
                 $pedido->_idEstado = filter_input(INPUT_POST, 'ddlEstado', FILTER_SANITIZE_NUMBER_INT);
                 
@@ -340,14 +340,14 @@ namespace CEIT\mvc\controllers
                 $this->result = $this->_model['Pedidos']->Select();
             }
             
+            // Cargo tabla con items
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
                 {
                     $filename = BASE_DIR . "/mvc/templates/preparador/{$this->_action}_table.html";
                     $this->table_content .= file_get_contents($filename);
-
-                    // verifico si trajo 1 o muchos resultados.
+                    
                     if(is_array($row))
                     {
                         foreach($row as $key => $value)

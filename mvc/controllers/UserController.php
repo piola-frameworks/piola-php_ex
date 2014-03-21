@@ -133,12 +133,21 @@ namespace CEIT\mvc\controllers
                         $modelUsuario->_contrasena = $nueva; //crypt($nueva);
                         $this->_model['Usuarios']->UpdateContrasena($modelUsuario);
                         
+                        // se deberia mandar un mail con la nueva contraseña.
+                        
+                        
+                        // se deberia cerrar session para comprobar la nueva contraseña
+                        $this->logout();
+                        
+                        // se redireccion al login.
+                        header("Location: index.php?do=/login/index");
                     }
                     else
                     {
                         // la contraseña no verifica.
                         //trigger_error("La contraseña no cumple con los requiremientos minimos de aceptacion.", E_USER_NOTICE);
                     }
+                    unset($this->result);
                 }
             }
         }
@@ -191,6 +200,9 @@ namespace CEIT\mvc\controllers
                         $modelUsuario->_contrasena = $contrasena1; //crypt($contrasena1);
                         $modelUsuario->_emailValidado = false;
                         $this->result = $this->_model['Usuarios']->Update(array($modelUsuario));
+                        unset($this->result);
+                        
+                        $this->logout();
                         
                         header("Location: index.php?do=/dashboard/index");
                     }
@@ -286,6 +298,9 @@ namespace CEIT\mvc\controllers
                         $modelUsuario->_contrasena = $contrasena1; //crypt($contrasena1);
                         $modelUsuario->_emailValidado = false;
                         $this->result = $this->_model['Usuarios']->Update(array($modelUsuario));
+                        unset($this->result);
+                        
+                        $this->logout();
                         
                         header("Location: index.php?do=/dashboard/index");
                     }
@@ -353,6 +368,9 @@ namespace CEIT\mvc\controllers
                         $modelUsuario->_contrasena = $contrasena1; //crypt($contrasena1);
                         $modelUsuario->_emailValidado = false;
                         $this->result = $this->_model['Usuarios']->Update(array($modelUsuario));
+                        unset($this->result);
+                        
+                        $this->logout();
                         
                         header("Location: index.php?do=/dashboard/index");
                     }

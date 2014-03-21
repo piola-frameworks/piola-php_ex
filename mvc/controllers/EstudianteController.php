@@ -417,6 +417,7 @@ namespace CEIT\mvc\controllers
             
             $this->result = $this->_model['Franjas']->Select();
             $this->result2 = $this->_model['Pedidos']->SelectDisponibilidad();
+            //var_dump($this->result2);
             if(count($this->result) > 1)
             {
                 foreach($this->result as $row)
@@ -432,7 +433,19 @@ namespace CEIT\mvc\controllers
                         }
                         
                         // Fila extra que no viene en el resultado de la base de datos.
-                        $this->combo_franja = str_replace('{Seleccionado}', $this->result2[0]['FranjaHoraria'] != $row['IdHorarioFranja'] ? '' : 'selected', $this->combo_franja);
+                        if($this->result2[0]['FranjaHoraria'] > $row['IdHorarioFranja'])
+                        {
+                            $texto = "disabled";
+                        }
+                        else if($this->result2[0]['FranjaHoraria'] == $row['IdHorarioFranja'])
+                        {
+                            $texto = "selected";
+                        }
+                        else
+                        {
+                            $texto = "";
+                        }
+                        $this->combo_franja = str_replace('{Seleccionado}', $texto, $this->combo_franja);
                     }
                 }
                 $this->DiaRetiro = $this->result2[0]['DiaRetiro'];
