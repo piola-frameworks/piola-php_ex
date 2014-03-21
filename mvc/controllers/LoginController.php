@@ -54,7 +54,7 @@ namespace CEIT\mvc\controllers
                 
                 if(count($this->result) == 1)
                 {
-                    var_dump($this->result);
+                    //var_dump($this->result);
                     
                     $contrasena = filter_input(INPUT_POST, 'txtPassword', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     if(!empty($contrasena) && $this->result[0]['Contrasena'] == $contrasena)
@@ -71,7 +71,7 @@ namespace CEIT\mvc\controllers
                                         $filledData = false;
                                     }
                                     break;
-                                case 'Contraseña':
+                                case 'Contrasena':
                                     if(empty($value))
                                     {
                                         $filledData = false;
@@ -90,18 +90,6 @@ namespace CEIT\mvc\controllers
                                     }
                                     break;
                                 case 'DNI':
-                                    if(empty($value))
-                                    {
-                                        $filledData = false;
-                                    }
-                                    break;
-                                case 'Legajo':
-                                    if(empty($value))
-                                    {
-                                        $filledData = false;
-                                    }
-                                    break;
-                                case 'IdCarrera':
                                     if(empty($value))
                                     {
                                         $filledData = false;

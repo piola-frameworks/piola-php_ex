@@ -96,7 +96,7 @@ namespace CEIT\mvc\models
                 ));
             }
             
-            return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
     }
 }

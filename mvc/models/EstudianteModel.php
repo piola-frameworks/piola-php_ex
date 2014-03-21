@@ -116,6 +116,8 @@ namespace CEIT\mvc\models
                 ':idCarrera'    =>  is_null($model->_idCarrera) ? null : (int)$model->_idCarrera,
             ));
             
+            //var_dump($this->_sp, $this->_params, $this->_trans);
+            
             return Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
         }
         

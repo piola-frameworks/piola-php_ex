@@ -24,7 +24,7 @@ namespace CEIT\mvc\controllers
             parent::__destruct();
         }
         
-        public function getpdf($param1, $param2, $param3, $param4)
+        public function getpdf($param1, $param2, $param3, $param4, $param5)
         {
             /*$item = explode("/", $param);
             
@@ -33,18 +33,18 @@ namespace CEIT\mvc\controllers
             $this->result = $this->_model['PedidoItems']->Select($modelItems);
             //var_dump($this->result); */
             
-            $file = BASE_DIR . '/data/texts/' . $param1 . '/' . $param2 . '/' . $param3 . '/' . $param4 . '.pdf';
-            $filename = $param4 . '.pdf'; // Note: Always use .pdf at the end.
+            $file = BASE_DIR . '/data/texts/' . $param1 . '/' . $param2 . '/' . $param3 . '/' . $param4 . '/' . $param5 . '.pdf';
+            $filename = $param5 . '.pdf'; // Note: Always use .pdf at the end.
             
-            var_dump($file, $filename);
+            //var_dump($file, $filename);
 
-            /*header('Content-type: application/pdf');
+            header('Content-type: application/pdf');
             header('Content-Disposition: inline; filename="' . $filename . '"');
             header('Content-Transfer-Encoding: binary');
             header('Content-Length: ' . filesize($file));
             header('Accept-Ranges: bytes');
 
-            @readfile($file);*/
+            @readfile($file);
         }
         
         public function gettp($param)
