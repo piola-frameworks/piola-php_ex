@@ -113,7 +113,7 @@ namespace CEIT\mvc\models
                 ':legajo'       =>  is_null($model->_legajo) ? null : (string)$model->_legajo,
             ));
             
-            var_dump($this->_sp, $this->_params);
+            //var_dump($this->_sp, $this->_params);
             
             return Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
         }

@@ -5,57 +5,81 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{page_title}</title>
-        <link rel="icon" href="/webs/ceit/public/img/favicon.png" type="image/png">
+        <link rel="icon" href="/public/img/favicon.png" type="image/png">
 
         <!-- Bootstrap -->
-        <link rel="stylesheet" type="text/css" href="/webs/ceit/public/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/public/css/bootstrap.min.css">
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
           <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
           <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
-        <link rel="stylesheet" type="text/css" href="/webs/ceit/public/css/smoothness/jquery-ui-1.10.4.custom.min.css">
+        <link rel="stylesheet" type="text/css" href="/public/css/smoothness/jquery-ui-1.10.4.custom.min.css">
 
-        <script type="text/javascript" src="/webs/ceit/public/js/jquery-2.1.0.min.js"></script>
-        <script type="text/javascript" src="/webs/ceit/public/js/jquery-ui-1.10.4.custom.min.js"></script>
+        <script type="text/javascript" src="/public/js/jquery-2.1.0.min.js"></script>
+        <script type="text/javascript" src="/public/js/jquery-ui-1.10.4.custom.min.js"></script>
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
             <section id="header">
                 <nav class="navbar navbar-inverse" role="navigation">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="index.php?do=/dashboard/index">
-                            <img src="/webs/ceit/public/img/logo_white.png" alt="Logo ApunTec Blanco" width="103" height="20" />
-                        </a>
-                    </div>
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav">
-                            {nav_links}
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li>
-                                <a href="index.php?do=/user/profile/{IdUsuario}">
-                                    <span class="glyphicon glyphicon-user"></span> {Usuario}
-                                </a>
-                            </li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Opciones <b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="index.php?do=/web/help">Ayuda</a></li>
-                                    <li><a href="index.php?do=/web/contact">Contacto</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="index.php?do=/user/logout">Salir</a></li>
-                                </ul>
-                            </li>
-                        </ul>
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <!-- Boton para colapsar el menu -->
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <!-- Logo de Apuntec -->
+                            <a class="navbar-brand" href="index.php?do=/dashboard/index">
+                                <img src="/public/img/logo_white.png" alt="Logo ApunTec Blanco" width="103" height="20" />
+                            </a>
+                        </div>
+                        <div id="navbar-collapse-1" class="collapse navbar-collapse">
+                            <!-- Items para navegas entre los paginas -->
+                            <ul class="nav navbar-nav">
+                                {nav_links}
+                            </ul>
+                            <!-- Para entrar al perfil -->
+                            <ul class="nav navbar-nav navbar-right">
+                                <li>
+                                    <a href="index.php?do=/user/profile/{IdUsuario}">
+                                        <span class="glyphicon glyphicon-user"></span> {Usuario}
+                                    </a>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Opciones <b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="index.php?do=/web/help">
+                                                <span class="glyphicon glyphicon-book"></span> Ayuda
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="index.php?do=/web/contact">
+                                                <span class="glyphicon glyphicon-envelope"></span> Contacto
+                                            </a>
+                                        </li>
+                                        <li class="divider"></li>
+                                        <li>
+                                            <a href="index.php?do=/user/logout">
+                                                <span class="glyphicon glyphicon-off"></span> Salir
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </nav>
             </section>
             <section id="main">
                 {page_content}
                 <!-- Include all compiled plugins (below), or include individual files as needed -->
-                <script src="/webs/ceit/public/js/bootstrap.min.js"></script>
+                <script src="/public/js/bootstrap.min.js"></script>
             </section>
         </div>
         <div class="footer">

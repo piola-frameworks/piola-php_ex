@@ -14,7 +14,9 @@
                         {combo_estados}
                     </select>    
                 </div>
-                <button type="submit" class="btn btn-default">Filtrar</button>
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-filter"></span> Filtrar
+                </button>
             </fieldset>
         </form>
     </div>
@@ -24,22 +26,24 @@
         <h3 class="panel-title">Resultados</h3>
     </div>
     <div class="panel-body">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>N&ordm;</th>
-                    <!-- <th>Comentario</th> -->
-                    <th>Estado</th>
-                    <!-- <th>Creado</th> -->
-                    <th>Retiro</th>
-                    <th>Desde</th>
-                    <th>Precio</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {table_content}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>N&ordm;</th>
+                        <!-- <th>Comentario</th> -->
+                        <th>Estado</th>
+                        <!-- <th>Creado</th> -->
+                        <th>Retiro</th>
+                        <th>Desde</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {table_content}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

@@ -461,7 +461,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST) && !empty($_FILES))
             {
-                var_dump($_POST, $_FILES);
+                //var_dump($_POST, $_FILES);
                 
                 switch($_FILES['filArchivo']['error'])
                 {
@@ -618,7 +618,7 @@ namespace CEIT\mvc\controllers
         {
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
             }
             
             // indico el template a usar

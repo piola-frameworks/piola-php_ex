@@ -115,7 +115,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 if(isset($_POST['btnGuardar']))
                 {
@@ -334,7 +334,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 if(isset($_POST['btnGuardar']))
                 {
@@ -381,7 +381,7 @@ namespace CEIT\mvc\controllers
             $modelEstudiante = new models\UsuarioModel();
             $modelEstudiante->_idUsuario = (int)$id;
             $this->result = $this->_model['Usuarios']->Select($modelEstudiante);
-            var_dump($this->result);
+            //var_dump($this->result);
             if(count($this->result) == 1)
             {
                 foreach($this->result as $row)

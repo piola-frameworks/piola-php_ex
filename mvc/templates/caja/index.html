@@ -6,23 +6,25 @@
             </div>
             <form name="frmDetalleCobrar" method="POST" role="form">
                 <div class="panel-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Descripcion</th>
-                                <th>
-                                    <abbr title="Precio Unitario">PU</abbr>
-                                </th>
-                                <th>Cantidad</th>
-                                <th>Importe</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {table_1_content}
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Descripcion</th>
+                                    <th>
+                                        <abbr title="Precio Unitario">PU</abbr>
+                                    </th>
+                                    <th>Cantidad</th>
+                                    <th>Importe</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {table_1_content}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="panel-footer">
                     <div class="form-group">
@@ -58,28 +60,30 @@
                     </div>
                 </div>
                 <form name="frmPedidosTerminados" method="POST" role="form">
-                    <table class="table table-hover">    
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>DNI</th>
-                                <th>Nombre</th>
-                                <th>Apellido</th>
-                                <th>Fecha</th>
-                                <th>Franja</th>
-                                <!-- <th>Legajo/Usuario</th>
-                                <th>Comentario</th>
-                                <th>Anillado</th> -->
-                                <!-- <th>Retiro</th>
-                                <th>Horario</th>
-                                <th>Estado</th> -->
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {table_2_content}
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-hover">    
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>DNI</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Fecha</th>
+                                    <th>Franja</th>
+                                    <!-- <th>Legajo/Usuario</th>
+                                    <th>Comentario</th>
+                                    <th>Anillado</th> -->
+                                    <!-- <th>Retiro</th>
+                                    <th>Horario</th>
+                                    <th>Estado</th> -->
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {table_2_content}
+                            </tbody>
+                        </table>
+                    </div>
                 </form>
             </div>
         </div>
@@ -89,49 +93,51 @@
             </div>
             <div class="panel-body">
                 <form name="frmAgregarItem" method="POST" role="form">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Id Item</th>
-                                <!-- <th>Descripcion</th>
-                                <th>
-                                    <abbr title="Precio Unitario">PU</abbr>
-                                </th> -->
-                                <th>Cantidad</th>
-                                <th>Importe</th>
-                                <th>Acciones</th>
-                            </tr>    
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <select class="form-control" name="ddlItemTipo">
-                                        <option value="ANI">Anillado</option>
-                                        <option value="LIB">Art. de Libreria</option>
-                                        <option value="FOS">Fotocopias Sueltas</option>
-                                    </select>
-                                    <!-- <input class="form-control" name="txtIdItem" type="text" required="required" /> -->
-                                </td>
-                                <!-- <td>
-                                    <input class="form-control" name="txtDescripcion" type="text" required="required" />
-                                </td>
-                                <td>
-                                    <input class="form-control" name="txtPrecioUnitario" type="number" min="0" step="0.05" required="required" />
-                                </td> -->
-                                <td>
-                                    <input class="form-control" name="txtCantidad" type="number" min="1" step="1" value="1" required="required" readonly="readonly" />
-                                </td>
-                                <td>
-                                    <input class="form-control" name="txtImporte" type="number" min="0" step="0.05" />
-                                </td>
-                                <td>
-                                    <button class="btn btn-success btn-sm" name="btnAgregarItem" type="submit">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Id Item</th>
+                                    <!-- <th>Descripcion</th>
+                                    <th>
+                                        <abbr title="Precio Unitario">PU</abbr>
+                                    </th> -->
+                                    <th>Cantidad</th>
+                                    <th>Importe</th>
+                                    <th>Acciones</th>
+                                </tr>    
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-control" name="ddlItemTipo">
+                                            <option value="ANI">Anillado</option>
+                                            <option value="LIB">Art. de Libreria</option>
+                                            <option value="FOS">Fotocopias Sueltas</option>
+                                        </select>
+                                        <!-- <input class="form-control" name="txtIdItem" type="text" required="required" /> -->
+                                    </td>
+                                    <!-- <td>
+                                        <input class="form-control" name="txtDescripcion" type="text" required="required" />
+                                    </td>
+                                    <td>
+                                        <input class="form-control" name="txtPrecioUnitario" type="number" min="0" step="0.05" required="required" />
+                                    </td> -->
+                                    <td>
+                                        <input class="form-control" name="txtCantidad" type="number" min="1" step="1" value="1" required="required" readonly="readonly" />
+                                    </td>
+                                    <td>
+                                        <input class="form-control" name="txtImporte" type="number" min="0" step="0.05" />
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" name="btnAgregarItem" type="submit">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </form>
             </div>
         </div>
@@ -139,27 +145,27 @@
 </div>
 <script type="text/javascript">
     $('select[name=ddlItemTipo]').change(function() {
-        if($('select[name=ddlItemTipo]').val() === "ANI") {
+        if ($('select[name=ddlItemTipo]').val() === "ANI") {
             $('input[name=txtCantidad]').val(1);
             $('input[name=txtCantidad]').attr("readonly", "readonly");
         } else {
             $('input[name=txtCantidad]').removeAttr("readonly");
         }
     });
-    
+
     /*$('input[name=txtPrecioUnitario]').change(function() {
-        var precio = $('input[name=txtPrecioUnitario]').val();
-        var cant = $('input[name=txtCantidad]').val();
-        var importe = precio * cant;
-
-        $('input[name=txtImporte]').val(importe.toFixed(2));
-    });estas a fill
-
-    $('input[name=txtCantidad]').change(function() {
-        var precio = $('input[name=txtPrecioUnitario]').val();
-        var cant = $('input[name=txtCantidad]').val();
-        var importe = precio * cant;
-
-        $('input[name=txtImporte]').val(importe.toFixed(2));
-    });*/
+     var precio = $('input[name=txtPrecioUnitario]').val();
+     var cant = $('input[name=txtCantidad]').val();
+     var importe = precio * cant;
+     
+     $('input[name=txtImporte]').val(importe.toFixed(2));
+     });estas a fill
+     
+     $('input[name=txtCantidad]').change(function() {
+     var precio = $('input[name=txtPrecioUnitario]').val();
+     var cant = $('input[name=txtCantidad]').val();
+     var importe = precio * cant;
+     
+     $('input[name=txtImporte]').val(importe.toFixed(2));
+     });*/
 </script>

@@ -186,7 +186,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
             }
         }
 
@@ -196,7 +196,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
             }
             
             $var = new models\UsuarioModel();
@@ -254,7 +254,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
             }
             
             $var = new models\UsuarioModel();
@@ -417,7 +417,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 $post = filter_input(INPUT_POST, "btnAceptar", FILTER_SANITIZE_STRING);
                 if($post !== null)
