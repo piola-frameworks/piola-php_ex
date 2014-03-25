@@ -52,7 +52,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'Caja'));
                 

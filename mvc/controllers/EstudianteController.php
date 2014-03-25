@@ -467,8 +467,8 @@ namespace CEIT\mvc\controllers
                 {
                     case UPLOAD_ERR_OK:
                         $cmd = 'FOR /F "tokens=2*" %a IN ("' . str_replace("", "", BASE_DIR) . '\bin\pdfinfo.exe" "' . $_FILES['filArchivo']['tmp_name'] . '" ^| findstr "Pages:") DO ECHO %a';
-                        echo $cmd . "<br />";
-                        echo shell_exec($cmd) . "<br />";
+                        //echo $cmd . "<br />";
+                        //echo shell_exec($cmd) . "<br />";
                         
                         // Guardo en la db.
                         $modelTP = new models\TextoModel();
@@ -486,7 +486,6 @@ namespace CEIT\mvc\controllers
                             ':cantPaginas'      =>  (int)$item->_cantPaginas,
                          *  ':activo'           =>  (bool)$item->_activo,
                          */
-                        
                         $modelTP->_creadoPor = $_SESSION['IdUsuario'];
                         $modelTP->_creadoDia = date("Y-m-d H:i:s");
                         $modelTP->_modificadoPor = null;
@@ -500,8 +499,7 @@ namespace CEIT\mvc\controllers
                         $modelTP->_docente = null;
                         $modelTP->_cantPaginas = 1/*shell_exec($cmd)*/;
                         $modelTP->_activo = 0;
-                        $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));
-                        unset($modelTP);
+                        $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));                        
                         
                         $modelPedido = new models\PedidoModel();
                         /*
@@ -515,7 +513,6 @@ namespace CEIT\mvc\controllers
                          *  ':pagado'       =>  (bool)$item->_pagado,
                          *  ':idEstado'     =>  (int)$item->_idEstado
                          */
-                        
                         $modelPedido->_idUsuario = $_SESSION['IdUsuario'];
                         $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
                         $modelPedido->_creadoDia = date("Y-m-d H:i:s");
@@ -528,7 +525,6 @@ namespace CEIT\mvc\controllers
                         $modelPedido->_pagado = false;
                         $modelPedido->_idEstado = 1;
                         $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
-                        unset($modelPedido);
                         
                         $modelPedidoItem = new models\PedidoItemModel();
                         /*
@@ -546,15 +542,15 @@ namespace CEIT\mvc\controllers
                         $modelPedidoItem->_simpleFaz = false;
                         $modelPedidoItem->_idEstado = 1;
                         $this->_model['PedidoItems']->Insert(array($modelPedidoItem));
-                        unset($modelPedidoItem);
-                        
-                        unset($this->lastIdTexto);
-                        unset($this->lastIdPedido);
                         
                         // Muevo el archivo al directorio donde van a estar todos los PDFs
                         $uploaddir = BASE_DIR . '/data/tps/';
-                        $uploadfile = $uploaddir . basename($_FILES['filArchivo']['name']);
+                        $uploadfile = $uploaddir . $this->_lastIdTexto . ".pdf";//basename($_FILES['filArchivo']['name']);
 
+                        unset($modelTP);
+                        unset($modelPedido);
+                        unset($modelPedidoItem);
+                        
                         if($_FILES['filArchivo']['type'] != 'application/pdf')
                         {
                             trigger_error("Me queres hackear la aplicacion web?", E_USER_NOTICE);
@@ -567,7 +563,7 @@ namespace CEIT\mvc\controllers
                         else
                         {
                             echo "¡Posible ataque de carga de archivos!\n";
-                        }
+                        }                    
                         break;
                         
                     case UPLOAD_ERR_INI_SIZE:
