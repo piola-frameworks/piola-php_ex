@@ -45,6 +45,8 @@ namespace CEIT\mvc\models
                 ));
             }
             
+            //var_dump($this->_sp, $this->_params, $this->_trans);
+            
             Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
 

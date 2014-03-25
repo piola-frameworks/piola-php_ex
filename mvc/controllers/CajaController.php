@@ -52,7 +52,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                //var_dump($_POST);
+                var_dump($_POST);
                 
                 $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'Caja'));
                 
@@ -96,19 +96,19 @@ namespace CEIT\mvc\controllers
                         case 'LIB':
                             $variosDesc = "Art(s) de Libreria";
                             break;
-                        case 'ART':
+                        case 'FOS':
                             $variosDesc = "Fotocopia(s) Suelta(s)";
                             break;
                         case 'ANI':
                             $variosDesc = "Anillado";
-                        
+                            break;
                         default:
                             //filter_input(INPUT_POST, 'txtDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                             break;
                     }
                     $variosPU = filter_input(INPUT_POST, 'txtImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
                     $variosCant = filter_input(INPUT_POST, 'txtCantidad', FILTER_SANITIZE_NUMBER_INT);
-                    $variosImp = filter_input(INPUT_POST, 'txtImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                    $variosImp = $variosPU * $variosCant;
                     
                     if(!empty($variosIdItem) && !empty($variosDesc) && !empty($variosPU) && !empty($variosCant) && !empty($variosImp))
                     {
@@ -325,7 +325,7 @@ namespace CEIT\mvc\controllers
                     // Items
                     $ids = filter_input(INPUT_POST, 'hidId', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
                     $tipo = filter_input(INPUT_POST, 'hidType', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
-                    $descripcion = filter_input(INPUT_POST, 'hidDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                    $descripcion = filter_input(INPUT_POST, 'hidDescripcion', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
                     $preunit = filter_input(INPUT_POST, 'hidPrecioUnitario', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY);
                     $cantidad = filter_input(INPUT_POST, 'hidCantidad', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                     $importe = filter_input(INPUT_POST, 'hidImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY);
@@ -373,7 +373,8 @@ namespace CEIT\mvc\controllers
                                 $pedido->_modificadoPor = $_SESSION['IdUsuario'];
                                 $pedido->_anillado = $this->result[0]['Anillado'];
                                 $pedido->_comentario = $this->result[0]['Comentario'];
-                                $pedido->_posicion = $this->result[0]['Posicion'];
+                                $pedido->_posicionX = $this->result[0]['PosicionX'];
+                                $pedido->_posicionY = $this->result[0]['PosicionY'];
                                 $pedido->_retiro = $this->result[0]['Retiro'];
                                 $pedido->_idFranja = $this->result[0]['IdFranja'];
                                 $pedido->_pagado = true;
