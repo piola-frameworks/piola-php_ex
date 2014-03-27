@@ -49,7 +49,7 @@ namespace CEIT\mvc\models
             {
                 $this->_sp = "sp_selGabinetePedido";
                 $this->_params = array(
-                    ':idRol'   =>  (int)$model->_idGabinetePedido,
+                    ':idPedido'   =>  (int)$model->_idGabinetePedido,
                 );
 
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);
@@ -62,6 +62,31 @@ namespace CEIT\mvc\models
             }
         }
 
+        /*
+         * Start custom selects
+         */
+        
+        public function SelectCaja()
+        {
+            $this->_sp = "sp_selGabineteCaja";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
+        public function SelectCajaItem(core\AModel $model)
+        {
+            $this->_sp = "sp_selGabineteCajaPedido";
+            $this->_params = array(
+                ':idPedido' =>  (int)$model->_idPedido,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        /*
+         * End custom selects
+         */
+        
         public function Update(array $model)
         {
             if(count($model) > 1)

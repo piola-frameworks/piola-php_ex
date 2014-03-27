@@ -19,7 +19,17 @@ namespace CEIT\core
                 'Estudiante'        =>  '<li><a href="index.php?do=/estudiante/index">Mis pedidos</a></li>',
                 'Preparador'        =>  '<li><a href="index.php?do=/preparador/index">Pedidos</a></li>',
                 'Textos'            =>  '<li><a href="index.php?do=/textos/index">Textos</a></li>',
-                'Gabinete'          =>  '<li><a href="index.php?do=/gabinete/index">Gabinete</a></li>',
+                'Gabinete'          =>  '<li class="dropdown">'
+                                        . '<a class="dropdown-toggle" href="#" data-toggle="dropdown">Gabinete <b class="caret"></b></a>'
+                                            . '<ul class="dropdown-menu">'
+                                                . '<li><a href="index.php?do=/gabinete/pedidos_index">'
+                                                    . '<span class="glyphicon glyphicon-inbox"></span> Pedidos'
+                                                . '</a></li>'
+                                                . '<li><a href="index.php?do=/gabinete/caja_index">'
+                                                    . '<span class="glyphicon glyphicon-credit-card"></span> Caja'
+                                                . '</a></li>'
+                                            . '</ul>'
+                                        . '</li>',
                 'AtPublico'         =>  '<li><a href="index.php?do=/atpublico/index">At. Publico</a></li>',
                 'Caja'              =>  '<li><a href="index.php?do=/caja/index">Caja</a></li>',
                 'Reportes'          =>  '<li><a href="index.php?do=/reportes/index">Reportes</a></li>',

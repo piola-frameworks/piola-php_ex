@@ -1,0 +1,82 @@
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">A cobrar</h3>
+            </div>
+            <form name="frmDetalleCobrar" method="POST" role="form">
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Descripcion</th>
+                                    <th>Importe</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {table_1_content}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="form-group">
+                        <label class=" col-sm-offset-8 col-sm-1" for="txtTotal">Total:</label>
+                        <div class="col-sm-3">
+                            <input id="txtTotal" class="form-control" type="number" value="{Total}" readonly="readonly" />
+                        </div>
+                    </div>
+                    <button id="btnCobrar" class="btn btn-default" type="submit" name="btnConfirmar" formaction="index.php?do=/caja/index_confirm">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">Pedidos</h3>
+            </div>
+            <div class="panel-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Busqueda</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-inline" name="frmCajaFiltros" method="POST" role="form">
+                            <div class="form-group">
+                                <label class="sr-only" for="txtLegajo">Legajo o Id Pedido</label>
+                                <input id="txtLegajo" class="form-control" type="text" name="txtLegajo" placeholder="Legajo o Id Pedido">
+                            </div>
+                            <button class="btn btn-default" type="submit" name="btnFiltrar">
+                                <span class="glyphicon glyphicon-filter"></span> Filtrar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <form name="frmPedidosTerminados" method="POST" role="form">
+                    <div class="table-responsive">
+                        <table class="table table-hover">    
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>DNI</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Fecha</th>
+                                    <th>Franja</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {table_2_content}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

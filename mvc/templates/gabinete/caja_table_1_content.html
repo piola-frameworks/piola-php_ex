@@ -1,0 +1,19 @@
+<tr>
+    <td>
+        {IdPedido}
+        <input name="hidIdPedido[]" type="hidden" value="{IdPedido}" />
+    </td>
+    <td>
+        {Descripcion}
+        <input name="hidDescripcion[{IdPedido}]" type="hidden" value="{Descripcion}" />
+    </td>
+    <td>
+        {Importe}
+        <input name="hidImporte[{IdPedido}]" type="hidden" value="{Importe}" />
+    </td>
+    <td>
+        <button class="btn btn-danger btn-sm" type="submit" name="btnQuitarPedido" value="{IdPedido}">
+            <span class="glyphicon glyphicon-minus"></span>
+        </button>
+    </td>
+</tr>
