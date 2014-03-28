@@ -15,8 +15,12 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
-                    'Pedidos'  =>  new models\PedidoModel(),
-                    'PedidoEstados'    =>  new models\PedidoEstadosModel(),
+                    'Usuarios'      =>  new models\UsuarioModel(),
+                    'Textos'        =>  new models\TextoModel(),
+                    'Pedidos'       =>  new models\PedidoModel(),
+                    'PedidoItems'   =>  new models\PedidoItemModel(),
+                    'PedidoEstados' =>  new models\PedidoEstadosModel(),
+                    'Franjas'       =>  new models\HorarioFranjasModel(),
                 );
             }
             
@@ -78,6 +82,127 @@ namespace CEIT\mvc\controllers
             else
             {
                 $this->table_content = "";
+            }
+            unset($this->result);
+        }
+        
+        public function create()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}.html";
+            
+            $this->IdUsuario = "";
+            $this->Legajo = "";
+            $this->DNI = "";
+            $this->Nombre = "";
+            $this->Apellido = "";
+            $this->Telefono = "";
+            $this->Celular = "";
+            $this->Creado = date("Y-m-d H:i:s");
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                if(isset($_POST['btnFiltrar']))
+                {
+                    $dni_legajo = filter_input(INPUT_POST, 'txtDNILegajo', FILTER_SANITIZE_NUMBER_INT);
+                    
+                    // Panel Usuario
+                    $modelUsuario = new models\UsuarioModel();
+                    $modelUsuario->_legajoDNI = $dni_legajo;
+                    $this->result = $this->_model['Usuarios']->SelectByLegajoOrDNI($modelUsuario);
+                    //var_dump($this->result);
+                    if(count($this->result) == 1)
+                    {
+                        foreach($this->result[0] as $key => $value)
+                        {
+                            $this->{$key} = $value;
+                        }
+                    }
+                }
+                
+                if(isset($_POST['btnGuardar']))
+                {
+                    $idUsuario = filter_input(INPUT_POST, 'hidIdUsuario', FILTER_SANITIZE_NUMBER_INT);
+                    $creado = filter_input(INPUT_POST, 'txtCreado', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
+                    $descripcion = filter_input(INPUT_POST, 'txtDescripcionItem', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $hojas = filter_input(INPUT_POST, 'txtHojas', FILTER_SANITIZE_NUMBER_INT);
+                    $anillado = filter_input(INPUT_POST, 'chkAnillado', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $abrochado = filter_input(INPUT_POST, 'chkAbrochado', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $simplefaz = filter_input(INPUT_POST, 'chkSimpleFaz', FILTER_SANITIZE_SPECIAL_CHARS);
+                    
+                    if(!empty($idUsuario) && !empty($creado) && !empty($retiro) && !empty($idFranja) && !empty($descripcion) && !empty($hojas))
+                    {
+                        // Guardo en la db.
+                        $modelTextoEspecial = new models\TextoModel();
+                        $modelTextoEspecial->_creadoPor = $_SESSION['IdUsuario'];
+                        $modelTextoEspecial->_creadoDia = $creado;
+                        $modelTextoEspecial->_modificadoPor = null;
+                        $modelTextoEspecial->_modificadoDia = null;
+                        $modelTextoEspecial->_codInterno = null;
+                        $modelTextoEspecial->_idMateria = null;
+                        $modelTextoEspecial->_idTipoTexto = 1;
+                        $modelTextoEspecial->_idTipoContenido = null;
+                        $modelTextoEspecial->_nombre = $descripcion;
+                        $modelTextoEspecial->_autor = null;
+                        $modelTextoEspecial->_docente = null;
+                        $modelTextoEspecial->_cantPaginas = $hojas;
+                        $modelTextoEspecial->_activo = 0;
+                        $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTextoEspecial));                        
+                        
+                        $modelPedido = new models\PedidoModel();
+                        $modelPedido->_idUsuario = $idUsuario;
+                        $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
+                        $modelPedido->_creadoDia = date("Y-m-d H:i:s");
+                        $modelPedido->_modificadoPor = null;
+                        $modelPedido->_modificadoDia = null;
+                        $modelPedido->_anillado = false;
+                        $modelPedido->_comentario = null;
+                        $modelPedido->_retiro = $retiro;
+                        $modelPedido->_idFranja = $idFranja;
+                        $modelPedido->_pagado = false;
+                        $modelPedido->_idEstado = 1;
+                        $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
+                        
+                        $modelPedidoItem = new models\PedidoItemModel();
+                        $modelPedidoItem->_idPedido = $this->_lastIdPedido;
+                        $modelPedidoItem->_cantidad = 1;
+                        $modelPedidoItem->_idTexto = $this->_lastIdTexto;
+                        $modelPedidoItem->_anillado = !empty($anillado) ? true : false;
+                        $modelPedidoItem->_abrochado = !empty($abrochado) ? true : false;
+                        $modelPedidoItem->_simpleFaz = !empty($simplefaz) ? true : false;
+                        $modelPedidoItem->_idEstado = 1;
+                        $this->_model['PedidoItems']->Insert(array($modelPedidoItem));
+                        
+                        header("Location: index.php?do=/atpublico/index");
+                    }
+                    else
+                    {
+                        // falta completar campos obligatorios
+                    }
+                }
+            }
+            
+            // Combo de franjas horarias
+            $this->result = $this->_model['Franjas']->Select();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/at_publico/combo_franja.html";
+                    $this->combo_franja_horario .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_franja_horario = str_replace('{' . $key . '}', $value, $this->combo_franja_horario);
+                        }
+                    }
+                }
             }
             unset($this->result);
         }

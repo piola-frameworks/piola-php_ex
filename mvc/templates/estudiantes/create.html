@@ -73,6 +73,7 @@
                             <input id="chkAnilladoCompleto" type="checkbox" name="chkAnilladoCompleto"> Anillado completo ({PrecioAnillado})
                             <input id="hidPrecioAnillado" type="hidden" value="{PrecioAnillado}" />
                             <input id="hidPrecioSimpleFaz" type="hidden" value="{PrecioSimpleFaz}" />
+                            <input id="hidPrecioCEIT" type="hidden" value="{PrecioCEIT}" />
                         </label>
                     </div>
                 </div>
@@ -244,7 +245,7 @@
                 $('#ddlNivel').removeAttr('disabled');
 
                 // Coloco el indice por fuera del rango.
-                $('#ddlNivel').attr('selectedIndex', -1);
+                $('#ddlNivel').prop('selectedIndex', -1);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert('error');
@@ -271,7 +272,7 @@
                 $('#ddlMateria').removeAttr('disabled');
 
                 // Coloco el indice por fuera del rango.
-                $('#ddlMateria').attr('selectedIndex', -1);
+                $('#ddlMateria').prop('selectedIndex', -1);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert('error');
@@ -320,9 +321,11 @@
 
     $('.chkAnillado, .chkSimpleFaz').change(function() {
         var countAnillado = 0;
-        var countSimpleFaz = 0;
+        //var countSimpleFaz = 0;
+        var acumSimpleFaz = 0;
         var anillado = $('#hidPrecioAnillado').val();
         var simpleFaz = $('#hidPrecioSimpleFaz').val();
+        var precioCeit = $('#hidPrecioCEIT').val();
         var subTotal = 0;
 
         $('.chkAnillado').each(function(index, value) {
@@ -334,7 +337,11 @@
 
         $('.chkSimpleFaz').each(function(index, value) {
             if (value.checked) {
-                countSimpleFaz++;
+                //countSimpleFaz++;
+                //console.debug($(value).parent("td").parent("tr").find(".itemPrecio").text());
+                $(value).parent("td").parent("tr").find(".itemPrecio").text(parseFloat($(value).parent("td").parent("tr").find(".itemPaginas").text() * simpleFaz).toFixed(2)); 
+            } else {
+                $(value).parent("td").parent("tr").find(".itemPrecio").text(parseFloat($(value).parent("td").parent("tr").find(".itemPaginas").text() * precioCeit).toFixed(2)); 
             }
         });
 
@@ -343,6 +350,6 @@
             subTotal += parseFloat(value);
         });
 
-        $('#txtSubTotal').val((subTotal + (countAnillado * anillado) + (countSimpleFaz * simpleFaz)).toFixed(2));
+        $('#txtSubTotal').val((subTotal + (countAnillado * anillado) + acumSimpleFaz /*(countSimpleFaz * simpleFaz)*/).toFixed(2));
     });
 </script>

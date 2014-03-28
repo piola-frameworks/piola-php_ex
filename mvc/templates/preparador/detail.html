@@ -110,6 +110,12 @@
                 </tbody>
             </table>
         </div>
+        
+    </div>
+    <div class="panel-footer">
+        <div class="text-right">
+            <button class="btn btn-info hidden-print" type="button" onclick="window.location.reload()">Actualizar</button       
+        </div>
     </div>
 </div>
 <script type="text/javascript">
@@ -135,7 +141,10 @@
         </head>\n\
         <body>\n\
             <div class="container">\n\
-                <img class="img-responsive" src="/public/img/logo3.png" alt="Apuntec Logo" />\n\
+                <div class="center-block">\n\
+                    <img class="img-responsive" src="/public/img/ceit_logo.png" width="259" height="50" alt="Ceit Logo" />\n\
+                    <img class="img-responsive" src="/public/img/logo3.png" width="146" height="50" alt="Apuntec Logo" />\n\
+                </div>\n\
                 ' + divDatos.innerHTML + '\n\
                 ' + divItems.innerHTML + '\n\
                 <a class="btn btn-success hidden-print" href="javascript:;" onclick="window.print();" role="button"><span class="glyphicon glyphicon-print"></span> Imprimir</a>\n\

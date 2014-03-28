@@ -139,6 +139,10 @@ namespace CEIT\mvc\controllers
                                 case 'IdEstadoItem':
                                     $this->table_rows = str_replace("{Impreso}", $value == 3 ? "checked=\"checked\"" : "", $this->table_rows);
                                     break;
+                                case 'IdTipoTexto':
+                                    $this->table_rows = str_replace("{link_enabled}", $value == 1 ? "onclick=\"return false;\"" : "", $this->table_rows);
+                                    $this->table_rows = str_replace("{button_print}", $value == 1 ? "btn-danger" : "btn-default", $this->table_rows);
+                                    break;
                                 default:
                                     $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
                                     break;
@@ -388,14 +392,17 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/preparador/combo_estado.html";
-                    $this->combo_estados .= file_get_contents($filename);
-                    
                     if(is_array($row))
                     {
-                        foreach($row as $key => $value)
+                        if(!($row['Descripcion'] == "Entregado" || $row['Descripcion'] == "Cancelado"))
                         {
-                            $this->combo_estados = str_replace('{' . $key . '}', htmlentities($value), $this->combo_estados);
+                            $filename = BASE_DIR . "/mvc/templates/preparador/combo_estado.html";
+                            $this->combo_estados .= file_get_contents($filename);
+                            
+                            foreach($row as $key => $value)
+                            {   
+                                $this->combo_estados = str_replace('{' . $key . '}', htmlentities($value), $this->combo_estados);
+                            }
                         }
                     }
                 }

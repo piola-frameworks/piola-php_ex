@@ -268,9 +268,9 @@
             hasError = true;
             errorMsg += "> Apellido\n";
         }
-        if(($("#txtContrasena1").val().length >== 6 || $("#txtContrasena2").val().length >== 6) &&
-           ($("#txtContrasena1").val().length == $("#txtContrasena2").val().length) &&
-           ($("#txtContrasena1").val() === $("#txtContrasena2").val())) {
+        if(!($("#txtContrasena1").val().length >= 6 || $("#txtContrasena2").val().length >= 6) &&
+           !($("#txtContrasena1").val().length == $("#txtContrasena2").val().length) &&
+           !($("#txtContrasena1").val() === $("#txtContrasena2").val())) {
             hasError = true;
             errorMsg += "> Contraseña y su verificacion\n";
         }

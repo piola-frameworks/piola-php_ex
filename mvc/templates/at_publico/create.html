@@ -1,0 +1,155 @@
+<!-- Busqueda -->
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Busqueda</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-inline" name="frmBusqueda" method="POST" role="form">
+            <div class="form-group">
+                <label class="sr-only" for="txtDNILegajo">DNI o N&ordm; de Legajo</label>
+                <input id="txtDNILegajo" class="form-control" name="txtDNILegajo" type="number" min="1" step="1" placeholder="DNI o N&ordm; Legajo">
+            </div>
+            <button type="submit" name="btnFiltrar" class="btn btn-default">
+                <span class="glyphicon glyphicon-filter"></span> Filtrar
+            </button>
+        </form>
+    </div>
+</div>
+<!-- Datos del pedido -->
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Datos del pedido</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" name="frmPedido" method="POST" role="form">
+            <fieldset>
+                <!-- Datos de la persona -->
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Datos de la persona</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Legajo</label>
+                            <div class="col-sm-4">
+                                <input name="hidIdUsuario" type="hidden" value="{IdUsuario}" />
+                                <p class="form-control-static">{Legajo}</p>
+                            </div>
+                            <label class="col-sm-2 control-label">DNI</label>
+                            <div class="col-sm-4">
+                                <p class="form-control-static">{DNI}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Nombre</label>
+                            <div class="col-sm-4">
+                                <p class="form-control-static">{Nombre}</p>
+                            </div>
+                            <label class="col-sm-2 control-label">Apellido</label>
+                            <div class="col-sm-4">                    
+                                <p class="form-control-static">{Apellido}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Telefono</label>
+                            <div class="col-sm-4">
+                                <p class="form-control-static">{Telefono}</p>
+                            </div>
+                            <label class="col-sm-2 control-label">Celular</label>
+                            <div class="col-sm-4">                    
+                                <p class="form-control-static">{Celular}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Datos del pedido -->
+                <div class="form-group">
+                    <label class="col-sm-1 control-label" for="txtCreado">Creado</label>
+                    <div class="col-sm-2">
+                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-1 control-label" for="txtRetiro">Retiro</label>
+                    <div class="col-sm-2">
+                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" />
+                    </div>
+                    <label class="col-sm-1 control-label">Franja</label>
+                    <div class="col-sm-2">
+                        <select id="ddlFranja" class="form-control" name="ddlFranja">
+                            {combo_franja_horario}
+                        </select>
+                    </div>
+                </div>
+                <!-- Item -->
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Item</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Descripcion</th>
+                                        <th>Hojas</th>
+                                        <th>Anillado</th>
+                                        <th>Abrochado</th>
+                                        <th>Simple Faz</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input class="form-control" name="txtDescripcionItem" type="text" maxlength="50" required="required" />
+                                        </td>
+                                        <td>
+                                            <input class="form-control" name="txtHojas" type="number" step="1" min="1" max="10000" required="required" />
+                                        </td>
+                                        <td>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input name="chkAnillado" type="checkbox" />
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input name="chkAbrochado" type="checkbox" />
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input name="chkSimpleFaz" type="checkbox" />
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-10 col-sm-1">
+                        <button class="btn btn-default" name="btnGuardar" type="submit">Guardar</button>
+                    </div>
+                    <div class="col-sm-1">
+                        <a class="btn btn-default" href="index.php?do=/estudiante/index">Volver</a>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#txtRetiro').datepicker({
+        minDate: "{DiaRetiro}",
+        dateFormat: "yy-mm-dd",
+        showAnim: "slideDown",
+        beforeShowDay: $.datepicker.noWeekends
+    });
+</script>

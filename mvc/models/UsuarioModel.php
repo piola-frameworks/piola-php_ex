@@ -81,6 +81,16 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
+        public function SelectByLegajoOrDNI(core\AModel $model)
+        {
+            $this->_sp = "sp_selUsuarioByLegajoOrDNI";
+            $this->_params = array(
+                ':legajoDni'    =>  (int)$model->_legajoDNI,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function SelectByEmail(core\AModel $model)
         {
             $this->_sp = "sp_selUsuarioByEmail";

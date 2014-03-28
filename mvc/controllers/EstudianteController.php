@@ -75,6 +75,8 @@ namespace CEIT\mvc\controllers
             
             if(!isset($_COOKIE['TextosAgregados'])) // Si la cookie no esta, creo un cookie esqueleto.
             {
+                $this->table_text_added = "";
+                
                 $tmpArray = array(
                     'AnilladoCompleto'  =>  false,
                     'Comentario'        =>  null,
@@ -259,6 +261,13 @@ namespace CEIT\mvc\controllers
             {
                 $this->combo_carrera = "";
             }
+            unset($this->result);
+            
+            // Cargo el precio del anillado.
+            $modelConf = new models\WebModel();
+            $modelConf->_clave = "PrecioCEIT";
+            $this->result = $this->_model['Web']->Select($modelConf);
+            $this->PrecioCEIT = $this->result[0]['Valor'];
             unset($this->result);
             
             // Cargo el precio del anillado.
@@ -493,7 +502,7 @@ namespace CEIT\mvc\controllers
                         $modelTP->_codInterno = null;
                         $modelTP->_idMateria = null;
                         $modelTP->_idTipoTexto = 4;
-                        $modelTP->_idTipoContenido = 2;
+                        $modelTP->_idTipoContenido = null;
                         $modelTP->_nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                         $modelTP->_autor = null;
                         $modelTP->_docente = null;
@@ -539,6 +548,7 @@ namespace CEIT\mvc\controllers
                         $modelPedidoItem->_cantidad = 1;
                         $modelPedidoItem->_idTexto = $this->_lastIdTexto;
                         $modelPedidoItem->_anillado = false;
+                        $modelPedidoItem->_abrochado = false;
                         $modelPedidoItem->_simpleFaz = false;
                         $modelPedidoItem->_idEstado = 1;
                         $this->_model['PedidoItems']->Insert(array($modelPedidoItem));
@@ -995,12 +1005,12 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table.html";
-                    $this->table_content .= file_get_contents($filename);
-
                     // verifico si trajo 1 o muchos resultados.
                     if(is_array($row))
                     {
+                        $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table.html";
+                        $this->table_content .= file_get_contents($filename);
+                        
                         foreach($row as $key => $value)
                         {
                             if($key == 'IdPedido')
