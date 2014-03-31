@@ -16,8 +16,12 @@ namespace CEIT\mvc\controllers
             {
                 $this->_model = array(
                     'Gabinete'  =>  new models\GabineteModel(),
+                    'PedidoEstados' =>  new models\PedidoEstadosModel(),
+                    'Franjas'       =>  new models\HorarioFranjasModel(),
                     'Carreras'  =>  new models\CarreraModel(),
                     'Estados'   =>  new models\PedidoItemEstadosModel(),
+                    'PosicionX'     =>  new models\PedidoPosicionXModel(),
+                    'PosicionY'     =>  new models\PedidoPosicionYModel(),
                 );
             }
             
@@ -118,6 +122,185 @@ namespace CEIT\mvc\controllers
             {
                 $this->table_content = "";
             }
+        }
+        
+        public function pedidos_detail($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
+            
+            // seteo el modelo para trabajar con los items del pedido
+            $pedidosItems = new models\GabineteModel();
+            $pedidosItems->_idPedido = $id;
+            $this->result = $this->_model['Gabinete']->SelectItem($pedidosItems);
+            var_dump($this->result);
+            
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table_row.html";
+                        $this->table_rows .= file_get_contents($filename);
+                        
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case 'Anillado':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'Abrochado':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'SimpleFaz':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'IdEstadoItem':
+                                    $this->table_rows = str_replace("{Impreso}", $value == 3 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'IdTipoTexto':
+                                    $this->table_rows = str_replace("{link_enabled}", $value == 1 ? "onclick=\"return false;\"" : "", $this->table_rows);
+                                    $this->table_rows = str_replace("{button_print}", $value == 1 ? "btn-danger" : "btn-default", $this->table_rows);
+                                    break;
+                                default:
+                                    $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            // elaboro el parametro y traigo los datos
+            $pedido = new models\GabineteModel();
+            $pedido->_idPedido = $id;
+            $this->result = $this->_model['Gabinete']->Select($pedido);
+            var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result[0] as $key => $value)
+                {
+                    switch($key)
+                    {
+                        case "Pagado":
+                            $this->Pagado = $value ? "checked=\"checked\"" : '';
+                            break;
+
+                        case "Anillado":
+                            $this->Anillado = $value ? "checked=\"checked\"" : "";
+                            break;
+
+                        default:
+                            $this->{$key} = htmlentities($value);
+                            break;
+                    }
+                }
+            }
+            unset($this->result);
+            
+            $modelEstadoPedido = new models\PedidoEstadosModel();
+            $modelEstadoPedido->_idPedido = $id;
+            $this->result = $this->_model['PedidoEstados']->SelectByIdPedido($modelEstadoPedido);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if($row['Descripcion'] == "Entregado" || $row['Descripcion'] == "Cancelado")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/gabinete/combo_estado.html";
+                        $this->combo_estado_pedido .= file_get_contents($filename);
+
+                        if(is_array($row))
+                        {
+                            foreach($row as $key => $value)
+                            {
+                                $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            $modelFranja = new models\HorarioFranjasModel();
+            $modelFranja->_idPedido = $id;
+            $this->result = $this->_model['Franjas']->SelectByIdPedido($modelFranja);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/gabinete/combo_franja.html";
+                    $this->combo_franja_horario .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_franja_horario = str_replace('{' . $key . '}', $value, $this->combo_franja_horario);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            // Posicion X
+            $modelPosX = new models\PedidoPosicionXModel();
+            $modelPosX->_idPedido = $id;
+            $this->result = $this->_model['PosicionX']->SelectWithMarkByIdPedido($modelPosX);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/gabinete/combo_posicion_x.html";
+                    $this->combo_posicion_x .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_posicion_x = str_replace('{' . $key . '}', $value, $this->combo_posicion_x);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            // Posicion Y
+            $modelPosY = new models\PedidoPosicionYModel();
+            $modelPosY->_idPedido = $id;
+            $this->result = $this->_model['PosicionY']->SelectWithMarkByIdPedido($modelPosY);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/gabinete/combo_posicion_y.html";
+                    $this->combo_posicion_y .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_posicion_y = str_replace('{' . $key . '}', $value, $this->combo_posicion_y);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+        }
+        
+        public function pedidos_delete($id)
+        {
+            
         }
         
         public function caja_index()

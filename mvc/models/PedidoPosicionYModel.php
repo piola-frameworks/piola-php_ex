@@ -5,7 +5,7 @@ namespace CEIT\mvc\models
     use \CEIT\core;
     use \CEIT\core\CMySQLDatabase as Database;
     
-    class PedidoPosicionYModel
+    final class PedidoPosicionYModel extends core\AModel
     {
         public function Delete(array $model)
         {

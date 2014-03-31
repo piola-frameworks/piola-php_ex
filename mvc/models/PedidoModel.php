@@ -9,6 +9,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -27,6 +29,8 @@ namespace CEIT\mvc\models
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -35,7 +39,6 @@ namespace CEIT\mvc\models
             foreach($model as $item)
             {
                 array_push($this->_sp, "sp_insPedido");
-                
                 array_push($this->_params, array(
                     ':idUsuario'        =>  (int)$item->_idUsuario,
                     ':creadoPor'        =>  (int)$item->_creadoPor,
@@ -60,29 +63,26 @@ namespace CEIT\mvc\models
         {
             if($model != null)
             {
-                $params = array();
-                $sp = null;
-
+                $this->init();
+                
                 if(array_key_exists("_idUsuario", $model->_data))
                 {
-                    $params = array(
+                    $this->_sp = "sp_selPedidosByIdUsuario";
+                    $this->_params = array(
                         ':id'   =>  (int)$model->_idUsuario,
                     );
-
-                    $sp = "sp_selPedidosByIdUsuario";
                 }
                 else if(array_key_exists("_idPedido", $model->_data))
                 {
-                    $params = array(
+                    $this->_sp = "sp_selPedidoByIdPedido";
+                    $this->_params = array(
                         ':id'   =>  (int)$model->_idPedido,
                     );
-
-                    $sp = "sp_selPedidoByIdPedido";
                 }
 
-                if(!empty($params) || !empty($sp))
+                if(!empty($this->_params) || !empty($this->_sp))
                 {
-                    return Database::getInstance()->DoQuery($sp , $params);
+                    return Database::getInstance()->DoQuery($this->_sp , $this->_params);
                 }
                 else
                 {
@@ -101,6 +101,8 @@ namespace CEIT\mvc\models
         
         public function SelectByIdEstado(core\AModel $model)
         {
+            $this->init();
+            
             if(array_key_exists("_idUsuario", $model->_data))
             {
                 $this->_sp = "sp_selPedidosByIdUsuarioAndIdEstado";
@@ -122,6 +124,8 @@ namespace CEIT\mvc\models
         
         public function SelectByIdPedidoOrLegajo(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selPedidosByIdPedidoOrLegajo";
             $this->_params = array(
                 ':id'   =>  $model->_id,
@@ -132,6 +136,8 @@ namespace CEIT\mvc\models
         
         public function SelectItem(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selPedidoItems";
             $this->_params = array(
                 ':id'   =>  $model->_idPedido,
@@ -142,6 +148,8 @@ namespace CEIT\mvc\models
         
         public function SelectForDeliver()
         {
+            $this->init();
+            
             $this->_sp = "sp_selPedidoForDeliver";
                 
             return Database::getInstance()->DoQuery($this->_sp);
@@ -149,6 +157,8 @@ namespace CEIT\mvc\models
         
         public function SelectForDeliverByIdPedidoOrLegajo(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selPedidoForDeliverByIdPedidoOrLegajo";
             $this->_params = array(
                 ':idPedidoOrLegajo'   =>  (string)$model->_idPedidoLegajo,
@@ -159,6 +169,8 @@ namespace CEIT\mvc\models
         
         public function SelectFinished()
         {
+            $this->init();
+            
             $this->_sp = "sp_selPedidosTerminados";
             
             return Database::getInstance()->DoQuery($this->_sp);
@@ -166,6 +178,8 @@ namespace CEIT\mvc\models
         
         public function SelectItemCaja(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selPedidoCaja";
             $this->_params = array(
                 ':idPedido' =>  $model->_idPedido,
@@ -176,6 +190,8 @@ namespace CEIT\mvc\models
         
         public function SelectDisponibilidad()
         {
+            $this->init();
+            
             $this->_sp = "sp_selPedidoDisponibilidad";
             
             return Database::getInstance()->DoQuery($this->_sp);
@@ -187,6 +203,8 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -218,6 +236,8 @@ namespace CEIT\mvc\models
         
         public function UpdateEstado(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;

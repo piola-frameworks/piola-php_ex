@@ -15,6 +15,7 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
+                    'Usuarios'      =>  new models\UsuarioModel(),
                     'Pedidos'       =>  new models\PedidoModel(),
                     'PedidoItems'   =>  new models\PedidoItemModel(),
                     'PedidoEstados' =>  new models\PedidoEstadosModel(),
@@ -62,51 +63,6 @@ namespace CEIT\mvc\controllers
         public function detail($id)
         {
             $this->_template = BASE_DIR . "/mvc/templates/preparador/{$this->_action}.html";
-            
-            if(!empty($_POST))
-            {
-                //var_dump($_POST);
-                
-                if(isset($_POST['btnTerminar']))
-                {
-                    $pedido = new models\PedidoModel();
-                    $pedido->_idPedido = filter_input(INPUT_POST, "txtIdPedido", FILTER_SANITIZE_NUMBER_INT);
-                    $this->result = $this->_model['Pedidos']->Select($pedido);
-
-                    /*
-                     *  'IdPedido' => int 1
-                        'IdUsuario' => int 1
-                        'Creado' => string '2014-02-06 16:12:05' (length=19)
-                        'CreadoPor' => int 1
-                        'Modificado' => string '2014-03-10 12:50:08' (length=19)
-                        'ModificadoPor' => int 1
-                        'Anillado' => int 0
-                        'Comentario' => string 'Comentario' (length=10)
-                        'PosicionX' => int 1
-                        'PosicionY' => int 1
-                        'Retiro' => string '2014-02-06' (length=10)
-                        'IdFranja' => int 1
-                        'Pagado' => int 1
-                        'IdEstado' => int 4
-                     */
-
-                    $pedido->_idUsuario = $this->result[0]['IdUsuario'];
-                    $pedido->_creado = $this->result[0]['Creado'];
-                    $pedido->_creadoPor = $this->result[0]['CreadoPor'];
-                    $pedido->_modificado = date("Y-m-d H:i:s");
-                    $pedido->_modificadoPor = $_SESSION['IdUsuario'];
-                    $pedido->_anillado = $this->result[0]['Anillado'];
-                    $pedido->_comentario = $this->result[0]['Comentario'];
-                    $pedido->_posicionX = filter_input(INPUT_POST, "ddlPosicionX", FILTER_SANITIZE_NUMBER_INT);
-                    $pedido->_posicionY = filter_input(INPUT_POST, "ddlPosicionY", FILTER_SANITIZE_NUMBER_INT);
-                    $pedido->_retiro = $this->result[0]['Retiro'];
-                    $pedido->_idFranja = $this->result[0]['IdFranja'];
-                    $pedido->_pagado = $this->result[0]['Pagado'];
-                    $pedido->_idEstado = 4;
-
-                    $this->result = $this->_model['Pedidos']->Update(array($pedido));
-                }
-            }
             
             // seteo el modelo para trabajar con los items del pedido
             $pedidosItems = new models\PedidoModel();
@@ -252,7 +208,7 @@ namespace CEIT\mvc\controllers
             unset($this->result);
             
             // Posicion Y
-            $modelPosY = new models\HorarioFranjasModel();
+            $modelPosY = new models\PedidoPosicionYModel();
             $modelPosY->_idPedido = $id;
             $this->result = $this->_model['PosicionY']->SelectWithMarkByIdPedido($modelPosY);
             //var_dump($this->result);
@@ -273,6 +229,117 @@ namespace CEIT\mvc\controllers
                 }
             }
             unset($this->result);
+        }
+        
+        public function print_detail()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/preparador/{$this->_action}.html";
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                $idPedido = filter_input(INPUT_POST, 'txtIdPedido', FILTER_SANITIZE_NUMBER_INT);
+                
+                $pedido = new models\PedidoModel();
+                $pedido->_idPedido = $idPedido;
+                $this->result = $this->_model['Pedidos']->Select($pedido);
+                //var_dump($this->result);
+                if(count($this->result) == 1)
+                {
+                    $this->Creado = $this->result[0]['Creado'];
+                    $this->Retiro = $this->result[0]['Retiro'];
+                    $this->AnilladoCompleto = $this->result[0]['Anillado'] == 0 ? "No" : "Si";
+                    
+                    $usuario = new models\UsuarioModel();
+                    $usuario->_idUsuario = $this->result[0]['IdUsuario'];
+                    $this->result2 = $this->_model['Usuarios']->Select($usuario);
+                    //var_dump($this->result2);
+                    if(count($this->result2) == 1)
+                    {
+                        $this->Legajo = $this->result2[0]['Legajo'];
+                        $this->DNI = $this->result2[0]['DNI'];
+                        $this->Nombre = $this->result2[0]['Nombre'];
+                        $this->Apellido = $this->result2[0]['Apellido'];
+                        $this->Telefono = $this->result2[0]['Telefono'];
+                        $this->Celular = $this->result2[0]['Celular'];
+                    }
+                    unset($this->result2);
+                    
+                    $modelFranja = new models\HorarioFranjasModel();
+                    $modelFranja->_idFranja = $this->result[0]['IdFranja'];
+                    $this->result2 = $this->_model['Franjas']->Select($modelFranja);
+                    //var_dump($this->result2);
+                    if(count($this->result2) == 1)
+                    {
+                        $this->Franja = $this->result2[0]['Desde'] . " hs.";
+                    }
+                    unset($this->result2);
+                    
+                    $modelPedidoItems = new models\PedidoModel();
+                    $modelPedidoItems->_idPedido = $idPedido;
+                    $this->result2 = $this->_model['Pedidos']->SelectItem($modelPedidoItems);
+                    //var_dump($this->result2);
+                    if(count($this->result2) > 0)
+                    {
+                        foreach($this->result2 as $row)
+                        {
+                            if(is_array($row))
+                            {
+                                $filename = BASE_DIR . "/mvc/templates/preparador/{$this->_action}_table_row.html";
+                                $this->table_content .= file_get_contents($filename);
+                                
+                                foreach($row as $key => $value)
+                                {
+                                    switch($key)
+                                    {
+                                        case 'Nombre':
+                                            $this->table_content = str_replace("{Descripcion}", $value, $this->table_content);
+                                            break;
+                                        case 'Hojas':
+                                            $this->table_content = str_replace("{CantidadHojas}", $value, $this->table_content);
+                                            break;
+                                        case 'Anillado':
+                                            $this->table_content = str_replace("{" . $key . "}", $value == 1 ? "Si" : "No", $this->table_content);
+                                            break;
+                                        case 'Abrochado':
+                                            $this->table_content = str_replace("{" . $key . "}", $value == 1 ? "Si" : "No", $this->table_content);
+                                            break;
+                                        case 'SimpleFaz':
+                                            $this->table_content = str_replace("{" . $key . "}", $value == 1 ? "Si" : "No", $this->table_content);
+                                            break;
+                                        default:
+                                            $this->table_content = str_replace("{" . $key . "}", $value, $this->table_content);
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    unset($this->result2);
+                }
+                
+                if(isset($_POST['btnTerminar']))
+                {
+                    $pedido->_idUsuario = $this->result[0]['IdUsuario'];
+                    $pedido->_creado = $this->result[0]['Creado'];
+                    $pedido->_creadoPor = $this->result[0]['CreadoPor'];
+                    $pedido->_modificado = date("Y-m-d H:i:s");
+                    $pedido->_modificadoPor = $_SESSION['IdUsuario'];
+                    $pedido->_anillado = $this->result[0]['Anillado'];
+                    $pedido->_comentario = $this->result[0]['Comentario'];
+                    $pedido->_posicionX = filter_input(INPUT_POST, "ddlPosicionX", FILTER_SANITIZE_NUMBER_INT);
+                    $pedido->_posicionY = filter_input(INPUT_POST, "ddlPosicionY", FILTER_SANITIZE_NUMBER_INT);
+                    $pedido->_retiro = $this->result[0]['Retiro'];
+                    $pedido->_idFranja = $this->result[0]['IdFranja'];
+                    $pedido->_pagado = $this->result[0]['Pagado'];
+                    $pedido->_idEstado = 4;
+
+                    $this->result = $this->_model['Pedidos']->Update(array($pedido));
+                }
+                
+                unset($this->result);
+            }
         }
         
         /*public function detail_item($id)

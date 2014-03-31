@@ -120,19 +120,74 @@ namespace CEIT\mvc\controllers
                         }
                     }
                 }
+            }
+            
+            // Combo de franjas horarias
+            $this->result = $this->_model['Franjas']->Select();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/at_publico/combo_franja.html";
+                    $this->combo_franja_horario .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_franja_horario = str_replace('{' . $key . '}', $value, $this->combo_franja_horario);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+        }
+        
+        public function print_create()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}.html";
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                $idUsuario = filter_input(INPUT_POST, 'hidIdUsuario', FILTER_SANITIZE_NUMBER_INT);
+                $this->Creado = $creado = filter_input(INPUT_POST, 'txtCreado', FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->Retiro = $retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS);
+                $idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
+                $this->Descripcion = $descripcion = filter_input(INPUT_POST, 'txtDescripcionItem', FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->CantidadHojas = $hojas = filter_input(INPUT_POST, 'txtHojas', FILTER_SANITIZE_NUMBER_INT);
+                $anillado = filter_input(INPUT_POST, 'chkAnillado', FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->Anillado = !empty($anillado) ? "Si" : "No";
+                $abrochado = filter_input(INPUT_POST, 'chkAbrochado', FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->Abrochado = !empty($abrochado) ? "Si" : "No";
+                $simplefaz = filter_input(INPUT_POST, 'chkSimpleFaz', FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->SimpleFaz = !empty($simplefaz) ? "Si" : "No";
+                
+                $modelUsuario = new models\UsuarioModel();
+                $modelUsuario->_idUsuario = $idUsuario;
+                $this->result = $this->_model['Usuarios']->Select($modelUsuario);
+                //var_dump($this->result);
+                if(count($this->result) == 1)
+                {
+                    foreach($this->result[0] as $key => $value)
+                    {
+                        $this->{$key} = $value;
+                    }
+                }
+                
+                $modelFranjas = new models\HorarioFranjasModel();
+                $modelFranjas->_idFranja = $idFranja;
+                $this->result = $this->_model['Franjas']->Select($modelFranjas);
+                //var_dump($this->result);
+                if(count($this->result) == 1)
+                {
+                    $this->Franja = $this->result[0]['Desde'] . " hs.";
+                }
                 
                 if(isset($_POST['btnGuardar']))
                 {
-                    $idUsuario = filter_input(INPUT_POST, 'hidIdUsuario', FILTER_SANITIZE_NUMBER_INT);
-                    $creado = filter_input(INPUT_POST, 'txtCreado', FILTER_SANITIZE_SPECIAL_CHARS);
-                    $retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS);
-                    $idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
-                    $descripcion = filter_input(INPUT_POST, 'txtDescripcionItem', FILTER_SANITIZE_SPECIAL_CHARS);
-                    $hojas = filter_input(INPUT_POST, 'txtHojas', FILTER_SANITIZE_NUMBER_INT);
-                    $anillado = filter_input(INPUT_POST, 'chkAnillado', FILTER_SANITIZE_SPECIAL_CHARS);
-                    $abrochado = filter_input(INPUT_POST, 'chkAbrochado', FILTER_SANITIZE_SPECIAL_CHARS);
-                    $simplefaz = filter_input(INPUT_POST, 'chkSimpleFaz', FILTER_SANITIZE_SPECIAL_CHARS);
-                    
                     if(!empty($idUsuario) && !empty($creado) && !empty($retiro) && !empty($idFranja) && !empty($descripcion) && !empty($hojas))
                     {
                         // Guardo en la db.
@@ -175,8 +230,6 @@ namespace CEIT\mvc\controllers
                         $modelPedidoItem->_simpleFaz = !empty($simplefaz) ? true : false;
                         $modelPedidoItem->_idEstado = 1;
                         $this->_model['PedidoItems']->Insert(array($modelPedidoItem));
-                        
-                        header("Location: index.php?do=/atpublico/index");
                     }
                     else
                     {
@@ -184,27 +237,6 @@ namespace CEIT\mvc\controllers
                     }
                 }
             }
-            
-            // Combo de franjas horarias
-            $this->result = $this->_model['Franjas']->Select();
-            //var_dump($this->result);
-            if(count($this->result) > 0)
-            {
-                foreach($this->result as $row)
-                {
-                    $filename = BASE_DIR . "/mvc/templates/at_publico/combo_franja.html";
-                    $this->combo_franja_horario .= file_get_contents($filename);
-                    
-                    if(is_array($row))
-                    {
-                        foreach($row as $key => $value)
-                        {
-                            $this->combo_franja_horario = str_replace('{' . $key . '}', $value, $this->combo_franja_horario);
-                        }
-                    }
-                }
-            }
-            unset($this->result);
         }
         
         public function update($id)

@@ -1,0 +1,98 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-6 col-md-6">
+            <img class="img-responsive" src="/public/img/logo3.png" alt="Apuntec Logo" />
+        </div>
+        <div class="col-xs-6 col-md-6">
+            <img class="img-responsive" src="/public/img/ceit_logo.png" alt="Ceit Logo" />
+        </div>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Datos de la persona</h3>
+    </div>
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <p class="col-xs-6 col-md-6">
+                    <strong>Legajo:</strong> {Legajo}
+                </p>
+                <p class="col-xs-6 col-md-6">
+                    <strong>DNI:</strong> {DNI}
+                </p>
+            </div>
+            <div class="row">
+                <p class="col-xs-6 col-md-6">
+                    <strong>Nombre:</strong> {Nombre}
+                </p>
+                <p class="col-xs-6 col-md-6">
+                    <strong>Apellido:</strong> {Apellido}
+                </p>
+            </div>
+            <div class="row">
+                <p class="col-xs-6 col-md-6">
+                    <strong>Telefono:</strong> {Telefono}
+                </p>
+                <p class="col-xs-6 col-md-6">
+                    <strong>Celular:</strong> {Celular}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Datos del pedido</h3>
+    </div>
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <p class="col-xs-3 col-md-3">
+                    <strong>Creado:</strong> {Creado}
+                </p>
+                <p class="col-xs-3 col-md-3">
+                    <strong>Retiro:</strong> {Retiro}
+                </p>
+                <p class="col-xs-3 col-md-3">
+                    <strong>Desde:</strong> {Franja}
+                </p>
+                <p class="col-xs-3 col-md-3">
+                    <strong>&iquest;Anillado completo?</strong> {AnilladoCompleto}
+                </p>
+            </div>
+        </div>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">Item</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Descripcion</th>
+                            <th>Materias</th>
+                            <th>Hojas</th>
+                            <th>Anillado</th>
+                            <th>Abrochado</th>
+                            <th>Simple Faz</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {table_content}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-offset-11 col-md-1">
+            <a class="btn btn-default hidden-print" href="#" onclick="window.print();" role="button">
+                <span class="glyphicon glyphicon-print"></span> Imprimir
+            </a>
+        </div>
+    </div>
+</div>

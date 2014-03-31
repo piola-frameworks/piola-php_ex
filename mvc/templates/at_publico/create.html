@@ -16,12 +16,12 @@
     </div>
 </div>
 <!-- Datos del pedido -->
-<div class="panel panel-info">
+<div id="pnlDatosPedido" class="panel panel-info">
     <div class="panel-heading">
         <h3 class="panel-title">Datos del pedido</h3>
     </div>
     <div class="panel-body">
-        <form class="form-horizontal" name="frmPedido" method="POST" role="form">
+        <form class="form-horizontal" name="frmPedido" action="index.php?do=/atpublico/print_create" method="POST" role="form">
             <fieldset>
                 <!-- Datos de la persona -->
                 <div class="panel panel-primary">
@@ -66,15 +66,13 @@
                 <div class="form-group">
                     <label class="col-sm-1 control-label" for="txtCreado">Creado</label>
                     <div class="col-sm-2">
-                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" readonly="readonly" />
+                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" readonly="readonly" required="required" />
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-1 control-label" for="txtRetiro">Retiro</label>
+                    <label class="col-sm-2 control-label" for="txtRetiro">Retiro</label>
                     <div class="col-sm-2">
-                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" />
+                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" required="required" />
                     </div>
-                    <label class="col-sm-1 control-label">Franja</label>
+                    <label class="col-sm-2 control-label">Franja</label>
                     <div class="col-sm-2">
                         <select id="ddlFranja" class="form-control" name="ddlFranja">
                             {combo_franja_horario}
@@ -135,19 +133,23 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-10 col-sm-1">
-                        <button class="btn btn-default" name="btnGuardar" type="submit">Guardar</button>
+                        <button class="btn btn-default hidden-print" name="btnGuardar" type="submit">
+                            <span class="glyphicon glyphicon-floppy-disk"></span> Guardar
+                        </button>
                     </div>
                     <div class="col-sm-1">
-                        <a class="btn btn-default" href="index.php?do=/estudiante/index">Volver</a>
+                        <a class="btn btn-default hidden-print" href="index.php?do=/atpublico/index">
+                            <span class="glyphicon glyphicon-arrow-left"></span> Volver
+                        </a>
                     </div>
                 </div>
             </fieldset>
         </form>
     </div>
 </div>
-<script type="text/javascript">
+<script type="text/javascript">    
     $('#txtRetiro').datepicker({
-        minDate: "{DiaRetiro}",
+        minDate: 0,
         dateFormat: "yy-mm-dd",
         showAnim: "slideDown",
         beforeShowDay: $.datepicker.noWeekends

@@ -9,6 +9,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -27,6 +29,8 @@ namespace CEIT\mvc\models
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -45,6 +49,8 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if($model != null)
             {
                 $this->_sp = "sp_selGabinetePedido";
@@ -66,8 +72,24 @@ namespace CEIT\mvc\models
          * Start custom selects
          */
         
+        public function SelectItem(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selGabineteItems";
+            $this->_params = array(
+                ':idPedido'     => (int)$model->_idPedido,
+            );
+            
+            //var_dump($this->_sp, $this->_params);
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function SelectCaja()
         {
+            $this->init();
+            
             $this->_sp = "sp_selGabineteCaja";
             
             return Database::getInstance()->DoQuery($this->_sp);
@@ -75,6 +97,8 @@ namespace CEIT\mvc\models
         
         public function SelectCajaItem(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selGabineteCajaPedido";
             $this->_params = array(
                 ':idPedido' =>  (int)$model->_idPedido,
@@ -89,6 +113,8 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;

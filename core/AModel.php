@@ -33,5 +33,13 @@ namespace CEIT\core
         {
             unset($this->_data[$name]);
         }
+        
+        public function init()
+        {
+            $this->_data = array();
+            $this->_params = array();
+            $this->_sp = array();
+            $this->_trans = false;
+        }
     }
 }

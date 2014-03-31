@@ -1,0 +1,29 @@
+<tr>
+    <!-- <td>{Cantidad}</td> -->
+    <td>{Codigo}</td>
+    <td>{Nombre}</td>
+    <td>{Materia}</td>
+    <td>{Hojas}</td>
+    <td>
+        <input class="chkAnillado" type="checkbox" name="chkAnillado" value="{IdItem}" {Anillado} disabled="disabled" />
+    </td>
+    <td>
+        <input class="chkAbrochado" type="checkbox" name="chkAbrochado" value="{IdItem}" {Abrochado} disabled="disabled" />
+    </td>
+    <td>
+        <input class="chkSimpleFaz" type="checkbox" name="chkSimpleFaz" value="{IdItem}" {SimpleFaz} disabled="disabled" />
+    </td>
+    <td>
+        <input class="chkImpreso" type="checkbox" name="chkImpreso" value="{IdItem}" {Impreso} />
+    </td>
+    <td>
+        <div class="btn-group">
+            <a class="btn {button_print} hidden-print" href="index.php?do=/data/{TipoAccion}/{RutaArchivo}" target="_blank" role="button" {link_enabled}>
+                <span class="glyphicon glyphicon-print"></span>
+            </a>
+            <!-- <a class="btn btn-default" href="index.php?do=/pedidos/detail_item/{IdItem}" role="button">
+                <span class="glyphicon glyphicon-cog"></span>
+            </a> -->
+        </div>
+    </td>
+</tr>
