@@ -117,10 +117,10 @@
         }
     });
     $("#txtNombre").change(function(event) {
-        var username = new String($("#txtNombre").val().substring(0, 1).toLowerCase() + $("#txtApellido").val().toLowerCase());
+        var username = new String($("#txtNombre").val().substring(0, 1).toLowerCase() + $("#txtApellido").val().split(" ")[0].toLowerCase());
         var maxlen = parseInt($("#txtUsuario").attr('maxLength'));
         var hasValue = $("#txtUsuario").val().length == 0 ? false : true;
-        console.debug(hasValue);
+        
         if (username.length >= 2 && username.length <= maxlen && !hasValue) {
             $("#txtUsuario").val(username.toString());
             validateUserName(username.toString());
@@ -138,10 +138,10 @@
         }
     });
     $("#txtApellido").change(function(event) {
-        var username = new String($("#txtNombre").val().substring(0, 1).toLowerCase() + $("#txtApellido").val().toLowerCase());
+        var username = new String($("#txtNombre").val().substring(0, 1).toLowerCase() + $("#txtApellido").val().split(" ")[0].toLowerCase());
         var maxlen = parseInt($("#txtUsuario").attr('maxLength'));
         var hasValue = $("#txtUsuario").val().length == 0 ? false : true;
-        console.debug(hasValue);
+        
         if (username.length >= 2 && username.length <= maxlen && !hasValue) {
             $("#txtUsuario").val(username.toString());
             validateUserName(username.toString());

@@ -9,6 +9,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -16,24 +18,19 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_delCarrera"
-                );
-                
-                array_push(
-                    $this->_params,
-                    array(
-                        ':idCarrera' =>  (int)$item->_idCarrera,
-                    )
-                );
+                array_push($this->_sp, "sp_delCarrera");
+                array_push($this->_params, array(
+                    ':idCarrera' =>  (int)$item->_idCarrera,
+                ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
         }
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -41,18 +38,12 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_insCarrera"
-                );
+                array_push($this->_sp, "sp_insCarrera");
                 
-                array_push(
-                    $this->_params,
-                    array(
-                        ':codInterno'   =>  (int)$item->_codInterno,
-                        ':descripcion'  =>  (string)$item->_descripcion,
-                    )
-                );
+                array_push($this->_params, array(
+                    ':codInterno'   =>  (int)$item->_codInterno,
+                    ':descripcion'  =>  (string)$item->_descripcion,
+                ));
             }
             
             return Database::getInstance()->DoScalar($this->_sp, $this->_params);
@@ -60,6 +51,8 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if($model == null)
             {
                 $this->_sp = "sp_selCarreras";
@@ -79,6 +72,8 @@ namespace CEIT\mvc\models
 
         public function SelectByIdUsuario(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selCarrerasByIdUsuario";
             $this->_params = array(
                 ':idUsuario'    =>  $model->_idUsuario,
@@ -89,6 +84,8 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -96,22 +93,16 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push(
-                    $this->_sp,
-                    "sp_updCarrera"
-                );
+                array_push($this->_sp, "sp_updCarrera");
                 
-                array_push(
-                    $this->_params,
-                    array(
-                        ':idCarrera'    =>  (int)$item->_idCarrera,
-                        ':codInterno'   =>  (int)$item->_codInterno,
-                        ':descripcion'  =>  (string)$item->_descripcion,
-                    )
-                );
+                array_push($this->_params, array(
+                    ':idCarrera'    =>  (int)$item->_idCarrera,
+                    ':codInterno'   =>  (int)$item->_codInterno,
+                    ':descripcion'  =>  (string)$item->_descripcion,
+                ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params);
         }
 
     }

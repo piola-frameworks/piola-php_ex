@@ -15,11 +15,11 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
-                    'Gabinete'  =>  new models\GabineteModel(),
+                    'Gabinete'      =>  new models\GabineteModel(),
                     'PedidoEstados' =>  new models\PedidoEstadosModel(),
                     'Franjas'       =>  new models\HorarioFranjasModel(),
-                    'Carreras'  =>  new models\CarreraModel(),
-                    'Estados'   =>  new models\PedidoItemEstadosModel(),
+                    'Carreras'      =>  new models\CarreraModel(),
+                    'Estados'       =>  new models\PedidoItemEstadosModel(),
                     'PosicionX'     =>  new models\PedidoPosicionXModel(),
                     'PosicionY'     =>  new models\PedidoPosicionYModel(),
                 );

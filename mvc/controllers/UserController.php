@@ -233,6 +233,7 @@ namespace CEIT\mvc\controllers
             $modelCarrera = new models\CarreraModel();
             $modelCarrera->_idUsuario = (int)$id;
             $this->result = $this->_model['Carreras']->SelectByIdUsuario($modelCarrera);
+            //var_dump($this->result);
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
