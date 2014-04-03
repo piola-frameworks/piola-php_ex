@@ -1,3 +1,7 @@
+<div class="well">
+    <p>Si tu archivo tiene menos de 50 páginas, retiralo por el Gabinete Graciela Pane.</p>
+    <p>Si tu archivo tiene más de 50 páginas, retiralo por el local de apuntes Alejandro Alborino.</p>
+</div>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">Datos</h3>
@@ -15,6 +19,9 @@
                 <div class="col-sm-10">
                     <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
                     <input id="filArchivo" class="form-control" name="filArchivo" type="file" required="required" accept="application/pdf">
+                    <p class="help-block">
+                        El archivo que envíes debe ser <abbr title="Portable Document File">PDF</abbr>.
+                    </p>
                 </div>
             </div>
             <div class="form-group">
@@ -22,7 +29,7 @@
                 <input name="hidFranja" type="hidden" value="{FranjaHoraria}" />
                 <div class="col-sm-offset-2 col-sm-10">
                     <button type="submit" class="btn btn-default">Enviar</button>
-                    <a class="btn btn-default" href="index.php?do=/pedidos/index">Volver</a>
+                    <a class="btn btn-default" href="index.php?do=/estudiante/index">Volver</a>
                 </div>
             </div>
         </form>

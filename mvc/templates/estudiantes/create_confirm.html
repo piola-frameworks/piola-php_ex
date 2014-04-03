@@ -6,7 +6,7 @@
         <div class="panel-body">
             <div class="well well-sm">
                 <p class="lead">Franja Horaria</p>
-                <p>Seleccionar fecha y franja horaria a partir de la cual va a pasar a retirar el pedido. No va a poder elegir opciones donde ya haya muchos pedidos por hacer.</p>
+                <p>Seleccioná la fecha y franja horaria para pasar a retirar tu pedido.</p>
             </div>
             <div class="form-group">
                 <!-- <label for="txtComentario" class="col-sm-2 control-label">Comentario:</label>
@@ -15,7 +15,14 @@
                 </div> -->
                 <label for="txtRetiro" class="col-sm-2 control-label">Retiro</label>
                 <div class="col-sm-4">
-                    <input id="txtRetiro" class="form-control" type="text" name="txtRetiro" value="{DiaRetiro}" readonly="readonly">
+                    <div class="input-group">
+                        <input id="txtRetiro" class="form-control" type="text" name="txtRetiro" value="{DiaRetiro}" readonly="readonly">
+                        <span class="input-group-btn">
+                            <button id="btnMostrarCalendario" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </button>
+                        </span>
+                    </div>
                 </div>
                 <label for="ddlFranja" class="col-sm-2 control-label">Franja horaria</label>
                 <div class="col-sm-4">
@@ -75,5 +82,9 @@
         dateFormat: "yy-mm-dd",
         showAnim: "slideDown",
         beforeShowDay: $.datepicker.noWeekends
+    });
+    
+    $('#btnMostrarCalendario').click(function() {
+        $('#txtRetiro').datepicker('show');
     });
 </script>

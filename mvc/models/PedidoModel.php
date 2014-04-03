@@ -47,8 +47,8 @@ namespace CEIT\mvc\models
                     ':modificadoDia'    =>  is_null($item->_modificadoDia) ? null : (string)$item->_creadoDia,
                     ':anillado'         =>  (bool)$item->_anillado,
                     ':comentario'       =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
-                    ':posicionX'        =>  is_null($item->_posicionX) ? 1 : (int)$item->_posicionX,
-                    ':posicionY'        =>  is_null($item->_posicionY) ? 1 : (int)$item->_posicionY,
+                    ':posicionX'        =>  is_null($item->_posicionX) ? null : (int)$item->_posicionX,
+                    ':posicionY'        =>  is_null($item->_posicionY) ? null : (int)$item->_posicionY,
                     ':retiro'           =>  (string)$item->_retiro,
                     ':idFranja'         =>  (int)$item->_idFranja,
                     ':pagado'           =>  (bool)$item->_pagado,
@@ -122,11 +122,11 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
-        public function SelectByIdPedidoOrLegajo(core\AModel $model)
+        public function SelectByIdPedidoOrDNI(core\AModel $model)
         {
             $this->init();
             
-            $this->_sp = "sp_selPedidosByIdPedidoOrLegajo";
+            $this->_sp = "sp_selPedidosByIdPedidoOrDNI";
             $this->_params = array(
                 ':id'   =>  $model->_id,
             );
@@ -222,8 +222,8 @@ namespace CEIT\mvc\models
                     ':modificadoPor'    =>  (int)$item->_modificadoPor,
                     ':anillado'         =>  (bool)$item->_anillado,
                     ':comentario'       =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
-                    ':posicionX'        =>  is_null($item->_posicionX) ? 1 : (int)$item->_posicionX,
-                    ':posicionY'        =>  is_null($item->_posicionY) ? 1 : (int)$item->_posicionY,
+                    ':posicionX'        =>  is_null($item->_posicionX) ? null : (int)$item->_posicionX,
+                    ':posicionY'        =>  is_null($item->_posicionY) ? null : (int)$item->_posicionY,
                     ':retiro'           =>  (string)$item->_retiro,
                     ':idFranja'         =>  (int)$item->_idFranja,
                     ':pagado'           =>  (bool)$item->_pagado,

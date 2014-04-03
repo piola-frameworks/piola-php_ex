@@ -381,7 +381,7 @@ namespace CEIT\mvc\controllers
                     
                     $modelPedido = new models\PedidoModel();
                     $modelPedido->_id = filter_input(INPUT_POST, 'txtLegajo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $this->result = $this->_model['Gabinete']->SelectByIdPedidoOrLegajo($modelPedido);
+                    $this->result = $this->_model['Gabinete']->SelectByIdPedidoOrDNI($modelPedido);
                 }
             }
             

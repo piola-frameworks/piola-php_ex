@@ -65,6 +65,21 @@ namespace CEIT\mvc\models
             }
         }
 
+        /*
+         * Start Custom Select
+         */
+        
+        public function SelectCierraCaja()
+        {
+            $this->_sp = "sp_selCajaCierreParcial";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
+        /*
+         * End custom Select
+         */
+        
         public function Update(array $model)
         {
             if(count($model) > 1)

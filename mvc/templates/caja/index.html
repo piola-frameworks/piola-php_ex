@@ -43,19 +43,20 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Pedidos</h3>
             </div>
-
             <div class="panel-body">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Filtros</h3>
+                        <h3 class="panel-title">Busqueda</h3>
                     </div>
                     <div class="panel-body">
                         <form class="form-inline" name="frmCajaFiltros" method="POST" role="form">
                             <div class="form-group">
-                                <label class="sr-only" for="txtLegajo">Legajo o Id Pedido</label>
-                                <input id="txtLegajo" class="form-control" type="text" name="txtLegajo" placeholder="Legajo o Id Pedido">
+                                <label class="sr-only" for="txtLegajo">DNI o ID Pedido</label>
+                                <input id="txtDNI_IDPedido" class="form-control" type="number" name="txtDNI_IDPedido" step="1" min="1" placeholder="DNI o ID Pedido">
                             </div>
-                            <button class="btn btn-default" type="submit" name="btnFiltrar">Filtrar</button>
+                            <button class="btn btn-default" type="submit" name="btnFiltrar">
+                                <span class="glyphicon glyphicon-filter"></span> Filtrar
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -93,6 +94,9 @@
             </div>
             <div class="panel-body">
                 <form name="frmAgregarItem" method="POST" role="form">
+                    <input type="hidden" name="hidAnillado" value="{Anillado}" />
+                    <input type="hidden" name="hidSimpleFaz" value="{SimpleFaz}" />
+                    <input type="hidden" name="hidDobleFaz" value="{PrecioCEIT}" />
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
@@ -113,7 +117,8 @@
                                         <select class="form-control" name="ddlItemTipo">
                                             <option value="ANI">Anillado</option>
                                             <option value="LIB">Art. de Libreria</option>
-                                            <option value="FOS">Fotocopias Sueltas</option>
+                                            <option value="FSF">Fot Sueltas - Simple Faz</option>
+                                            <option value="FDF">Fot Sueltas - Doble Faz</option>
                                         </select>
                                         <!-- <input class="form-control" name="txtIdItem" type="text" required="required" /> -->
                                     </td>
@@ -141,18 +146,45 @@
                 </form>
             </div>
         </div>
+        <div class="row">
+            <button class="btn btn-default" type="button" name="btnCierreCaja">Cierre de Caja</button>
+        </div>
     </div>
 </div>
 <script type="text/javascript">
     $('select[name=ddlItemTipo]').change(function() {
-        if ($('select[name=ddlItemTipo]').val() === "ANI") {
-            $('input[name=txtCantidad]').val(1);
-            $('input[name=txtCantidad]').attr("readonly", "readonly");
-        } else {
-            $('input[name=txtCantidad]').removeAttr("readonly");
+        switch($('select[name=ddlItemTipo]').val()) {
+            case "ANI":
+                $("input[name=txtImporte]").val($("input[name=hidAnillado]").val());
+                $('input[name=txtCantidad]').val(1);
+                $('input[name=txtCantidad]').attr("readonly", "readonly");
+            break;
+            
+            case "FSF":
+                $("input[name=txtImporte]").val($("input[name=hidSimpleFaz]").val());
+                $('input[name=txtCantidad]').removeAttr("readonly");
+                break;
+            
+            case "FDF":
+                $("input[name=txtImporte]").val($("input[name=hidDobleFaz]").val());
+                $('input[name=txtCantidad]').removeAttr("readonly");
+                break;
+            
+            default:
+                $("input[name=txtImporte]").val("");
+                break;
         }
     });
 
+    $("button[name=btnCierreCaja]").click(function() {
+        $.ajax({
+            type: "POST",
+            url: "index.php?do=/caja/ajax_get_cierre_caja"
+        })
+        .done(function(msg) {
+            alert("Total hasta el momento: " + msg);
+        });
+    });
     /*$('input[name=txtPrecioUnitario]').change(function() {
      var precio = $('input[name=txtPrecioUnitario]').val();
      var cant = $('input[name=txtCantidad]').val();

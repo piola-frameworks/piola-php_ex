@@ -15,6 +15,7 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
+                    'Configuraciones'   => new models\WebModel(),
                     'Pedidos'   =>  new models\PedidoModel(),
                     'Caja'      =>  new models\CajaModel(),
                     'CajaItems' =>  new models\CajaItemModel(),
@@ -31,7 +32,16 @@ namespace CEIT\mvc\controllers
         {
             parent::__destruct();
             
-            $this->_view->render($this->_template, $this->_dataCollection);
+            if($this->_ajaxRequest)
+            {
+                $this->_view->json($this->result);
+            }
+            else
+            {
+                $this->_view->render($this->_template, $this->_dataCollection);
+            }
+            
+            unset($this->result);
         }
         
         public function index()
@@ -96,8 +106,11 @@ namespace CEIT\mvc\controllers
                         case 'LIB':
                             $variosDesc = "Art(s) de Libreria";
                             break;
-                        case 'FOS':
-                            $variosDesc = "Fotocopia(s) Suelta(s)";
+                        case 'FSF':
+                            $variosDesc = "Fotocopia(s) Suelta(s) Simple Faz";
+                            break;
+                        case 'FDF':
+                            $variosDesc = "Fotocopia(s) Suelta(s) Doble Faz";
                             break;
                         case 'ANI':
                             $variosDesc = "Anillado";
@@ -193,8 +206,8 @@ namespace CEIT\mvc\controllers
                     //$reloadFlag = true;
                     
                     $modelPedido = new models\PedidoModel();
-                    $modelPedido->_id = filter_input(INPUT_POST, 'txtLegajo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $this->result = $this->_model['Pedidos']->SelectByIdPedidoOrLegajo($modelPedido);
+                    $modelPedido->_id = filter_input(INPUT_POST, 'txtDNI_IDPedido', FILTER_SANITIZE_NUMBER_INT);
+                    $this->result = $this->_model['Pedidos']->SelectByIdPedidoOrDNI($modelPedido);
                 }
             }
             
@@ -270,6 +283,33 @@ namespace CEIT\mvc\controllers
                 }
             }
             
+            // Cargo datos de los precios.
+            $modelConfiguracion = new models\WebModel();
+            $modelConfiguracion->_clave = "PrecioAnillado";
+            $this->result = $this->_model['Configuraciones']->Select($modelConfiguracion);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->Anillado = $this->result[0]['Valor'];
+            }
+            
+            $modelConfiguracion->_clave = "PrecioSimpleFaz";
+            $this->result = $this->_model['Configuraciones']->Select($modelConfiguracion);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->SimpleFaz = $this->result[0]['Valor'];
+            }
+            
+            $modelConfiguracion->_clave = "PrecioCEIT";
+            $this->result = $this->_model['Configuraciones']->Select($modelConfiguracion);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->PrecioCEIT = $this->result[0]['Valor'];
+            }
+            unset($this->result);
+                    
             if(empty($this->result))
             {
                 $this->result = $this->_model['Pedidos']->SelectFinished();
@@ -425,13 +465,16 @@ namespace CEIT\mvc\controllers
                 {
                     foreach($idPedidos as $item)
                     {
-                        $pedidos[$item] = array(
-                            'Tipo'              =>  "Pedido",
-                            'Descripcion'       =>  $descripcion[$item],
-                            'PrecioUnitario'    =>  $preunit[$item],
-                            'Cantidad'          =>  $cantidad[$item],
-                            'Importe'           =>  $importe[$item],
-                        );
+                        if(!empty($item))
+                        {
+                            $pedidos[$item] = array(
+                                'Tipo'              =>  "Pedido",
+                                'Descripcion'       =>  $descripcion[$item],
+                                'PrecioUnitario'    =>  $preunit[$item],
+                                'Cantidad'          =>  $cantidad[$item],
+                                'Importe'           =>  $importe[$item],
+                            );
+                        }
                     }
                 }
                 
@@ -500,6 +543,17 @@ namespace CEIT\mvc\controllers
             else
             {
                 // por que entro sin hacer mandado datos?
+            }
+        }
+        
+        public function ajax_get_cierre_caja()
+        {
+            if(!empty($_POST))
+            {
+                $this->_ajaxRequest = true;
+                
+                $this->result = $this->_model['Caja']->SelectCierreCaja();
+                var_dump($this->result);
             }
         }
     }

@@ -240,13 +240,33 @@ namespace CEIT\mvc\controllers
                 //var_dump($_POST);
                 
                 $idPedido = filter_input(INPUT_POST, 'txtIdPedido', FILTER_SANITIZE_NUMBER_INT);
-                
                 $pedido = new models\PedidoModel();
                 $pedido->_idPedido = $idPedido;
                 $this->result = $this->_model['Pedidos']->Select($pedido);
                 //var_dump($this->result);
+                
+                if(isset($_POST['btnTerminar']))
+                {
+                    $pedido->_idUsuario = $this->result[0]['IdUsuario'];
+                    $pedido->_creado = $this->result[0]['Creado'];
+                    $pedido->_creadoPor = $this->result[0]['CreadoPor'];
+                    $pedido->_modificado = date("Y-m-d H:i:s");
+                    $pedido->_modificadoPor = $_SESSION['IdUsuario'];
+                    $pedido->_anillado = $this->result[0]['Anillado'];
+                    $pedido->_comentario = $this->result[0]['Comentario'];
+                    $pedido->_posicionX = filter_input(INPUT_POST, "ddlPosicionX", FILTER_SANITIZE_NUMBER_INT);
+                    $pedido->_posicionY = filter_input(INPUT_POST, "ddlPosicionY", FILTER_SANITIZE_NUMBER_INT);
+                    $pedido->_retiro = $this->result[0]['Retiro'];
+                    $pedido->_idFranja = $this->result[0]['IdFranja'];
+                    $pedido->_pagado = $this->result[0]['Pagado'];
+                    $pedido->_idEstado = 4;
+
+                    $this->_model['Pedidos']->Update(array($pedido));
+                }
+                
                 if(count($this->result) == 1)
                 {
+                    $this->IdPedido = $this->result[0]['IdPedido'];
                     $this->Creado = $this->result[0]['Creado'];
                     $this->Retiro = $this->result[0]['Retiro'];
                     $this->AnilladoCompleto = $this->result[0]['Anillado'] == 0 ? "No" : "Si";
@@ -273,6 +293,26 @@ namespace CEIT\mvc\controllers
                     if(count($this->result2) == 1)
                     {
                         $this->Franja = $this->result2[0]['Desde'] . " hs.";
+                    }
+                    unset($this->result2);
+                    
+                    $modelPosicionX = new models\PedidoPosicionXModel();
+                    $modelPosicionX->_idPosicionX = $this->result[0]['PosicionX'];
+                    $this->result2 = $this->_model['PosicionX']->Select($modelPosicionX);
+                    //var_dump($this->result2);
+                    if(count($this->result2) == 1)
+                    {
+                        $this->PosicionX = $this->result2[0]['Descripcion'];
+                    }
+                    unset($this->result2);
+                    
+                    $modelPosicionY = new models\PedidoPosicionYModel();
+                    $modelPosicionY->_idPosicionY = $this->result[0]['PosicionY'];
+                    $this->result2 = $this->_model['PosicionY']->Select($modelPosicionY);
+                    //var_dump($this->result2);
+                    if(count($this->result2) == 1)
+                    {
+                        $this->PosicionY = $this->result2[0]['Descripcion'];
                     }
                     unset($this->result2);
                     
@@ -318,26 +358,6 @@ namespace CEIT\mvc\controllers
                     }
                     unset($this->result2);
                 }
-                
-                if(isset($_POST['btnTerminar']))
-                {
-                    $pedido->_idUsuario = $this->result[0]['IdUsuario'];
-                    $pedido->_creado = $this->result[0]['Creado'];
-                    $pedido->_creadoPor = $this->result[0]['CreadoPor'];
-                    $pedido->_modificado = date("Y-m-d H:i:s");
-                    $pedido->_modificadoPor = $_SESSION['IdUsuario'];
-                    $pedido->_anillado = $this->result[0]['Anillado'];
-                    $pedido->_comentario = $this->result[0]['Comentario'];
-                    $pedido->_posicionX = filter_input(INPUT_POST, "ddlPosicionX", FILTER_SANITIZE_NUMBER_INT);
-                    $pedido->_posicionY = filter_input(INPUT_POST, "ddlPosicionY", FILTER_SANITIZE_NUMBER_INT);
-                    $pedido->_retiro = $this->result[0]['Retiro'];
-                    $pedido->_idFranja = $this->result[0]['IdFranja'];
-                    $pedido->_pagado = $this->result[0]['Pagado'];
-                    $pedido->_idEstado = 4;
-
-                    $this->result = $this->_model['Pedidos']->Update(array($pedido));
-                }
-                
                 unset($this->result);
             }
         }
