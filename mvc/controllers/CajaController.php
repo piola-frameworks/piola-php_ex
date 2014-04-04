@@ -100,7 +100,7 @@ namespace CEIT\mvc\controllers
                 {
                     $reloadFlag = true;
                     
-                    $variosIdItem = filter_input(INPUT_POST, 'ddlItemTipo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $variosIdItem = filter_input(INPUT_POST, 'ddlItemTipo', FILTER_SANITIZE_SPECIAL_CHARS);
                     switch($variosIdItem)
                     {
                         case 'LIB':
@@ -164,8 +164,8 @@ namespace CEIT\mvc\controllers
                 {
                     $reloadFlag = true;
                     
-                    $btnValor = filter_input(INPUT_POST, 'btnQuitarPedido', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $hidType = filter_input(INPUT_POST, 'hidType', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $btnValor = filter_input(INPUT_POST, 'btnQuitarPedido', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $hidType = filter_input(INPUT_POST, 'hidType', FILTER_SANITIZE_SPECIAL_CHARS);
                     
                     if(!empty($btnValor) && !empty($hidType))
                     {
@@ -363,8 +363,8 @@ namespace CEIT\mvc\controllers
                     $idCaja = $this->_model['Caja']->Insert(array($modelCaja));
                     
                     // Items
-                    $ids = filter_input(INPUT_POST, 'hidId', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
-                    $tipo = filter_input(INPUT_POST, 'hidType', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                    $ids = filter_input(INPUT_POST, 'hidId', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                    $tipo = filter_input(INPUT_POST, 'hidType', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
                     $descripcion = filter_input(INPUT_POST, 'hidDescripcion', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
                     $preunit = filter_input(INPUT_POST, 'hidPrecioUnitario', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY);
                     $cantidad = filter_input(INPUT_POST, 'hidCantidad', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
@@ -455,8 +455,8 @@ namespace CEIT\mvc\controllers
                 
                 // armo arrays para poder meterlos en tablas.
                 $idPedidos = filter_input(INPUT_POST, 'hidIdPedido', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
-                $idItems = filter_input(INPUT_POST, 'hidIdItem', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
-                $descripcion = filter_input(INPUT_POST, 'hidDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                $idItems = filter_input(INPUT_POST, 'hidIdItem', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                $descripcion = filter_input(INPUT_POST, 'hidDescripcion', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
                 $preunit = filter_input(INPUT_POST, 'hidPrecioUnitario', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY);
                 $cantidad = filter_input(INPUT_POST, 'hidCantidad', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                 $importe = filter_input(INPUT_POST, 'hidImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY);
@@ -548,13 +548,9 @@ namespace CEIT\mvc\controllers
         
         public function ajax_get_cierre_caja()
         {
-            if(!empty($_POST))
-            {
-                $this->_ajaxRequest = true;
+            $this->_ajaxRequest = true;
                 
-                $this->result = $this->_model['Caja']->SelectCierreCaja();
-                var_dump($this->result);
-            }
+            $this->result = $this->_model['Caja']->SelectCierraCaja();
         }
     }
 }

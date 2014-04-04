@@ -374,6 +374,23 @@ namespace CEIT\mvc\controllers
                 // Si acepto el pedido, persisto en DB.
                 if(isset($_POST['btnSi']))
                 {
+                    $fechaRetiro = date("Y-m-d" , strtotime(filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS)));
+                    $horaRetiro = date("H:i", strtotime(filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS)));
+                    $idFranjaSeleccionada = 1;
+                    
+                    $this->franjaResult = $this->_model["Franjas"]->Select();
+                    if(count($this->franjaResult) > 0)
+                    {
+                        foreach($this->franjaResult as $item)
+                        {
+                            if(date("H:i", strtotime($item["Desde"] . ":00")) == $horaRetiro)
+                            {
+                                $idFranjaSeleccionada = $item["IdHorarioFranja"];
+                            }
+                        }
+                    }
+                    unset($this->franjaResult);
+                    
                     // Agrego el pedido.
                     $modelPedido = new models\PedidoModel();
                     $modelPedido->_idUsuario = $_SESSION['IdUsuario'];
@@ -381,11 +398,11 @@ namespace CEIT\mvc\controllers
                     $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
                     $modelPedido->_modificadoDia = null;
                     $modelPedido->_modificadoPor = null;
-                    $asd = filter_input(INPUT_POST, 'chkAnilladoCompleto', FILTER_SANITIZE_STRING);
-                    $modelPedido->_anillado = empty($asd) ? true : false;
+                    $asd = filter_input(INPUT_POST, 'hidAnilladoCompleto', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $modelPedido->_anillado = strlen($asd) != 0 ? true : false;
                     $modelPedido->_comentario = null; //filter_input(INPUT_POST, 'txtComentario', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $modelPedido->_retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_STRING);
-                    $modelPedido->_idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
+                    $modelPedido->_retiro = $fechaRetiro; //filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_STRING);
+                    $modelPedido->_idFranja = $idFranjaSeleccionada; //filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
                     $modelPedido->_pagado = false;
                     $modelPedido->_idEstado = 1;
                     $this->lastId = $this->_model['Pedidos']->Insert(array($modelPedido));
@@ -412,20 +429,18 @@ namespace CEIT\mvc\controllers
                     }
                     $this->result = $this->_model['PedidoItems']->Insert($modelPedidoItems);
                     
-                    // Libero memoria.
                     unset($this->lastId);
                     unset($this->result);
                     
-                    // Quito la seleccion de la pagina previa.
                     setcookie('TextosAgregados', null, -1);
                     
-                    // Redirecciono para ir al inicio de la seccion.
                     header("Location: index.php?do=/estudiante/index");
                 }
             }
             
             $this->result = $this->_model['Franjas']->Select();
             $this->result2 = $this->_model['Pedidos']->SelectDisponibilidad();
+            $this->result3 = $this->_model['Franjas']->SelectRangos();
             //var_dump($this->result2);
             if(count($this->result) > 1)
             {
@@ -458,6 +473,8 @@ namespace CEIT\mvc\controllers
                     }
                 }
                 $this->DiaRetiro = $this->result2[0]['DiaRetiro'];
+                $this->HoraRetiro = $this->result2[0]['HoraRetiro'];
+                $this->FranjaRango = $this->result3[0]["RangoHorariosJSON"];
             }
             unset($this->result);
             unset($this->result2);
@@ -622,13 +639,32 @@ namespace CEIT\mvc\controllers
         
         public function delete($id)
         {
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
+            
             if(!empty($_POST))
             {
                 //var_dump($_POST);
+                
+                if(isset($_POST["btnCancelar"]))
+                {
+                    $model = new models\PedidoModel();
+                    $model->_idPedido = $id;
+                    $model->_idEstado = 6; // Estado cancelado.
+                    $this->_model['Pedidos']->UpdateEstado(array($model));
+
+                    header("Location: index.php?do=/estudiante/index");
+                }
             }
             
-            // indico el template a usar
-            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
+            $modelPedido = new models\PedidoModel();
+            $modelPedido->_idPedido = $id;
+            $this->result = $this->_model['Pedidos']->Select($modelPedido);
+            //var_dump($this->result);
+            if(count($this->result) == 1)
+            {
+                $this->IdPedido = $this->result[0]['IdPedido'];
+            }
+            unset($this->result);
         }
 
         public function detail($id)

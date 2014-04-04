@@ -16,7 +16,7 @@
                 <label for="txtRetiro" class="col-sm-2 control-label">Retiro</label>
                 <div class="col-sm-4">
                     <div class="input-group">
-                        <input id="txtRetiro" class="form-control" type="text" name="txtRetiro" value="{DiaRetiro}" readonly="readonly">
+                        <input id="txtRetiro" class="form-control" type="text" name="txtRetiro" value="{DiaRetiro} {HoraRetiro}" readonly="readonly">
                         <span class="input-group-btn">
                             <button id="btnMostrarCalendario" class="btn btn-default" type="button">
                                 <span class="glyphicon glyphicon-calendar"></span>
@@ -24,12 +24,12 @@
                         </span>
                     </div>
                 </div>
-                <label for="ddlFranja" class="col-sm-2 control-label">Franja horaria</label>
+                <!-- <label for="ddlFranja" class="col-sm-2 control-label">Franja horaria</label>
                 <div class="col-sm-4">
                     <select id="ddlFranja" class="form-control" name="ddlFranja">
                         {combo_franja}
                     </select>
-                </div>
+                </div> -->
             </div>
             <div class="form-group">
 
@@ -58,7 +58,8 @@
                 <label for="chkAnilladoCompleto" class="col-sm-offset-6 col-sm-2 control-label">&iquest;Anillado Completo?</label>
                 <div class="col-sm-1">
                     <div class="checkbox">
-                        <input type="checkbox" name="chkAnilladoCompleto" disabled="disabled" {TodoAnillado}>
+                        <input type="checkbox" name="chkAnilladoCompleto" disabled="disabled" {TodoAnillado}/>
+                        <input type="hidden" name="hidAnilladoCompleto" value="{TodoAnillado}" />
                     </div>
                 </div>
                 <label for="txtSubTotal" class="col-sm-1 control-label">Subtotal</label>
@@ -76,15 +77,54 @@
         </div>
     </form>
 </div>
+<link rel="stylesheet" type="text/css" href="/public/css/jquery.datetimepicker.css" />
+<script type="text/javascript" src="/public/js/jquery.datetimepicker.js"></script>
 <script type="text/javascript">
-    $('#txtRetiro').datepicker({
-        minDate: "{DiaRetiro}",
-        dateFormat: "yy-mm-dd",
-        showAnim: "slideDown",
-        beforeShowDay: $.datepicker.noWeekends
+    var logic = function(selectedDateTime) {
+        var limitDate = new Date("{DiaRetiro} {HoraRetiro}");
+        // 'this' is jquery object datetimepicker
+	if(limitDate >= selectedDateTime){
+            this.setOptions({
+                minDate: "{DiaRetiro}",
+                minTime: "{HoraRetiro}"
+            });
+	} else {
+            this.setOptions({
+                minDate: 0,
+                minTime: false
+            });
+        }
+    };
+    
+    var logic2 = function(selectedDate, $input) {
+        var limitDate = new Date("{DiaRetiro} {HoraRetiro}");
+        if(selectedDate <= limitDate) {
+            this.setOptions({
+                value: "{DiaRetiro} {HoraRetiro}"
+            });
+        } else {
+            this.setOptions({
+                value: null
+            });
+        };
+    };
+    
+    $("#txtRetiro").datetimepicker({
+        onGenerate: function(ct) {
+            $(this).find('.xdsoft_date.xdsoft_weekend').addClass('xdsoft_disabled');
+	},
+        onChangeDateTime: logic,
+        onShow: logic,
+        onSelectDate: logic2,
+        closeOnDateSelect: false,
+        format: "Y-m-d H:i",
+        formatDate: "Y-m-d",
+        formatTime: "H:i",
+        allowTimes: [{FranjaRango}],
+        weekends: ['01.01.2014','02.01.2014','03.01.2014','04.01.2014','05.01.2014','06.01.2014']
     });
     
-    $('#btnMostrarCalendario').click(function() {
-        $('#txtRetiro').datepicker('show');
+    $("#btnMostrarCalendario").click(function() {
+        $("#txtRetiro").datetimepicker("show");
     });
 </script>

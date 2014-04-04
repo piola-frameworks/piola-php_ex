@@ -76,6 +76,15 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
+        public function SelectRangos()
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selHorarioFranajasJson";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
         /*
          * End custom selects
          */

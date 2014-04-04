@@ -61,10 +61,10 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if($model != null)
             {
-                $this->init();
-                
                 if(array_key_exists("_idUsuario", $model->_data))
                 {
                     $this->_sp = "sp_selPedidosByIdUsuario";
@@ -82,6 +82,8 @@ namespace CEIT\mvc\models
 
                 if(!empty($this->_params) || !empty($this->_sp))
                 {
+                    //var_dump($this->_sp, $this->_params);
+                    
                     return Database::getInstance()->DoQuery($this->_sp , $this->_params);
                 }
                 else
@@ -234,6 +236,10 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
         
+        /*
+         * Start custom Updates
+         */
+        
         public function UpdateEstado(array $model)
         {
             $this->init();
@@ -254,6 +260,10 @@ namespace CEIT\mvc\models
             
             return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
+        
+        /*
+         * End custom Updates
+         */
     }
 }
 

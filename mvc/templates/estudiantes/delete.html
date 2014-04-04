@@ -3,8 +3,16 @@
         <h3 class="panel-title">Cancelar pedido</h3>
     </div>
     <div class="panel-body">
-        &iquest;Esta seguro que desea cancelar el pedido {NumeroPedido}?
-        <a class="btn btn-danger btn-sm" href="#" role="button">Cancelar</a>
-        <a class="btn btn-info btn-sm" href="#" role="button">Volver</a>
+        <form class="form-inline" name="frmCancelarPedido" method="POST">
+            <p>&iquest;Esta seguro que desea cancelar el pedido {IdPedido}?</p>
+            <div class="form-group">
+                <button class="btn btn-danger" type="submit" name="btnCancelar">
+                    <span class="glyphicon glyphicon-remove"></span> Cancelar
+                </button>
+                <a class="btn btn-default" href="index.php?do=/estudiante/index" role="button">
+                    <span class=""></span> Volver
+                </a>
+            </div>
+        </form>
     </div>
 </div>

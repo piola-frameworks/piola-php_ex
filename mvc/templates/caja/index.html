@@ -147,7 +147,9 @@
             </div>
         </div>
         <div class="row">
-            <button class="btn btn-default" type="button" name="btnCierreCaja">Cierre de Caja</button>
+            <div class="col-sm-offset-9 col-sm-3">
+                <button class="btn btn-info" type="button" name="btnCierreCaja">Cierre de Caja</button>
+            </div>
         </div>
     </div>
 </div>
@@ -178,11 +180,13 @@
 
     $("button[name=btnCierreCaja]").click(function() {
         $.ajax({
-            type: "POST",
-            url: "index.php?do=/caja/ajax_get_cierre_caja"
+            url: "index.php?do=/caja/ajax_get_cierre_caja",
+            type: "GET",
+            async: true,
+            dataType: "json"
         })
         .done(function(msg) {
-            alert("Total hasta el momento: " + msg);
+            alert("Total hasta el momento: $" + msg[0].Total + " " + msg[0].Tiempo);
         });
     });
     /*$('input[name=txtPrecioUnitario]').change(function() {
