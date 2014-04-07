@@ -208,6 +208,7 @@ namespace CEIT\mvc\controllers
                     $modelPedido = new models\PedidoModel();
                     $modelPedido->_id = filter_input(INPUT_POST, 'txtDNI_IDPedido', FILTER_SANITIZE_NUMBER_INT);
                     $this->result = $this->_model['Pedidos']->SelectByIdPedidoOrDNI($modelPedido);
+                    //var_dump($this->result);
                 }
             }
             
@@ -286,29 +287,29 @@ namespace CEIT\mvc\controllers
             // Cargo datos de los precios.
             $modelConfiguracion = new models\WebModel();
             $modelConfiguracion->_clave = "PrecioAnillado";
-            $this->result = $this->_model['Configuraciones']->Select($modelConfiguracion);
+            $this->result2 = $this->_model['Configuraciones']->Select($modelConfiguracion);
             //var_dump($this->result);
-            if(count($this->result) > 0)
+            if(count($this->result2) > 0)
             {
-                $this->Anillado = $this->result[0]['Valor'];
+                $this->Anillado = $this->result2[0]['Valor'];
             }
             
             $modelConfiguracion->_clave = "PrecioSimpleFaz";
-            $this->result = $this->_model['Configuraciones']->Select($modelConfiguracion);
+            $this->result2 = $this->_model['Configuraciones']->Select($modelConfiguracion);
             //var_dump($this->result);
-            if(count($this->result) > 0)
+            if(count($this->result2) > 0)
             {
-                $this->SimpleFaz = $this->result[0]['Valor'];
+                $this->SimpleFaz = $this->result2[0]['Valor'];
             }
             
             $modelConfiguracion->_clave = "PrecioCEIT";
-            $this->result = $this->_model['Configuraciones']->Select($modelConfiguracion);
+            $this->result2 = $this->_model['Configuraciones']->Select($modelConfiguracion);
             //var_dump($this->result);
-            if(count($this->result) > 0)
+            if(count($this->result2) > 0)
             {
-                $this->PrecioCEIT = $this->result[0]['Valor'];
+                $this->PrecioCEIT = $this->result2[0]['Valor'];
             }
-            unset($this->result);
+            unset($this->result2);
                     
             if(empty($this->result))
             {

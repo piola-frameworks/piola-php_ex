@@ -115,6 +115,7 @@
                                 <tr>
                                     <td>
                                         <select class="form-control" name="ddlItemTipo">
+                                            <option disabled="disabled" selected="selected">Seleccione un item</option>
                                             <option value="ANI">Anillado</option>
                                             <option value="LIB">Art. de Libreria</option>
                                             <option value="FSF">Fot Sueltas - Simple Faz</option>
@@ -158,17 +159,26 @@
         switch($('select[name=ddlItemTipo]').val()) {
             case "ANI":
                 $("input[name=txtImporte]").val($("input[name=hidAnillado]").val());
+                $("input[name=txtImporte]").attr("readonly", "readonly");
                 $('input[name=txtCantidad]').val(1);
                 $('input[name=txtCantidad]').attr("readonly", "readonly");
             break;
-            
+           
+            case "LIB":
+                $("input[name=txtImporte]").val("");
+                $('input[name=txtImporte]').removeAttr("readonly");
+                $('input[name=txtCantidad]').removeAttr("readonly");
+                break;
+                
             case "FSF":
                 $("input[name=txtImporte]").val($("input[name=hidSimpleFaz]").val());
+                $("input[name=txtImporte]").attr("readonly", "readonly");
                 $('input[name=txtCantidad]').removeAttr("readonly");
                 break;
             
             case "FDF":
                 $("input[name=txtImporte]").val($("input[name=hidDobleFaz]").val());
+                $("input[name=txtImporte]").attr("readonly", "readonly");
                 $('input[name=txtCantidad]').removeAttr("readonly");
                 break;
             

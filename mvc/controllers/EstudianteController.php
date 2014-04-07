@@ -438,11 +438,8 @@ namespace CEIT\mvc\controllers
                 }
             }
             
-            $this->result = $this->_model['Franjas']->Select();
-            $this->result2 = $this->_model['Pedidos']->SelectDisponibilidad();
-            $this->result3 = $this->_model['Franjas']->SelectRangos();
-            //var_dump($this->result2);
-            if(count($this->result) > 1)
+            //$this->result = $this->_model['Franjas']->Select();
+            /*if(count($this->result) > 1)
             {
                 foreach($this->result as $row)
                 {
@@ -471,13 +468,26 @@ namespace CEIT\mvc\controllers
                         }
                         $this->combo_franja = str_replace('{Seleccionado}', $texto, $this->combo_franja);
                     }
-                }
+                }    
+            }*/
+            //unset($this->result);
+            
+            $this->result2 = $this->_model['Pedidos']->SelectDisponibilidad();
+            //var_dump($this->result2);
+            if(count($this->result2) > 0)
+            {
                 $this->DiaRetiro = $this->result2[0]['DiaRetiro'];
                 $this->HoraRetiro = $this->result2[0]['HoraRetiro'];
+            }
+            unset($this->result2);
+            
+            $this->result3 = $this->_model['Franjas']->SelectRangos();
+            //var_dump($this->result3);
+            if(count($this->result3) > 0)
+            {
                 $this->FranjaRango = $this->result3[0]["RangoHorariosJSON"];
             }
-            unset($this->result);
-            unset($this->result2);
+            unset($this->result3);
         }
 
         public function create_tp()

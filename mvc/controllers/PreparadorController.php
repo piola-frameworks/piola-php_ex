@@ -239,6 +239,9 @@ namespace CEIT\mvc\controllers
             {
                 //var_dump($_POST);
                 
+                $posicionX = filter_input(INPUT_POST, "ddlPosicionX", FILTER_SANITIZE_NUMBER_INT);
+                $posicionY = filter_input(INPUT_POST, "ddlPosicionY", FILTER_SANITIZE_NUMBER_INT);
+                
                 $idPedido = filter_input(INPUT_POST, 'txtIdPedido', FILTER_SANITIZE_NUMBER_INT);
                 $pedido = new models\PedidoModel();
                 $pedido->_idPedido = $idPedido;
@@ -254,8 +257,8 @@ namespace CEIT\mvc\controllers
                     $pedido->_modificadoPor = $_SESSION['IdUsuario'];
                     $pedido->_anillado = $this->result[0]['Anillado'];
                     $pedido->_comentario = $this->result[0]['Comentario'];
-                    $pedido->_posicionX = filter_input(INPUT_POST, "ddlPosicionX", FILTER_SANITIZE_NUMBER_INT);
-                    $pedido->_posicionY = filter_input(INPUT_POST, "ddlPosicionY", FILTER_SANITIZE_NUMBER_INT);
+                    $pedido->_posicionX = $posicionX;
+                    $pedido->_posicionY = $posicionY;
                     $pedido->_retiro = $this->result[0]['Retiro'];
                     $pedido->_idFranja = $this->result[0]['IdFranja'];
                     $pedido->_pagado = $this->result[0]['Pagado'];
@@ -297,7 +300,7 @@ namespace CEIT\mvc\controllers
                     unset($this->result2);
                     
                     $modelPosicionX = new models\PedidoPosicionXModel();
-                    $modelPosicionX->_idPosicionX = $this->result[0]['PosicionX'];
+                    $modelPosicionX->_idPosicionX = !empty($this->result[0]['PosicionX']) ? $this->result[0]['PosicionX'] : $posicionX;
                     $this->result2 = $this->_model['PosicionX']->Select($modelPosicionX);
                     //var_dump($this->result2);
                     if(count($this->result2) == 1)
@@ -307,7 +310,7 @@ namespace CEIT\mvc\controllers
                     unset($this->result2);
                     
                     $modelPosicionY = new models\PedidoPosicionYModel();
-                    $modelPosicionY->_idPosicionY = $this->result[0]['PosicionY'];
+                    $modelPosicionY->_idPosicionY = !empty($this->result[0]['PosicionY']) ? $this->result[0]['PosicionY'] : $posicionY;
                     $this->result2 = $this->_model['PosicionY']->Select($modelPosicionY);
                     //var_dump($this->result2);
                     if(count($this->result2) == 1)

@@ -138,6 +138,11 @@
             $("#ddlPosicionX").removeAttr("disabled");
             $("#ddlPosicionY").removeAttr("disabled");
         }
+        
+        $("input[type=checkbox]:checked").each(function(index, item) {
+            //console.debug(index, item);
+            $(item).parent().css("background-color", "#DCB8B8");
+        });
     });
 
     function postChangeItemStatus(item, value) {
