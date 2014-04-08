@@ -176,6 +176,8 @@ namespace CEIT\mvc\models
         
         public function UpdateContrasena(core\AModel $model)
         {
+            $this->init();
+            
             array_push($this->_sp, "sp_updUsuarioContrasena");
             array_push($this->_params, array(
                 ':idUsuario'    =>  $model->_idUsuario,

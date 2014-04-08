@@ -52,9 +52,12 @@ namespace CEIT\mvc\models
                     ':retiro'           =>  (string)$item->_retiro,
                     ':idFranja'         =>  (int)$item->_idFranja,
                     ':pagado'           =>  (bool)$item->_pagado,
-                    ':idEstado'         =>  (int)$item->_idEstado
+                    ':idEstado'         =>  (int)$item->_idEstado,
+                    ':especial'         =>  (bool)$item->_especial,
                 ));
             }
+            
+            //var_dump($this->_sp, $this->_params, $this->_trans);
             
             return Database::getInstance()->DoScalar($this->_sp, $this->_params, $this->_trans);
         }
@@ -199,6 +202,39 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp);
         }
         
+        public function SelectPedidoEstado(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selPedidoEstado";
+            $this->_params = array(
+                ":idPedido" =>  (int)$model->_idPedido,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        public function SelectEspeciales()
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selPedidosEspeciales";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
+        public function SelectEspecialesByIdEstado(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selPedidoEspecialByIdEstado";
+            $this->_params = array(
+                ":idEstado"     =>  (int)$model->_idEstado,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         /*
          * End custom selects
          */
@@ -230,6 +266,7 @@ namespace CEIT\mvc\models
                     ':idFranja'         =>  (int)$item->_idFranja,
                     ':pagado'           =>  (bool)$item->_pagado,
                     ':idEstado'         =>  (int)$item->_idEstado,
+                    ':especial'         =>  (bool)$item->_especial,
                 ));
             }
             

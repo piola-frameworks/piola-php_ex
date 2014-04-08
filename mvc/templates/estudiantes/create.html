@@ -148,12 +148,30 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="/public/js/jquery.cookie.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         // Desactivo los controles al principio para despues habilitarlos.
-        $('#ddlNivel').attr('disabled', true);
-        $('#ddlMateria').attr('disabled', true);
-
+        if($.cookie("comboCarrera") && $.cookie("comboNivel") && $.cookie("comboMateria")) {
+            if($.cookie("comboCarrera")) {
+                $("#ddlCarrera").val($.cookie("comboCarrera"));
+                $("#ddlCarrera").trigger("change");
+            }
+            
+            if($.cookie("comboNivel")) {
+                $("#ddlNivel").val($.cookie("comboNivel"));
+                $("#ddlNivel").trigger("change");
+            }
+            
+            if($.cookie("comboMateria")) {
+                $("#ddlMateria").val($.cookie("comboMateria"));
+                $("#ddlMateria").trigger("change");
+            }
+        } else {
+            $('#ddlNivel').attr('disabled', true);
+            $('#ddlMateria').attr('disabled', true);
+        };
+        
         // Muestro el subtotal
         /*var subTotal = 0;
          
@@ -199,6 +217,8 @@
     });
 
     $('#ddlCarrera').change(function() {
+        $.cookie("comboCarrera", $(this).val(), { expires: 1 });
+        
         $.ajax({
             type: 'POST',
             url: 'index.php?do=/estudiante/ajax_get_niveles',
@@ -219,7 +239,7 @@
                 $('#ddlNivel').removeAttr('disabled');
 
                 // Coloco el indice por fuera del rango.
-                $('#ddlNivel').prop('selectedIndex', -1);
+                $('#ddlNivel').prop('selectedIndex', 0);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert('error');
@@ -228,6 +248,8 @@
     });
 
     $('#ddlNivel').change(function() {
+        $.cookie("comboNivel", $(this).val(), { expires: 1 });
+        
         $.ajax({
             type: 'POST',
             url: 'index.php?do=/estudiante/ajax_get_materias',
@@ -246,12 +268,16 @@
                 $('#ddlMateria').removeAttr('disabled');
 
                 // Coloco el indice por fuera del rango.
-                $('#ddlMateria').prop('selectedIndex', -1);
+                $('#ddlMateria').prop('selectedIndex', 0);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert('error');
             }
         });
+    });
+
+    $("#ddlMateria").change(function() {
+        $.cookie("comboMateria", $(this).val(), { expires: 1 });
     });
 
     /*$('.itemCantidad').change(function() {

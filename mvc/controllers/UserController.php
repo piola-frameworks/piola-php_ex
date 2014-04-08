@@ -130,6 +130,7 @@ namespace CEIT\mvc\controllers
                     if(strcmp($this->result[0]['Contrasena'], $vieja) == 0 && strcmp($vieja, $nueva) != 0 && strlen($vieja) >= 6 && strlen($nueva) >= 6)
                     {
                         $modelUsuario = new models\UsuarioModel();
+                        $modelUsuario->_idUsuario = $_SESSION['IdUsuario'];
                         $modelUsuario->_contrasena = $nueva; //crypt($nueva);
                         $this->_model['Usuarios']->UpdateContrasena($modelUsuario);
                         

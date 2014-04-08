@@ -30,7 +30,17 @@ namespace CEIT\core
                                                 . '</a></li>'
                                             . '</ul>'
                                         . '</li>',
-                'AtPublico'         =>  '<li><a href="index.php?do=/atpublico/index">At. Publico</a></li>',
+                'AtPublico'         =>  '<li class="dropdown">'
+                                        . '<a class="dropdown-toggle" href="#" data-toggle="dropdown">At. Publico <b class="caret"></b></a>'
+                                            . '<ul class="dropdown-menu">'
+                                                . '<li><a href="index.php?do=/atpublico/index">'
+                                                    . '<span class="glyphicon glyphicon-file"></span> Comunes'
+                                                . '</a></li>'
+                                                . '<li><a href="index.php?do=/atpublico/especiales_index">'
+                                                    . '<span class="glyphicon glyphicon-star"></span> Especiales'
+                                                . '</a></li>'
+                                            . '</ul>'
+                                        . '</li>',
                 'Caja'              =>  '<li><a href="index.php?do=/caja/index">Caja</a></li>',
                 'Reportes'          =>  '<li><a href="index.php?do=/reportes/index">Reportes</a></li>',
                 'Administracion'    =>  '<li><a href="index.php?do=/admin/index">Administraci&oacute;n</a></li>'

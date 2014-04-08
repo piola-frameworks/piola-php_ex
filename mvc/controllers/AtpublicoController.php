@@ -86,6 +86,214 @@ namespace CEIT\mvc\controllers
             unset($this->result);
         }
         
+        public function especiales_index()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}.html";
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                $pedido = new models\PedidoModel();   
+                $pedido->_idEstado = filter_input(INPUT_POST, 'ddlEstado', FILTER_SANITIZE_NUMBER_INT);
+                
+                $this->result = $this->_model['Pedidos']->SelectEspecialesByIdEstado($pedido);
+            }
+            else
+            {
+                $this->result = $this->_model['Pedidos']->SelectEspeciales();
+            }
+            
+            // Cargo tabla con items
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}_table.html";
+                    $this->table_content .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            if($key == 'IdPedido')
+                            {
+                                $id_pedido = $value;
+                            }
+                            
+                            $this->table_content = str_replace("{" . $key . "}", htmlentities($value), $this->table_content);
+                            
+                            // BOTON BORRAR PEDIDO
+                            if(in_array($_SESSION['Roles']['Nombre'], array('Administrador')))
+                            {
+                                $file_button_delete = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}_table_button_delete.html";
+                                $button = file_get_contents($file_button_delete);
+                                $button = str_replace('{IdPedido}', $id_pedido, $button);
+                                
+                                $this->table_content = str_replace('{button_delete}', $button, $this->table_content);
+                            }
+                            else
+                            {
+                                $this->table_content = str_replace('{button_delete}', "", $this->table_content);
+                            }
+                        }   
+                    }
+                }
+            }
+            else
+            {
+                $this->table_content = "";
+            }
+            unset($this->result);
+            
+            // Cargo el combo de estados de items.
+            $this->result = $this->_model['PedidoEstados']->Select();
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        if(!($row['Descripcion'] == "Entregado" || $row['Descripcion'] == "Cancelado"))
+                        {
+                            $filename = BASE_DIR . "/mvc/templates/preparador/combo_estado.html";
+                            $this->combo_estados .= file_get_contents($filename);
+                            
+                            foreach($row as $key => $value)
+                            {   
+                                $this->combo_estados = str_replace('{' . $key . '}', htmlentities($value), $this->combo_estados);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                $this->combo_estados = "";
+            }
+        }
+        
+        public function especiales_detail($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}.html";
+            
+            // seteo el modelo para trabajar con los items del pedido
+            $pedidosItems = new models\PedidoModel();
+            $pedidosItems->_idPedido = $id;
+            $this->result = $this->_model['Pedidos']->SelectItem($pedidosItems);
+            //var_dump($this->result);
+            
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}_table_row.html";
+                    $this->table_rows .= file_get_contents($filename);
+
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case 'Anillado':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'Abrochado':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'SimpleFaz':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'IdEstadoItem':
+                                    $this->table_rows = str_replace("{Impreso}", $value == 3 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                default:
+                                    $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            // elaboro el parametro y traigo los datos
+            $pedido = new models\PedidoModel();
+            $pedido->_idPedido = $id;
+            $this->result = $this->_model['Pedidos']->Select($pedido);
+            //var_dump($this->result);
+            foreach($this->result[0] as $key => $value)
+            {
+                switch($key)
+                {
+                    case "Pagado":
+                        $this->Pagado = $value ? "checked=\"checked\"" : '';
+                        break;
+
+                    case "Anillado":
+                        $this->Anillado = $value ? "checked=\"checked\"" : "";
+                        break;
+                    
+                    default:
+                        $this->{$key} = htmlentities($value);
+                        break;
+                }
+            }
+            unset($this->result);
+            
+            $modelEstadoPedido = new models\PedidoEstadosModel();
+            $modelEstadoPedido->_idPedido = $id;
+            $this->result = $this->_model['PedidoEstados']->SelectByIdPedido($modelEstadoPedido);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if($row['Descripcion'] == "Entregado" || $row['Descripcion'] == "Cancelado")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/at_publico/combo_estado.html";
+                        $this->combo_estado_pedido .= file_get_contents($filename);
+
+                        if(is_array($row))
+                        {
+                            foreach($row as $key => $value)
+                            {
+                                $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            $modelFranja = new models\HorarioFranjasModel();
+            $modelFranja->_idPedido = $id;
+            $this->result = $this->_model['Franjas']->SelectByIdPedido($modelFranja);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/at_publico/combo_franja.html";
+                    $this->combo_franja_horario .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_franja_horario = str_replace('{' . $key . '}', $value, $this->combo_franja_horario);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+        }
+        
         public function create()
         {
             $this->_template = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}.html";
@@ -165,30 +373,9 @@ namespace CEIT\mvc\controllers
                 $simplefaz = filter_input(INPUT_POST, 'chkSimpleFaz', FILTER_SANITIZE_SPECIAL_CHARS);
                 $this->SimpleFaz = !empty($simplefaz) ? "Si" : "No";
                 
-                $modelUsuario = new models\UsuarioModel();
-                $modelUsuario->_idUsuario = $idUsuario;
-                $this->result = $this->_model['Usuarios']->Select($modelUsuario);
-                //var_dump($this->result);
-                if(count($this->result) == 1)
-                {
-                    foreach($this->result[0] as $key => $value)
-                    {
-                        $this->{$key} = $value;
-                    }
-                }
-                
-                $modelFranjas = new models\HorarioFranjasModel();
-                $modelFranjas->_idFranja = $idFranja;
-                $this->result = $this->_model['Franjas']->Select($modelFranjas);
-                //var_dump($this->result);
-                if(count($this->result) == 1)
-                {
-                    $this->Franja = $this->result[0]['Desde'] . " hs.";
-                }
-                
                 if(isset($_POST['btnGuardar']))
                 {
-                    if(!empty($idUsuario) && !empty($creado) && !empty($retiro) && !empty($idFranja) && !empty($descripcion) && !empty($hojas))
+                    if(!empty($idUsuario) && !empty($creado) && !empty($retiro) && !empty($idFranja) && !empty($descripcion) && strlen($hojas) > 0)
                     {
                         // Guardo en la db.
                         $modelTextoEspecial = new models\TextoModel();
@@ -219,7 +406,10 @@ namespace CEIT\mvc\controllers
                         $modelPedido->_idFranja = $idFranja;
                         $modelPedido->_pagado = false;
                         $modelPedido->_idEstado = 1;
+                        $modelPedido->_especial = true;
                         $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
+                        
+                        $this->IdPedido = $this->_lastIdPedido;
                         
                         $modelPedidoItem = new models\PedidoItemModel();
                         $modelPedidoItem->_idPedido = $this->_lastIdPedido;
@@ -235,6 +425,27 @@ namespace CEIT\mvc\controllers
                     {
                         // falta completar campos obligatorios
                     }
+                }
+                
+                $modelUsuario = new models\UsuarioModel();
+                $modelUsuario->_idUsuario = $idUsuario;
+                $this->result = $this->_model['Usuarios']->Select($modelUsuario);
+                //var_dump($this->result);
+                if(count($this->result) == 1)
+                {
+                    foreach($this->result[0] as $key => $value)
+                    {
+                        $this->{$key} = $value;
+                    }
+                }
+                
+                $modelFranjas = new models\HorarioFranjasModel();
+                $modelFranjas->_idFranja = $idFranja;
+                $this->result = $this->_model['Franjas']->Select($modelFranjas);
+                //var_dump($this->result);
+                if(count($this->result) == 1)
+                {
+                    $this->Franja = $this->result[0]['Desde'] . " hs.";
                 }
             }
         }
@@ -298,6 +509,19 @@ namespace CEIT\mvc\controllers
                 $modelPedido->_idEstado = filter_input(INPUT_POST, "toValue", FILTER_SANITIZE_STRING) == "true" ? 5 : 4;
                 
                 $this->result = $this->_model['Pedidos']->UpdateEstado(array($modelPedido));
+            }
+        }
+        
+        public function ajax_pedido_estado()
+        {
+            if(!empty($_POST))
+            {
+                $this->ajaxRequest = true;
+                
+                $modelPedido = new models\PedidoModel();
+                $modelPedido->_idPedido = filter_input(INPUT_POST, "idPedido", FILTER_SANITIZE_NUMBER_INT);
+                
+                $this->result = $this->_model['Pedidos']->SelectPedidoEstado($modelPedido);
             }
         }
     }

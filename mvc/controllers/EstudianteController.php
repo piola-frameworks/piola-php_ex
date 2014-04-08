@@ -405,6 +405,7 @@ namespace CEIT\mvc\controllers
                     $modelPedido->_idFranja = $idFranjaSeleccionada; //filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
                     $modelPedido->_pagado = false;
                     $modelPedido->_idEstado = 1;
+                    $modelPedido->_especial = false;
                     $this->lastId = $this->_model['Pedidos']->Insert(array($modelPedido));
                     
                     // Agrego los items del pedido.
@@ -560,6 +561,7 @@ namespace CEIT\mvc\controllers
                         $modelPedido->_idFranja = filter_input(INPUT_POST, 'hidFranja', FILTER_SANITIZE_NUMBER_INT);
                         $modelPedido->_pagado = false;
                         $modelPedido->_idEstado = 1;
+                        $modelPedido->_especial = false;
                         $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
                         
                         $modelPedidoItem = new models\PedidoItemModel();

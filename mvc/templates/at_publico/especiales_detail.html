@@ -1,0 +1,154 @@
+<div id="pnlPedidoDatos" class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Datos</h3>
+    </div>
+    <div class="panel-body">
+        <form id="frmDetalleUsuario" class="form-horizontal" name="frmDetalleUsuario" action="index.php?do=/preparador/print_detail" method="POST" role="form">
+            <fieldset>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtLegajo">Legajo</label>
+                    <div class="col-sm-4">
+                        <input id="txtLegajo" class="form-control" name="txtLegajo" type="text" value="{Legajo}" readonly="readonly" />
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtDNI">DNI</label>
+                    <div class="col-sm-4">
+                        <input id="txtDNI" class="form-control" name="txtDNI" type="number" value="{DNI}" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtIdPedido">N&ordm; de pedido</label>
+                    <div class="col-sm-4">
+                        <input id="txtIdPedido" class="form-control" name="txtIdPedido" type="text" value="{IdPedido}" readonly="readonly" />
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtCreado">Creado</label>
+                    <div class="col-sm-4">
+                        <input id="txtCreado" class="form-control" name="txtCreado" type="text" value="{Creado}" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="ddlEstado">Estado</label>
+                    <div class="col-sm-4">
+                        <select id="ddlEstado" class="form-control" name="ddlEstado" disabled="disabled">
+                            {combo_estado_pedido}
+                        </select>
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtRetiro">Retiro</label>
+                    <div class="col-sm-2">
+                        <input id="txtRetiro" class="form-control" name="txtRetiro" type="text" value="{Retiro}" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="chkAnilladoCompleto">Anillado Completo</label>
+                    <div class="col-sm-1">
+                        <div class="checkbox">
+                            <input id="chkAnilladoCompleto" type="checkbox" name="chkAnilladoCompleto" {Anillado} disabled="disabled" />
+                        </div>
+                    </div>
+                    <label class="col-sm-2 control-label" for="txtPagado">Pagado</label>
+                    <div class="col-sm-1">
+                        <div class="checkbox">
+                            <input id="txtApellido" type="checkbox" name="txtPagado" {Pagado} disabled="disabled" />
+                        </div>
+                    </div>
+                    <label class="col-sm-2 control-label">Franja</label>
+                    <div class="col-sm-2">
+                        <select id="ddlFranja" class="form-control" name="ddlFranja" disabled="disabled">
+                            {combo_franja_horario}
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="col-sm-offset-10 col-sm-2">
+                <button id="btnTerminar" class="btn btn-warning hidden-print" type="submit" name="btnTerminar">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> Terminar
+                </button>
+                <a class="btn btn-default hidden-print" href="index.php?do=/preparador/index">
+                    <span class="glyphicon glyphicon-arrow-left"></span> Volver
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="pnlPedidoItems" class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Items</h2>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Descripcion</th>
+                        <th>Hojas</th>
+                        <th>Anillado</th>
+                        <th>Abrochado</th>
+                        <th>Simple Faz</th>
+                        <th>&iquest;Impreso?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {table_rows}
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+    <div class="panel-footer">
+        <div class="text-right">
+            <button class="btn btn-info hidden-print" type="button" onclick="window.location.reload()">Actualizar</button       
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var countChk = 0;
+        var countChkTrue = 0;
+
+        $(".chkImpreso").each(function(index, value) {
+            countChk++;
+            if (value.checked) {
+                countChkTrue++;
+            }
+        });
+
+        if (countChk == countChkTrue) {
+            $("#ddlPosicionX").removeAttr("disabled");
+            $("#ddlPosicionY").removeAttr("disabled");
+        }
+        
+        $("input[type=checkbox]:checked").each(function(index, item) {
+            //console.debug(index, item);
+            $(item).parent().css("background-color", "#DCB8B8");
+        });
+    });
+
+    function postChangeItemStatus(item, value) {
+        $.post(
+                "index.php?do=/preparador/ajax_detail_item_change_status",
+                {
+                    idItem: item,
+                    toValue: value
+                }
+        ).fail(function() {
+            alert("error");
+        });
+    }
+
+    $(".chkImpreso").change(function() {
+        if (this.checked) {
+            postChangeItemStatus(this.value, true);
+        } else {
+            postChangeItemStatus(this.value, false);
+        }
+    });
+    
+    $("#frmDetalleUsuario").submit(function(e) {
+        console.debug($("#ddlPosicionX").val());
+        console.debug($("#ddlPosicionY").val());
+        
+        if($("#ddlPosicionX").val() == "Ninguna" || $("#ddlPosicionY").val() == "Ninguna") {
+            alert("Debe seleccionar una posicion valida.");
+            e.preventDefault();
+        }
+    });
+</script>
