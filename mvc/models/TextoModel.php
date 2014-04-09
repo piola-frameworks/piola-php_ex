@@ -78,11 +78,44 @@ namespace CEIT\mvc\models
          * Start custom selects
          */
         
+        public function SelectCountTotal()
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selTextosTotal";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
+        public function SelectPagination(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selTextosPagination";
+            $this->_params = array(
+                ":page"     =>  (int)$model->_page,
+                ":quantity" =>  (int)$model->_quantity,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function SelectByIdMateria(core\AModel $model)
         {
             $this->_sp = "sp_selTextosByIdMateria";
             $this->_params = array(
                 ':idMateria' =>  $model->_idMateria,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        public function SelectByIdMateriaAndDescripcion(core\AModel $model)
+        {
+            $this->_sp = "sp_selTextosByIdMateriaAndDescripcion";
+            $this->_params = array(
+                ':idMateria' =>  $model->_idMateria,
+                ':descripcion' =>  $model->_descripcion,
             );
             
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);

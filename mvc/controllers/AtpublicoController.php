@@ -177,6 +177,38 @@ namespace CEIT\mvc\controllers
         {
             $this->_template = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}.html";
             
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                if(isset($_POST['btnTerminar']))
+                {
+                    $modelPedido = new models\PedidoModel();
+                    $modelPedido->_idPedido = $id;
+                    $this->result = $this->_model['Pedidos']->Select($modelPedido);
+                    //var_dump($this->result);
+                    if(count($this->result) > 0)
+                    {
+                        $modelPedido->_idUsuario = $this->result[0]['IdUsuario'];
+                        $modelPedido->_creado = $this->result[0]['Creado'];
+                        $modelPedido->_creadoPor = $this->result[0]['CreadoPor'];
+                        $modelPedido->_modificado = date("Y-m-d H:i:s");
+                        $modelPedido->_modificadoPor = $_SESSION['IdUsuario'];
+                        $modelPedido->_anillado = $this->result[0]['Anillado'];
+                        $modelPedido->_comentario = null;
+                        $modelPedido->_posicionX = null;
+                        $modelPedido->_posicionY = null;
+                        $modelPedido->_retiro = $this->result[0]['Retiro'];
+                        $modelPedido->_idFranja = $this->result[0]['IdFranja'];
+                        $modelPedido->_pagado = $this->result[0]['Pagado'];
+                        $modelPedido->_idEstado = 4;
+                        $modelPedido->_especial = true;
+
+                        $this->_model['Pedidos']->Update(array($modelPedido));
+                    }
+                }
+            }
+            
             // seteo el modelo para trabajar con los items del pedido
             $pedidosItems = new models\PedidoModel();
             $pedidosItems->_idPedido = $id;

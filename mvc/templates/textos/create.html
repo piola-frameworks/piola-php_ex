@@ -3,7 +3,7 @@
         <h3 class="panel-title">Crear nuevo texto</h3>
     </div>
     <div class="panel-body">
-        <form id="frmCrearTexto" class="form-horizontal" method="POST" role="form">
+        <form id="frmCrearTexto" class="form-horizontal" name="frmCrearTexto" method="POST" enctype="multipart/form-data" role="form">
             <div class="form-group">
                 <label for="txtNombre" class="col-sm-2 control-label">Nombre del texto</label>
                 <div class="col-sm-10">
@@ -46,9 +46,16 @@
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="fileTextoPDF">Archivo</label>
-                <div class="col-sm-2">
+                <div class="col-sm-5">
                     <input id="fileTextoPDF" class="form-control" type="file" accept="application/pdf">
                     <!-- <p class="help-block">Una breve ayuda sobre el archivo a subir.</p> -->
+                </div>
+                <div class="col-sm-5">
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                            60%
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -69,3 +76,77 @@
         </form>
     </div>
 </div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var randIDS = "{UniqueID}";
+        
+        // Add Hidden Field
+        var hidden = $("<input>");
+        hidden.attr({
+            name: "APC_UPLOAD_PROGRESS",
+            id: "progressKey",
+            type: "hidden",
+            value: randIDS
+        });
+        
+        $("#uploadImage").prepend(hidden); 
+        $("#uploadImage").submit(function(e) {
+            var p = $(this);
+            p.attr('target','tmpForm');
+  
+            // creating iframe
+            if($("#tmpForm").length == 0) {
+                var frame = $("<iframe>");
+                
+                frame.attr({
+                    name: 'tmpForm',
+                    id: 'tmpForm',
+                    action: 'about:blank',
+                    border: 0
+                }).css('display','none');
+                
+                p.after(frame);
+            }  
+            
+            // Start file upload  
+            $.get("index.php?do=/textos/ajax_upload_progress", { progressKey: randIDS, rand: Math.random() }, function(data) { 
+                var uploaded = parseInt(data);
+                
+                if(uploaded == 100)
+                {
+                    $(".progress, .badge").hide();
+                    clearInterval(loadLoader);
+                }
+                else if(uploaded < 100)
+                {
+                    $(".progress, .badge").show();
+                    $(".badge").text(uploaded+"%");
+                    var cWidth = $(".bar").css('width', uploaded+"%");           
+                }
+                
+                if(uploaded < 100)
+                {
+                    var loader = setInterval(loadLoader,2000);
+                }
+            });
+
+            function loadLoader()
+            {
+                $.get("get_progress.php", { progressKey: randIDS, rand: Math.random() }, function(data) {
+                    var uploaded = parseInt(data);
+                    if(uploaded == 100)
+                    {
+                        $(".progress, .badge").hide();
+                        parent.location.href="index.php?success";
+                    }
+                    else if(uploaded < 100)
+                    {
+                        $(".progress, .badge").show();
+                        $(".badge").text(uploaded+"%");
+                        var cWidth = $(".bar").css('width', uploaded+"%");           
+                    }
+                });
+            }
+        });
+    });
+</script>

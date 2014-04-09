@@ -9,6 +9,7 @@ namespace CEIT\core
         protected $_template;
         protected $_dataCollection = array();
         protected $_ajaxRequest = false;
+        protected $_renderRaw = false;
 
         public function __construct()
         {

@@ -34,7 +34,7 @@ namespace CEIT\core
                                         . '<a class="dropdown-toggle" href="#" data-toggle="dropdown">At. Publico <b class="caret"></b></a>'
                                             . '<ul class="dropdown-menu">'
                                                 . '<li><a href="index.php?do=/atpublico/index">'
-                                                    . '<span class="glyphicon glyphicon-file"></span> Comunes'
+                                                    . '<span class="glyphicon glyphicon-file"></span> A retirar'
                                                 . '</a></li>'
                                                 . '<li><a href="index.php?do=/atpublico/especiales_index">'
                                                     . '<span class="glyphicon glyphicon-star"></span> Especiales'
@@ -131,6 +131,11 @@ namespace CEIT\core
             {
                 throw new \InvalidArgumentException("No se puede cargar la plantilla principal.");
             }
+        }
+        
+        public function renderRaw($rawData = null)
+        {
+            echo $rawData;
         }
         
         public function redirect($location)
