@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">Crear nuevo texto</h3>
     </div>
@@ -6,60 +6,47 @@
         <form id="frmCrearTexto" class="form-horizontal" name="frmCrearTexto" method="POST" enctype="multipart/form-data" role="form">
             <div class="form-group">
                 <label for="txtNombre" class="col-sm-2 control-label">Nombre del texto</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <input type="text" class="form-control" id="txtNombre" placeholder="Nombre del texto">
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="txtAutor" class="col-sm-2 control-label">Autor</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="txtAutor" placeholder="Autor">
-                </div>
-            </div>
-            <div class="form-group">
                 <label for="txtPaginas" class="col-sm-2 control-label">Paginas</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <input id="txtPaginas" class="form-control" type="number" min="1" placeholder="Cantidad de paginas">
                 </div>
             </div>
             <div class="form-group">
                 <label for="ddlCarrera" class="col-sm-2 control-label">Carrera</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <select id="ddlCarrera" class="form-control">
-                        <option value="{IdCarrera}">{NombreCarrera}</option>
+                        <option disabled="disabled" selected="selected">Carreras</option>
+                        {combo_carreras}
                     </select>
                 </div>
-            </div>
-            <div class="form-group">
                 <label for="ddlMateria" class="col-sm-2 control-label">Materia</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <select id="ddlMateria" class="form-control">
-                        <option value="{IdMateria}">{NombreMateria}</option>
+                        <option disabled="disabled" selected="selected">Materias</option>
+                        {combo_materias}
                     </select>
                 </div>
             </div>
             <div class="form-group">
+                <label for="txtAutor" class="col-sm-2 control-label">Autor</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="txtAutor" placeholder="Autor">
+                </div>
                 <label for="txtDocente" class="col-sm-2 control-label">Docente</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <input type="text" class="form-control" id="txtDocente" placeholder="Docente">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="fileTextoPDF">Archivo</label>
-                <div class="col-sm-5">
-                    <input id="fileTextoPDF" class="form-control" type="file" accept="application/pdf">
-                    <!-- <p class="help-block">Una breve ayuda sobre el archivo a subir.</p> -->
+                <div class="col-sm-4">
+                    <input id="fileTextoPDF" class="form-control" type="file" name="fileToUpload" accept="application/pdf">
+                    <p class="help-block">Una breve ayuda sobre el archivo a subir.</p>
                 </div>
-                <div class="col-sm-5">
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                            60%
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
+                <div class="col-sm-offset-2 col-sm-4">
                     <div class="checkbox">
                         <label for="chkActivo">
                             <input id="chkActivo" type="checkbox"> &iquest;Activo?
@@ -69,7 +56,24 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-default">Guardar</button>
+                    <div id="pnlProgressBarContainer" class="progress progress-striped active">
+                        <div  class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                            <span id="sUploadStatus" class="sr-only">45% Complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div id="pnlErrorShow" class="well"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input id="progressKey" type="hidden" name="{UploadVar}" value="{UniqueID}" />
+                    <button type="submit" class="btn btn-default" name="btnGuardar">
+                        <span class="glyphicon glyphicon-save"></span> Guardar
+                    </button>
                     <button type="reset" class="btn btn-default">Limpiar</button>
                 </div>
             </div>
@@ -77,76 +81,66 @@
     </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function() {
-        var randIDS = "{UniqueID}";
-        
-        // Add Hidden Field
-        var hidden = $("<input>");
-        hidden.attr({
-            name: "APC_UPLOAD_PROGRESS",
-            id: "progressKey",
-            type: "hidden",
-            value: randIDS
-        });
-        
-        $("#uploadImage").prepend(hidden); 
-        $("#uploadImage").submit(function(e) {
-            var p = $(this);
-            p.attr('target','tmpForm');
-  
-            // creating iframe
-            if($("#tmpForm").length == 0) {
-                var frame = $("<iframe>");
-                
-                frame.attr({
-                    name: 'tmpForm',
-                    id: 'tmpForm',
-                    action: 'about:blank',
-                    border: 0
-                }).css('display','none');
-                
-                p.after(frame);
-            }  
-            
-            // Start file upload  
-            $.get("index.php?do=/textos/ajax_upload_progress", { progressKey: randIDS, rand: Math.random() }, function(data) { 
-                var uploaded = parseInt(data);
-                
-                if(uploaded == 100)
-                {
-                    $(".progress, .badge").hide();
-                    clearInterval(loadLoader);
-                }
-                else if(uploaded < 100)
-                {
-                    $(".progress, .badge").show();
-                    $(".badge").text(uploaded+"%");
-                    var cWidth = $(".bar").css('width', uploaded+"%");           
-                }
-                
-                if(uploaded < 100)
-                {
-                    var loader = setInterval(loadLoader,2000);
-                }
-            });
+    var randIDS = "{UniqueID}";
+    
+    $("#frmCrearTexto").submit(function(e) {
+        var p = $(this);
+        p.attr('target', 'tmpForm');
 
-            function loadLoader()
+        // creating iframe
+        if ($("#tmpForm").length == 0) {
+            var frame = $("<iframe>");
+
+            frame.attr({
+                name: 'tmpForm',
+                id: 'tmpForm',
+                action: 'about:blank',
+                border: 0
+            }).css('display', 'none');
+
+            p.after(frame);
+        }
+
+        // Start file upload  
+        $.post("index.php?do=/textos/ajax_upload_progress", {progressKey: randIDS, rand: Math.random()}, function(data) {
+            $("#pnlErrorShow").html(data);
+            
+            var uploaded = parseInt(data);
+
+            if (uploaded == 100)
             {
-                $.get("get_progress.php", { progressKey: randIDS, rand: Math.random() }, function(data) {
-                    var uploaded = parseInt(data);
-                    if(uploaded == 100)
-                    {
-                        $(".progress, .badge").hide();
-                        parent.location.href="index.php?success";
-                    }
-                    else if(uploaded < 100)
-                    {
-                        $(".progress, .badge").show();
-                        $(".badge").text(uploaded+"%");
-                        var cWidth = $(".bar").css('width', uploaded+"%");           
-                    }
-                });
+                //$(".progress, .badge").hide();
+                clearInterval(loadLoader());
+            }
+            else if (uploaded < 100)
+            {
+                $("#pnlProgressBarContainer").show();
+                $("#sUploadStatus").text(uploaded + "% completado");
+                $(".progress-bar").css('width', uploaded + "%");
+            }
+
+            if (uploaded < 100)
+            {
+                setInterval(loadLoader(), 2000);
             }
         });
+
+        function loadLoader()
+        {
+            $.post("index.php?do=/textos/ajax_upload_progress", {progressKey: randIDS, rand: Math.random()}, function(data) {
+                var uploaded = parseInt(data);
+                if (uploaded == 100)
+                {
+                    $("#pnlProgressBarContainer").hide();
+                }
+                else if (uploaded < 100)
+                {
+                    $("#pnlProgressBarContainer").show();
+                    $("#sUploadStatus").text(uploaded + "% completado");
+                    $(".progress-bar").css('width', uploaded + "%");
+                    
+                }
+            });
+        }
     });
 </script>

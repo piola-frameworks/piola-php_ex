@@ -56,22 +56,126 @@ namespace CEIT\mvc\controllers
             {
                 var_dump($_POST);
                 
-                
+                if(!empty($_FILES))
+                {
+                    var_dump($_FILES);
+                    
+                    if(isset($_POST['btnGuardar']))
+                    { 
+                        switch($_FILES['fileToUpload']['error'])
+                        {
+                            case UPLOAD_ERR_OK:
+                                //$cmd = 'FOR /F "tokens=2*" %a IN ("' . str_replace("", "", BASE_DIR) . '\bin\pdfinfo.exe" "' . $_FILES['filArchivo']['tmp_name'] . '" ^| findstr "Pages:") DO ECHO %a';
+                                //echo shell_exec($cmd) . "<br />";
+
+                                /*$modelTP = new models\TextoModel();
+                                $modelTP->_creadoPor = $_SESSION['IdUsuario'];
+                                $modelTP->_creadoDia = date("Y-m-d H:i:s");
+                                $modelTP->_modificadoPor = null;
+                                $modelTP->_modificadoDia = null;
+                                $modelTP->_codInterno = null;
+                                $modelTP->_idMateria = null;
+                                $modelTP->_idTipoTexto = 4;
+                                $modelTP->_idTipoContenido = null;
+                                $modelTP->_nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                                $modelTP->_autor = null;
+                                $modelTP->_docente = null;
+                                $modelTP->_cantPaginas = 1; //shell_exec($cmd);
+                                $modelTP->_activo = 0;
+                                $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));*/
+
+                                // Muevo el archivo al directorio donde van a estar todos los PDFs
+                                $uploaddir = BASE_DIR . '/data/texts/asd/';
+                                $uploadfile = $uploaddir . $this->_lastIdTexto . ".pdf";//basename($_FILES['filArchivo']['name']);
+
+                                //unset($modelTP);
+
+                                if($_FILES['filArchivo']['type'] != 'application/pdf')
+                                {
+                                    trigger_error("Me queres hackear la aplicacion web?", E_USER_NOTICE);
+                                }
+
+                                if(move_uploaded_file($_FILES['filArchivo']['tmp_name'], $uploadfile))
+                                {
+                                    //echo "El archivo es válido y fue cargado exitosamente.\n";
+                                }
+                                else
+                                {
+                                    echo "¡Posible ataque de carga de archivos!\n";
+                                }                    
+                                break;
+
+                            case UPLOAD_ERR_INI_SIZE:
+                                trigger_error("El archivo subido excede la directiva upload_max_filesize en php.ini.", E_USER_ERROR);
+                                break;
+
+                            case UPLOAD_ERR_FORM_SIZE:
+                                trigger_error("El archivo subido excede la directiva MAX_FILE_SIZE que fue especificada en el formulario HTML.", E_USER_ERROR);
+                                break;
+
+                            case UPLOAD_ERR_PARTIAL:
+                                trigger_error("El archivo subido fue sólo parcialmente cargado.", E_USER_ERROR);    
+                                break;
+
+                            case UPLOAD_ERR_NO_FILE:
+                                trigger_error("Ningún archivo fue subido.", E_USER_WARNING);
+                                break;
+
+                            case UPLOAD_ERR_NO_TMP_DIR:
+                                trigger_error("Falta la carpeta temporal.", E_USER_ERROR);    
+                                break;
+
+                            case UPLOAD_ERR_CANT_WRITE:
+                                trigger_error("No se pudo escribir el archivo en el disco.", E_USER_ERROR);    
+                                break;
+
+                            case UPLOAD_ERR_EXTENSION:
+                                trigger_error("Una extensión de PHP detuvo la carga de archivos.", E_USER_ERROR);    
+                                break;
+
+                            default:
+                                // Por que entro aca?    
+                                break;
+                        }
+                    }
+                }
             }
-            else
+            
+            $this->UniqueID = uniqid();
+            $this->UploadVar = ini_get("session.upload_progress.name");
+            
+            $this->result = $this->_model['Carreras']->Select();
+            if(count($this->result) > 1)
             {
-                $this->UniqueID = uniqid();
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/textos/combo_carrera.html";
+                    $this->combo_carreras .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_carreras = str_replace('{' . $key . '}', $value, $this->combo_carreras);
+                        }
+                    }
+                }
             }
+            unset($this->result);
         }
 
-        public function ajax_progress_upload()
+        public function ajax_upload_progress()
         {
-            
-            $progressKey = ini_get("session.upload_progress.prefix") . ini_get("session.upload_progress.name");
-            $current = $_SESSION[$progressKey]["bytes_processed"];
-            $total = $_SESSION[$progressKey]["content_length"];
-            
-            echo $current < $total ? ceil($current / $total * 100) : 100;
+            if(!empty($_POST))
+            {
+                var_dump($_POST, $_SESSION, $_FILES);
+                
+                $progressKey = ini_get("session.upload_progress.prefix") . "frmCrearTexto";
+                $current = $_SESSION[$progressKey]["bytes_processed"];
+                $total = $_SESSION[$progressKey]["content_length"];
+
+                echo $current < $total ? ceil($current / $total * 100) : 100;
+            }
         }
         
         public function delete($id)
@@ -93,9 +197,7 @@ namespace CEIT\mvc\controllers
 
         public function index()
         {
-            // seteo el template
             $this->_template = BASE_DIR . "/mvc/templates/textos/{$this->_action}.html";
-            
             
             if(!empty($_POST))
             {
@@ -166,7 +268,7 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/textos/{$this->_action}_combo_carrera.html";
+                    $filename = BASE_DIR . "/mvc/templates/textos/combo_carrera.html";
                     $this->combo_carreras .= file_get_contents($filename);
                     
                     if(is_array($row))
