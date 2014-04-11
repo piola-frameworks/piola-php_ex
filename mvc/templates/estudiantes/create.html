@@ -73,7 +73,7 @@
             <div class="form-group">
                 <label class="sr-only" for="ddlCarrera">Carreras</label>
                 <select id="ddlCarrera" class="form-control" name="ddlCarrera">
-                    <option selected="selected" disabled="disabled">Carrera</option>
+                    <!-- <option selected="selected" disabled="disabled">Carrera</option> -->
                     {combo_carrera}
                 </select>
             </div>
@@ -94,7 +94,7 @@
             <div class="form-group">
                 <label class="sr-only" for="ddlMateria">Contenidos</label>
                 <select id="ddlContenido" class="form-control" name="ddlContenido">
-                    <option selected="selected" disabled="disabled">Contenidos</option>
+                    <!-- <option selected="selected" disabled="disabled">Contenidos</option> -->
                     {combo_contenido}
                 </select>
             </div>
@@ -152,25 +152,81 @@
 <script type="text/javascript">
     $(document).ready(function() {
         // Desactivo los controles al principio para despues habilitarlos.
-        if($.cookie("comboCarrera") && $.cookie("comboNivel") && $.cookie("comboMateria")) {
-            if($.cookie("comboCarrera")) {
-                $("#ddlCarrera").val($.cookie("comboCarrera"));
-                $("#ddlCarrera").trigger("change");
-            }
-            
-            if($.cookie("comboNivel")) {
-                $("#ddlNivel").val($.cookie("comboNivel"));
-                $("#ddlNivel").trigger("change");
-            }
-            
-            if($.cookie("comboMateria")) {
-                $("#ddlMateria").val($.cookie("comboMateria"));
-                $("#ddlMateria").trigger("change");
-            }
+        //console.debug("IdCarrera: " + $.cookie("idCarrera"));
+        if($.cookie("IdCarrera") != undefined && $.cookie("IdCarrera") != 0) {
+            $("#ddlCarrera").val($.cookie("IdCarrera"));
+            $.ajax({
+                type: 'POST',
+                async: false,
+                url: 'index.php?do=/estudiante/ajax_get_niveles',
+                data: 'idCarrera=' + $('#ddlCarrera').val(),
+                success: function(data, textStatus, jqXHR) {
+                    // Limpio los DDL foraneos.
+                    $('#ddlNivel').empty();
+                    $('#ddlNivel').append($('<option>').text('Niveles').attr('disabled', true));
+                    $('#ddlMateria').empty();
+                    $('#ddlMateria').append($('<option>').text('Materias').attr('disabled', true));
+
+                    // Parseo el JSON y agrego los datos en el DLL
+                    $.parseJSON(data).map(function(value, key) {
+                        $('#ddlNivel').append($('<option>').val(value.IdNivel).text(value.Descripcion));
+                    });
+
+                    // Habilito el DDL hijo.
+                    $('#ddlNivel').removeAttr('disabled');
+
+                    // Coloco el indice por fuera del rango.
+                    $('#ddlNivel').prop('selectedIndex', 0);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('error');
+                }
+            });
+        }
+        
+        //console.debug("IdNivel: " + $.cookie("IdNivel"));
+        if($.cookie("IdNivel") != undefined && $.cookie("IdNivel") != 0) {
+            $("#ddlNivel").val($.cookie("IdNivel"));
+            $.ajax({
+                type: 'POST',
+                async: false,
+                url: 'index.php?do=/estudiante/ajax_get_materias',
+                data: 'idNivel=' + $('#ddlNivel').val(),
+                success: function(data, textStatus, jqXHR) {
+                    // Limpio el DDL foraneo,
+                    $('#ddlMateria').empty();
+                    $('#ddlMateria').append($('<option>').text('Materias').attr('disabled', true));
+
+                    // Parseo el JSON y agrego los items al DDL.s
+                    $.parseJSON(data).map(function(value) {
+                        $('#ddlMateria').append($('<option>').val(value.IdMateria).text(value.Descripcion));
+                    });
+
+                    // Habilito el DDL hijo.
+                    $('#ddlMateria').removeAttr('disabled');
+
+                    // Coloco el indice por fuera del rango.
+                    $('#ddlMateria').prop('selectedIndex', 0);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('error');
+                }
+            });
         } else {
             $('#ddlNivel').attr('disabled', true);
+        }
+        
+        //console.debug("IdMateria: " + $.cookie("IdMateria"));
+        if($.cookie("IdMateria") != undefined && $.cookie("IdMateria") != 0) {
+            $("#ddlMateria").val($.cookie("IdMateria"));
+        } else {
             $('#ddlMateria').attr('disabled', true);
-        };
+        }
+        
+        //console.debug("IdContenido " + $.cookie("IdContenido"));
+        if($.cookie("IdContenido") != undefined && $.cookie("IdContenido") != 0) {
+            $("#ddlMateria").val($.cookie("IdMateria"));
+        }
         
         // Muestro el subtotal
         /*var subTotal = 0;
@@ -217,8 +273,6 @@
     });
 
     $('#ddlCarrera').change(function() {
-        $.cookie("comboCarrera", $(this).val(), { expires: 1 });
-        
         $.ajax({
             type: 'POST',
             url: 'index.php?do=/estudiante/ajax_get_niveles',
@@ -248,8 +302,6 @@
     });
 
     $('#ddlNivel').change(function() {
-        $.cookie("comboNivel", $(this).val(), { expires: 1 });
-        
         $.ajax({
             type: 'POST',
             url: 'index.php?do=/estudiante/ajax_get_materias',
@@ -274,10 +326,6 @@
                 alert('error');
             }
         });
-    });
-
-    $("#ddlMateria").change(function() {
-        $.cookie("comboMateria", $(this).val(), { expires: 1 });
     });
 
     /*$('.itemCantidad').change(function() {

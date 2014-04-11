@@ -420,6 +420,7 @@ namespace CEIT\mvc\controllers
                                 $pedido->_idFranja = $this->result[0]['IdFranja'];
                                 $pedido->_pagado = true;
                                 $pedido->_idEstado = $this->result[0]['IdEstado'];
+                                $pedido->_especial = $this->result[0]['Especial'];
                                 
                                 array_push($pedidosAPagar, $pedido);
                                 break;

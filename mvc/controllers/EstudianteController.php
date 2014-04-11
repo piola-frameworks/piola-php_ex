@@ -70,7 +70,6 @@ namespace CEIT\mvc\controllers
              *          'Cantidad' = entero obligatorio,
              *      );
              * );
-             * 
              */
             
             if(!isset($_COOKIE['TextosAgregados'])) // Si la cookie no esta, creo un cookie esqueleto.
@@ -82,7 +81,6 @@ namespace CEIT\mvc\controllers
                     'Comentario'        =>  null,
                     'Items'             =>  array(),
                 );
-                
                 setcookie('TextosAgregados', serialize($tmpArray), time() + 3600);
             }
             else // Si esta la cookie, la leo.
@@ -118,6 +116,46 @@ namespace CEIT\mvc\controllers
                 {
                     $this->table_text_added = "";
                 }
+            }
+            
+            $tmpIdCarrera = 0;
+            if(!isset($_COOKIE["IdCarrera"]))
+            {
+                setcookie("IdCarrera", $tmpIdCarrera, time() + 600);
+            }
+            else
+            {
+                $tmpIdCarrera = filter_input(INPUT_COOKIE, "IdCarrera", FILTER_SANITIZE_NUMBER_INT);
+            }
+            
+            $tmpIdNivel = 0;
+            if(!isset($_COOKIE["IdNivel"]))
+            {
+                setcookie("IdNivel", $tmpIdNivel, time() + 600);
+            }
+            else
+            {
+                $tmpIdNivel = filter_input(INPUT_COOKIE, "IdNivel", FILTER_SANITIZE_NUMBER_INT);
+            }
+            
+            $tmpIdMateria = 0;
+            if(!isset($_COOKIE["IdMateria"]))
+            {
+                setcookie("IdMateria", $tmpIdMateria, time() + 600);
+            }
+            else
+            {
+                $tmpIdMateria = filter_input(INPUT_COOKIE, "IdMateria", FILTER_SANITIZE_NUMBER_INT);
+            }
+            
+            $tmpIdContenido = 0;
+            if(!isset($_COOKIE["IdContenido"]))
+            {
+                setcookie("IdContenido", $tmpIdContenido, time() + 600);
+            }
+            else
+            {
+                $tmpIdContenido = filter_input(INPUT_COOKIE, "IdContenido", FILTER_SANITIZE_NUMBER_INT);
             }
             
             if(!empty($_POST))
@@ -190,14 +228,32 @@ namespace CEIT\mvc\controllers
                     setcookie('TextosAgregados', serialize($tmpArray), time() + 3600);
                 }
                 
+                if(isset($_POST["ddlCarrera"]))
+                {
+                    $tmpIdCarrera = filter_input(INPUT_POST, "ddlCarrera", FILTER_SANITIZE_NUMBER_INT);
+                    setcookie("IdCarrera", $tmpIdCarrera, time() + 600);
+                }
+                
+                if(isset($_POST["ddlNivel"]))
+                {
+                    $tmpIdNivel = filter_input(INPUT_POST, "ddlNivel", FILTER_SANITIZE_NUMBER_INT);
+                    setcookie("IdNivel", $tmpIdNivel, time() + 600);
+                }
+                
                 // Cargo la tabla de los resultados.
                 if(isset($_POST['ddlMateria']))
                 {
+                    $tmpIdMateria = filter_input(INPUT_POST, "ddlMateria", FILTER_SANITIZE_NUMBER_INT);
+                    setcookie("IdMateria", $tmpIdMateria, time() + 600);
+                    
                     $modelTexto = new models\TextoModel();
                     $modelTexto->_idMateria = filter_input(INPUT_POST, 'ddlMateria', FILTER_SANITIZE_NUMBER_INT);
 
                     if(isset($_POST['ddlContenido']))
                     {
+                        $tmpIdContenido = filter_input(INPUT_POST, "ddlContenido", FILTER_SANITIZE_NUMBER_INT);
+                        setcookie("IdContenido", $tmpIdContenido, time() + 600);
+                        
                         $modelTexto->_idTipoContenido = filter_input(INPUT_POST, 'ddlContenido', FILTER_SANITIZE_NUMBER_INT);
                         $this->result = $this->_model['Textos']->SelectByIdMateriaAndContenido($modelTexto);
                     }
@@ -241,8 +297,18 @@ namespace CEIT\mvc\controllers
             
             // Cargo las carreras.
             $this->result = $this->_model['Carreras']->Select();
-            if(count($this->result) > 1)
+            //var_dump($this->result);
+            if(count($this->result) > 0)
             {
+                if($tmpIdCarrera == 0)
+                {
+                    $this->combo_carrera = "<option selected=\"selected\" disabled=\"disabled\">Carrera</option>";
+                }
+                else
+                {
+                    $this->combo_carrera = "<option disabled=\"disabled\">Carrera</option>";
+                }
+                
                 foreach($this->result as $row)
                 {
                     $filename = BASE_DIR . "/mvc/templates/estudiantes/combo_carrera.html";
@@ -252,6 +318,15 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
+                            if($row["IdCarrera"] == $tmpIdCarrera)
+                            {
+                                $this->combo_carrera = str_replace("{Seleccionado}", "checked=\"checked\"", $this->combo_carrera);
+                            }
+                            else
+                            {
+                                $this->combo_carrera = str_replace("{Seleccionado}", "", $this->combo_carrera);
+                            }
+                            
                             $this->combo_carrera = str_replace('{' . $key .'}', htmlentities($value), $this->combo_carrera);
                         }
                     }
@@ -259,7 +334,7 @@ namespace CEIT\mvc\controllers
             }
             else
             {
-                $this->combo_carrera = "";
+                $this->combo_carrera = "<option selected=\"selected\" disabled=\"disabled\">Carrera</option>";
             }
             unset($this->result);
             
@@ -286,8 +361,18 @@ namespace CEIT\mvc\controllers
             
             // Cargo los tipos de contenido
             $this->result = $this->_model['Contenidos']->Select();
-            if(count($this->result) > 1)
+            //var_dump($this->result);
+            if(count($this->result) > 0)
             {
+                if($tmpIdContenido == 0)
+                {
+                    $this->combo_contenido = "<option selected=\"selected\" disabled=\"disabled\">Contenidos</option>";
+                }
+                else
+                {
+                    $this->combo_contenido = "<option disabled=\"disabled\">Contenidos</option>";
+                }
+                
                 foreach($this->result as $row)
                 {
                     $filename = BASE_DIR . "/mvc/templates/estudiantes/combo_contenido.html";
@@ -297,6 +382,15 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($row as $key => $value)
                         {
+                            if($row["IdTipoContenido"] == $tmpIdContenido)
+                            {
+                                $this->combo_contenido = str_replace("{Seleccionado}", "checked=\"checked\"", $this->combo_contenido);
+                            }
+                            else
+                            {
+                                $this->combo_contenido = str_replace("{Seleccionado}", "", $this->combo_contenido);
+                            }
+                            
                             $this->combo_contenido = str_replace('{' . $key .'}', htmlentities($value), $this->combo_contenido);
                         }
                     }
@@ -304,7 +398,7 @@ namespace CEIT\mvc\controllers
             }
             else
             {
-                $this->combo_contenido = "";
+                $this->combo_contenido = "<option selected=\"selected\" disabled=\"disabled\">Contenidos</option>";
             }
             unset($this->result);
             

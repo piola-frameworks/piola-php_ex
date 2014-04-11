@@ -23,15 +23,22 @@
                 <h3 class="panel-title">Verificar estado</h3>
             </div>
             <div class="panel-body">
-                <form class="form-inline" role="form">
+                <form class="form-inline" name="frmVericarPedido" action="#" method="GET" role="form">
                     <div class="form-group">
                         <label class="sr-only" for="txtEstadoIDPedido">ID Pedido</label>
-                        <input type="text" class="form-control" id="txtEstadoIDPedido" name="txtEstadoIDPedido" placeholder="ID Pedido" required="required">
+                        <input type="text" class="form-control" id="txtEstadoIDPedido" name="txtEstadoIDPedido" placeholder="ID Pedido" required="required" onsubmit="return false;">
                     </div>
-                    <button id="btnVerEstadoPedido" type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-search"></span> Verificar
-                    </button>
-                    <strong>Estado:</strong> <span id="sEstadoIDPedido"></span>
+                    <div class="form-group">
+                        <button id="btnVerEstadoPedido" type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-search"></span> Verificar
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <strong>Estado:</strong> <span id="sEstadoIDPedido"></span>
+                    </div>
+                    <div class="form-group">
+                        <strong>Pagado:</strong> <span id="sPagadoIDPedido"></span>
+                    </div>
                 </form>
             </div>
         </div>
@@ -116,7 +123,9 @@
                 data: {idPedido: $("#txtEstadoIDPedido").val()},
                 success: function(data, textStatus, jqXHR) {
                     var ret = JSON.parse(data);
-                    $("#sEstadoIDPedido").text(ret);
+                    console.debug(ret[0]);
+                    $("#sEstadoIDPedido").text(ret[0].Descripcion);
+                    $("#sPagadoIDPedido").text(ret[0].Pagado);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.error(jqXHR, textStatus, errorThrown);

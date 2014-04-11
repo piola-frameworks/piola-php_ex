@@ -148,8 +148,15 @@
     </div>
 </div>
 <script type="text/javascript">    
+    $(document).ready(function() {
+        //var date = new Date();
+        //date.setDate(date.getDate() + 3);
+        //$('#txtRetiro').val(date.toISOString().slice(0, 10));
+    });
+    
     $('#txtRetiro').datepicker({
         minDate: 0,
+        defaultDate: +3,
         dateFormat: "yy-mm-dd",
         showAnim: "slideDown",
         beforeShowDay: $.datepicker.noWeekends
