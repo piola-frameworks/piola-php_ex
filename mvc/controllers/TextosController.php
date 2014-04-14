@@ -56,12 +56,20 @@ namespace CEIT\mvc\controllers
             {
                 var_dump($_POST);
                 
-                if(!empty($_FILES))
+                if(isset($_POST["btnGuardar"]))
                 {
-                    var_dump($_FILES);
+                    $nombre = filter_input(INPUT_POST, "txtNombre", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $paginas = filter_input(INPUT_POST, "txtPaginas", FILTER_SANITIZE_NUMBER_INT);
+                    $carrera = filter_input(INPUT_POST, "ddlCarrera", FILTER_SANITIZE_NUMBER_INT);
+                    $materia = filter_input(INPUT_POST, "ddlMateria", FILTER_SANITIZE_NUMBER_INT);
+                    $autor = filter_input(INPUT_POST, "txtAutor", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $docente = filter_input(INPUT_POST, "txtDocente", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $activo = filter_input(INPUT_POST, "chkActivo", FILTER_SANITIZE_STRING);
                     
-                    if(isset($_POST['btnGuardar']))
-                    { 
+                    if(!empty($_FILES))
+                    {
+                        var_dump($_FILES);
+
                         switch($_FILES['fileToUpload']['error'])
                         {
                             case UPLOAD_ERR_OK:

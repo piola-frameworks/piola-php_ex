@@ -107,14 +107,14 @@
                                         <td>
                                             <div class="checkbox">
                                                 <label>
-                                                    <input name="chkAnillado" type="checkbox" />
+                                                    <input id="chkAnillado" name="chkAnillado" type="checkbox" />
                                                 </label>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="checkbox">
                                                 <label>
-                                                    <input name="chkAbrochado" type="checkbox" />
+                                                    <input id="chkAbrochado" name="chkAbrochado" type="checkbox" />
                                                 </label>
                                             </div>
                                         </td>
@@ -152,6 +152,18 @@
         //var date = new Date();
         //date.setDate(date.getDate() + 3);
         //$('#txtRetiro').val(date.toISOString().slice(0, 10));
+    });
+    
+    $("#chkAnillado").click(function() {
+        if(this.checked) {
+            $("#chkAbrochado").prop("checked", false);
+        }
+    });
+    
+    $("#chkAbrochado").click(function() {
+        if(this.checked) {
+            $("#chkAnillado").prop("checked", false);
+        }
     });
     
     $('#txtRetiro').datepicker({

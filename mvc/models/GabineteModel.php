@@ -123,9 +123,20 @@ namespace CEIT\mvc\models
             foreach($model as $item)
             {
                 array_push($this->_sp, "sp_updGabinetePedido");
-                
                 array_push($this->_params, array(
-                    ':idGabinetePedido' =>  (int)$item->_idGabinetePedido,
+                    ":idGabinetePedido" =>  (int)$item->_idGabinetePedido,
+                    ":idUsuario"        =>  (int)$item->_idUsuario,
+                    ":creadoPor"        =>  (int)$item->_creadoPor,
+                    ":creado"           =>  (string)$item->_creado,
+                    ":modificadoPor"    =>  is_null($item) ? null : (int)$item->_modificadoPor,
+                    ":modificado"       =>  is_null($item) ? null : (string)$item->_modificado,
+                    ":anillado"         =>  (bool)$item->_anillado,
+                    ":posicionX"        =>  is_null($item) ? null : (int)$item->_posicionX,
+                    ":posicionY"        =>  is_null($item) ? null : (int)$item->_posicionY,
+                    ":retiro"           =>  (string)$item->_retiro,
+                    ":idFranja"         =>  (int)$item->_idFranja,
+                    ":pagado"           =>  (bool)$item->_pagado,
+                    ":idEstado"         =>  (int)$item->_idEstado,
                 ));
             }
             

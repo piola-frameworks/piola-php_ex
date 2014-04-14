@@ -17,6 +17,8 @@ namespace CEIT\mvc\controllers
                 $this->_model = array(
                     'Gabinete'      =>  new models\GabineteModel(),
                     'PedidoEstados' =>  new models\PedidoEstadosModel(),
+                    "Caja"          =>  new models\CajaModel(),
+                    "CajaItems"     =>  new models\CajaItemModel(),
                     'Franjas'       =>  new models\HorarioFranjasModel(),
                     'Carreras'      =>  new models\CarreraModel(),
                     'Estados'       =>  new models\PedidoItemEstadosModel(),
@@ -128,56 +130,44 @@ namespace CEIT\mvc\controllers
         {
             $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
             
-            // seteo el modelo para trabajar con los items del pedido
-            $pedidosItems = new models\GabineteModel();
-            $pedidosItems->_idPedido = $id;
-            $this->result = $this->_model['Gabinete']->SelectItem($pedidosItems);
-            var_dump($this->result);
-            
-            if(count($this->result) > 0)
+            if(!empty($_POST))
             {
-                foreach($this->result as $row)
+                //var_dump($_POST);
+                
+                if(isset($_POST["btnTerminar"]))
                 {
-                    if(is_array($row))
-                    {
-                        $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table_row.html";
-                        $this->table_rows .= file_get_contents($filename);
-                        
-                        foreach($row as $key => $value)
-                        {
-                            switch($key)
-                            {
-                                case 'Anillado':
-                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
-                                    break;
-                                case 'Abrochado':
-                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
-                                    break;
-                                case 'SimpleFaz':
-                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
-                                    break;
-                                case 'IdEstadoItem':
-                                    $this->table_rows = str_replace("{Impreso}", $value == 3 ? "checked=\"checked\"" : "", $this->table_rows);
-                                    break;
-                                case 'IdTipoTexto':
-                                    $this->table_rows = str_replace("{link_enabled}", $value == 1 ? "onclick=\"return false;\"" : "", $this->table_rows);
-                                    $this->table_rows = str_replace("{button_print}", $value == 1 ? "btn-danger" : "btn-default", $this->table_rows);
-                                    break;
-                                default:
-                                    $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
-                                    break;
-                            }
-                        }
-                    }
+                    $posicionX = filter_input(INPUT_POST, "ddlPosicionX", FILTER_SANITIZE_NUMBER_INT);
+                    $posicionY = filter_input(INPUT_POST, "ddlPosicionY", FILTER_SANITIZE_NUMBER_INT);
+                    
+                    $pedido = new models\PedidoModel();
+                    $pedido->_idGabinetePedido = $id;
+
+                    $this->result = $this->_model["Gabinete"]->Select($pedido);
+                    //var_dump($this->result);
+                    
+                    $pedido->_idUsuario = $this->result[0]["IdUsuario"];
+                    $pedido->_creado = $this->result[0]["Creado"];
+                    $pedido->_creadoPor = $this->result[0]["CreadoPor"];
+                    $pedido->_modificado = date("Y-m-d H:i:s");
+                    $pedido->_modificadoPor = $_SESSION["IdUsuario"];
+                    $pedido->_anillado = $this->result[0]["Anillado"];
+                    $pedido->_posicionX = $posicionX;
+                    $pedido->_posicionY = $posicionY;
+                    $pedido->_retiro = $this->result[0]["Retiro"];
+                    $pedido->_idFranja = $this->result[0]["IdFranja"];
+                    $pedido->_pagado = $this->result[0]["Pagado"];
+                    $pedido->_idEstado = 4;
+                    
+                    $this->result = $this->_model["Gabinete"]->Update(array($pedido));
+                    
+                    header("Location: index.php?do=/atpublico/pedidos_detail_print/" . $id);
                 }
             }
-            unset($this->result);
             
-            // elaboro el parametro y traigo los datos
             $pedido = new models\GabineteModel();
-            $pedido->_idPedido = $id;
+            $pedido->_idGabinetePedido = $id;
             $this->result = $this->_model['Gabinete']->Select($pedido);
-            var_dump($this->result);
+            //var_dump($this->result);
             if(count($this->result) > 0)
             {
                 foreach($this->result[0] as $key => $value)
@@ -185,7 +175,7 @@ namespace CEIT\mvc\controllers
                     switch($key)
                     {
                         case "Pagado":
-                            $this->Pagado = $value ? "checked=\"checked\"" : '';
+                            $this->Pagado = $value ? "checked=\"checked\"" : "";
                             break;
 
                         case "Anillado":
@@ -222,6 +212,46 @@ namespace CEIT\mvc\controllers
                             foreach($row as $key => $value)
                             {
                                 $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            // seteo el modelo para trabajar con los items del pedido
+            $pedidosItems = new models\GabineteModel();
+            $pedidosItems->_idPedido = $id;
+            $this->result = $this->_model['Gabinete']->SelectItem($pedidosItems);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table_row.html";
+                        $this->table_rows .= file_get_contents($filename);
+                        
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case 'Anillado':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'Abrochado':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'SimpleFaz':
+                                    $this->table_rows = str_replace("{" . $key . "}", $value == 1 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                case 'IdEstadoItem':
+                                    $this->table_rows = str_replace("{Impreso}", $value == 3 ? "checked=\"checked\"" : "", $this->table_rows);
+                                    break;
+                                default:
+                                    $this->table_rows = str_replace("{" . $key . "}", htmlentities($value), $this->table_rows);
+                                    break;
                             }
                         }
                     }
@@ -296,6 +326,14 @@ namespace CEIT\mvc\controllers
                 }
             }
             unset($this->result);
+        }
+        
+        public function pedidos_detail_print($id)
+        {
+            $modelPedido = new models\PedidoModel();
+            $modelPedido->_idGabinetePedido = $id;
+            $this->result = $this->_model["Gabinete"]->Select($modelPedido);
+            var_dump($this->result);
         }
         
         public function pedidos_delete($id)
@@ -515,56 +553,33 @@ namespace CEIT\mvc\controllers
                     
                     foreach($pedidos as $index => $item)
                     {
-                        switch($item['Tipo'])
-                        {
-                            case 'Pedido':
-                                $modelCajaItem = new models\CajaItemModel();
-                                $modelCajaItem->_idCaja = $idCaja;
-                                $modelCajaItem->_idPedido = $index;
-                                $modelCajaItem->_idItem = null;
-                                $modelCajaItem->_descripcion = $item['Descripcion'];
-                                $modelCajaItem->_precioUnitario = $item['PrecioUnitario'];
-                                $modelCajaItem->_cantidad = $item['Cantidad'];
-                                
-                                array_push($cajaItems, $modelCajaItem);
-                                
-                                $pedido = new models\PedidoModel();
-                                $pedido->_idPedido = $index;
-                                $this->result = $this->_model['Gabinete']->Select($pedido);
-                                //var_dump($this->result);
+                        $modelCajaItem = new models\CajaItemModel();
+                        $modelCajaItem->_idCaja = $idCaja;
+                        $modelCajaItem->_idPedido = $index;
+                        $modelCajaItem->_idItem = null;
+                        $modelCajaItem->_descripcion = $item['Descripcion'];
+                        $modelCajaItem->_precioUnitario = $item['PrecioUnitario'];
+                        $modelCajaItem->_cantidad = $item['Cantidad'];
+                        array_push($cajaItems, $modelCajaItem);
 
-                                $pedido->_idUsuario = $this->result[0]['IdUsuario'];
-                                $pedido->_creado = $this->result[0]['Creado'];
-                                $pedido->_creadoPor = $this->result[0]['CreadoPor'];
-                                $pedido->_modificado = date('Y-m-d H:i:s');
-                                $pedido->_modificadoPor = $_SESSION['IdUsuario'];
-                                $pedido->_anillado = $this->result[0]['Anillado'];
-                                $pedido->_comentario = $this->result[0]['Comentario'];
-                                $pedido->_posicionX = $this->result[0]['PosicionX'];
-                                $pedido->_posicionY = $this->result[0]['PosicionY'];
-                                $pedido->_retiro = $this->result[0]['Retiro'];
-                                $pedido->_idFranja = $this->result[0]['IdFranja'];
-                                $pedido->_pagado = true;
-                                $pedido->_idEstado = $this->result[0]['IdEstado'];
-                                
-                                array_push($pedidosAPagar, $pedido);
-                                break;
+                        $pedido = new models\PedidoModel();
+                        $pedido->_idGabinetePedido = $index;
+                        $this->result = $this->_model['Gabinete']->Select($pedido);
+                        var_dump($this->result);
 
-                            case 'Item':
-                                $modelCajaItem = new models\CajaItemModel();
-                                $modelCajaItem->_idCaja = $idCaja;
-                                $modelCajaItem->_idPedido = null;
-                                $modelCajaItem->_idItem = $index;
-                                $modelCajaItem->_descripcion = $item['Descripcion'];
-                                $modelCajaItem->_precioUnitario = $item['PrecioUnitario'];
-                                $modelCajaItem->_cantidad = $item['Cantidad'];
-                                
-                                array_push($cajaItems, $modelCajaItem);
-                                break;
-                            
-                            default:
-                                break;
-                        }
+                        $pedido->_idUsuario = $this->result[0]['IdUsuario'];
+                        $pedido->_creado = $this->result[0]['Creado'];
+                        $pedido->_creadoPor = $this->result[0]['CreadoPor'];
+                        $pedido->_modificado = date('Y-m-d H:i:s');
+                        $pedido->_modificadoPor = $_SESSION['IdUsuario'];
+                        $pedido->_anillado = $this->result[0]['Anillado'];
+                        $pedido->_posicionX = $this->result[0]['PosicionX'];
+                        $pedido->_posicionY = $this->result[0]['PosicionY'];
+                        $pedido->_retiro = $this->result[0]['Retiro'];
+                        $pedido->_idFranja = $this->result[0]['IdFranja'];
+                        $pedido->_pagado = true;
+                        $pedido->_idEstado = $this->result[0]['IdEstado'];
+                        array_push($pedidosAPagar, $pedido);
                     }
                     
                     $this->_model['CajaItems']->Insert($cajaItems);
@@ -573,16 +588,14 @@ namespace CEIT\mvc\controllers
                     setcookie('Caja', null, -1);
                     $_COOKIE['Caja'] = null;
                     
-                    header("Location: index.php?do=/caja/index");
+                    //header("Location: index.php?do=/gabinete/caja_index");
                 }
                 
                 $pedidos = array();
-                $items = array();
                 $this->SubTotal = 0;
                 
                 // armo arrays para poder meterlos en tablas.
                 $idPedidos = filter_input(INPUT_POST, 'hidIdPedido', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
-                $idItems = filter_input(INPUT_POST, 'hidIdItem', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
                 $descripcion = filter_input(INPUT_POST, 'hidDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
                 $preunit = filter_input(INPUT_POST, 'hidPrecioUnitario', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY);
                 $cantidad = filter_input(INPUT_POST, 'hidCantidad', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
@@ -606,7 +619,7 @@ namespace CEIT\mvc\controllers
                 {
                     foreach($pedidos as $itemKey => $itemValue)
                     {
-                        $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table_content.html";
+                        $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table.html";
                         $this->table_content .= file_get_contents($filename);
 
                         $this->table_content = str_replace('{Id}', $itemKey, $this->table_content);
@@ -622,30 +635,6 @@ namespace CEIT\mvc\controllers
                                     $this->SubTotal += floatval($value);
                                 }
                             }
-                        }
-                    }
-                }
-
-                if(count($items) >= 1)
-                {
-                    foreach($items as $itemKey => $itemValue)
-                    {
-                        $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table_content.html";
-                        $this->table_content .= file_get_contents($filename);
-
-                        $this->table_content = str_replace('{Id}', $itemKey, $this->table_content);
-                        
-                        if(is_array($itemValue))
-                        {
-                            foreach($itemValue as $key => $value)
-                            {
-                                $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
-                                
-                                if($key == 'Importe')
-                                {
-                                    $this->SubTotal += floatval($value);
-                                }
-                            } 
                         }
                     }
                 }

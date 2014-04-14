@@ -263,7 +263,7 @@ namespace CEIT\mvc\controllers
                     }
                     //var_dump($this->result);
 
-                    if(count($this->result) > 1)
+                    if(count($this->result) > 0)
                     {
                         foreach($this->result as $row)
                         {
@@ -292,7 +292,41 @@ namespace CEIT\mvc\controllers
             }
             else
             {
-                $this->table_content = "";
+                $modelTexto = new models\TextoModel();
+                if($tmpIdMateria != 0 && $tmpIdContenido != 0)
+                {
+                    $modelTexto->_idMateria = $tmpIdMateria;
+                    $modelTexto->_idTipoContenido = $tmpIdContenido;
+                    $this->result = $this->_model['Textos']->SelectByIdMateriaAndContenido($modelTexto);
+                    
+                }
+                else if($tmpIdMateria != 0)
+                {
+                    $modelTexto->_idMateria = $tmpIdMateria;
+                    $this->result = $this->_model['Textos']->SelectByIdMateria($modelTexto);
+                }
+                
+                if(count($this->result) > 0)
+                {
+                    foreach($this->result as $row)
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}_table_row.html";
+                        $this->table_content .= file_get_contents($filename);
+
+                        if(is_array($row))
+                        {
+                            foreach($row as $key => $value)
+                            {
+                                $this->table_content = str_replace('{' . $key . '}', htmlentities($value), $this->table_content);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    $this->table_content = "";
+                }
+                unset($this->result);
             }
             
             // Cargo las carreras.

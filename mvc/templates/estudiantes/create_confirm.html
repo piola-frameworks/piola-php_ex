@@ -18,7 +18,7 @@
                     <div class="input-group">
                         <input id="txtRetiro" class="form-control" type="text" name="txtRetiro" value="{DiaRetiro} {HoraRetiro}" readonly="readonly">
                         <span class="input-group-btn">
-                            <button id="btnMostrarCalendario" class="btn btn-default" type="button">
+                            <button id="btnMostrarCalendario" class="btn btn-primary" type="button">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </button>
                         </span>
@@ -58,7 +58,7 @@
                 <label for="chkAnilladoCompleto" class="col-sm-offset-6 col-sm-2 control-label">&iquest;Anillado Completo?</label>
                 <div class="col-sm-1">
                     <div class="checkbox">
-                        <input type="checkbox" name="chkAnilladoCompleto" disabled="disabled" {TodoAnillado}/>
+                        <input type="checkbox" class="form-control-static" style="margin: 0px; width: 1.5em; height: 1.5em;" name="chkAnilladoCompleto" disabled="disabled" {TodoAnillado}/>
                         <input type="hidden" name="hidAnilladoCompleto" value="{TodoAnillado}" />
                     </div>
                 </div>
@@ -80,8 +80,9 @@
 <link rel="stylesheet" type="text/css" href="/public/css/jquery.datetimepicker.css" />
 <script type="text/javascript" src="/public/js/jquery.datetimepicker.js"></script>
 <script type="text/javascript">
+    var limitDate = new Date("{DiaRetiro} {HoraRetiro}");
+    
     var logic = function(selectedDateTime) {
-        var limitDate = new Date("{DiaRetiro} {HoraRetiro}");
         // 'this' is jquery object datetimepicker
 	if(limitDate >= selectedDateTime){
             this.setOptions({
@@ -97,7 +98,6 @@
     };
     
     var logic2 = function(selectedDate, $input) {
-        var limitDate = new Date("{DiaRetiro} {HoraRetiro}");
         if(selectedDate <= limitDate) {
             this.setOptions({
                 value: "{DiaRetiro} {HoraRetiro}"

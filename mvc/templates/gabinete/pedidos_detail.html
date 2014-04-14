@@ -3,7 +3,7 @@
         <h3 class="panel-title">Datos</h3>
     </div>
     <div class="panel-body">
-        <form class="form-horizontal" name="frmDetalleUsuario" action="index.php?do=/preparador/print_detail" method="POST" role="form">
+        <form id="frmDetalleUsuario" class="form-horizontal" name="frmDetalleUsuario" method="POST" role="form">
             <fieldset>
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="txtLegajo">Legajo</label>
@@ -81,7 +81,7 @@
                 <button class="btn btn-warning hidden-print" type="submit" name="btnTerminar">
                     <span class="glyphicon glyphicon-floppy-disk"></span> Terminar
                 </button>
-                <a class="btn btn-default hidden-print" href="index.php?do=/preparador/index">
+                <a class="btn btn-default hidden-print" href="index.php?do=/gabinete/pedidos_index">
                     <span class="glyphicon glyphicon-arrow-left"></span> Volver
                 </a>
             </div>
@@ -98,9 +98,9 @@
                 <thead>
                     <tr>
                         <!-- <th>Cantidad</th> -->
-                        <th>Codigo</th>
+                        <!-- <th>Codigo</th> -->
                         <th>Nombre</th>
-                        <th>Materia</th>
+                        <!-- <th>Materia</th> -->
                         <th>Hojas</th>
                         <th>Anillado</th>
                         <th>Abrochado</th>
@@ -118,7 +118,9 @@
     </div>
     <div class="panel-footer">
         <div class="text-right">
-            <button class="btn btn-info hidden-print" type="button" onclick="window.location.reload()">Actualizar</button       
+            <button class="btn btn-info hidden-print" type="button" onclick="window.location.reload()">
+                <span class="glyphicon glyphicon-refresh"></span> Actualizar
+            </button>
         </div>
     </div>
 </div>
@@ -195,6 +197,13 @@
             postChangeItemStatus(this.value, true);
         } else {
             postChangeItemStatus(this.value, false);
+        }
+    });
+    
+    $("#frmDetalleUsuario").submit(function(e) {
+        if($("#ddlPosicionX").val() == "Ninguna" || $("#ddlPosicionY").val() == "Ninguna") {
+            alert("Debe seleccionar una posicion valida.");
+            e.preventDefault();
         }
     });
 </script>
