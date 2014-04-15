@@ -33,7 +33,9 @@
                             <input id="txtTotal" class="form-control" type="number" value="{Total}" readonly="readonly" />
                         </div>
                     </div>
-                    <button id="btnCobrar" class="btn btn-default" type="submit" name="btnConfirmar" formaction="index.php?do=/caja/index_confirm">Confirmar</button>
+                    <button id="btnCobrar" class="btn btn-default" type="submit" name="btnConfirmar" formaction="index.php?do=/caja/index_confirm">
+                        <span class="glyphicon glyphicon-ok"></span> Confirmar
+                    </button>
                 </div>
             </form>
         </div>
@@ -120,6 +122,8 @@
                                             <option value="LIB">Art. de Libreria</option>
                                             <option value="FSF">Fot Sueltas - Simple Faz</option>
                                             <option value="FDF">Fot Sueltas - Doble Faz</option>
+                                            <option value="PES">P. Especial - Simple Faz</option>
+                                            <option value="PED">P. Especial - Doble Faz</option>
                                         </select>
                                         <!-- <input class="form-control" name="txtIdItem" type="text" required="required" /> -->
                                     </td>
@@ -149,7 +153,9 @@
         </div>
         <div class="row">
             <div class="col-sm-offset-9 col-sm-3">
-                <button class="btn btn-info" type="button" name="btnCierreCaja">Cierre de Caja</button>
+                <button class="btn btn-info" type="button" name="btnCierreCaja">
+                    <span class="glyphicon glyphicon-lock"></span> Cierre de Caja
+                </button>
             </div>
         </div>
     </div>
@@ -177,6 +183,18 @@
                 break;
             
             case "FDF":
+                $("input[name=txtImporte]").val($("input[name=hidDobleFaz]").val());
+                $("input[name=txtImporte]").attr("readonly", "readonly");
+                $('input[name=txtCantidad]').removeAttr("readonly");
+                break;
+                
+            case "PES":
+                $("input[name=txtImporte]").val($("input[name=hidSimpleFaz]").val());
+                $("input[name=txtImporte]").attr("readonly", "readonly");
+                $('input[name=txtCantidad]').removeAttr("readonly");
+                break;
+            
+            case "PED":
                 $("input[name=txtImporte]").val($("input[name=hidDobleFaz]").val());
                 $("input[name=txtImporte]").attr("readonly", "readonly");
                 $('input[name=txtCantidad]').removeAttr("readonly");

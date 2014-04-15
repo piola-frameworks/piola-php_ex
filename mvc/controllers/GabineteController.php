@@ -15,6 +15,7 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
+                    "Usuarios"      =>  new models\UsuarioModel(),
                     'Gabinete'      =>  new models\GabineteModel(),
                     'PedidoEstados' =>  new models\PedidoEstadosModel(),
                     "Caja"          =>  new models\CajaModel(),
@@ -37,20 +38,9 @@ namespace CEIT\mvc\controllers
         {
             parent::__destruct();
             
-            unset($this->result);
             $this->_view->render($this->_template, $this->_dataCollection);
-        }
-        
-        public function delete($id)
-        {
-            // seteo el template
-            $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
-        }
-
-        public function detail($id)
-        {
-            // seteo el template
-            $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
+            
+            unset($this->result);
         }
 
         public function pedidos_index()
@@ -109,8 +99,7 @@ namespace CEIT\mvc\controllers
                 {
                     $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table.html";
                     $this->table_content .= file_get_contents($filename);
-
-                    // verifico si trajo 1 o muchos resultados.
+                    
                     if(is_array($row))
                     {
                         foreach($row as $innerKey => $innerValue)
@@ -160,7 +149,7 @@ namespace CEIT\mvc\controllers
                     
                     $this->result = $this->_model["Gabinete"]->Update(array($pedido));
                     
-                    header("Location: index.php?do=/atpublico/pedidos_detail_print/" . $id);
+                    header("Location: index.php?do=/gabinete/pedidos_detail_print/" . $id);
                 }
             }
             
@@ -330,15 +319,121 @@ namespace CEIT\mvc\controllers
         
         public function pedidos_detail_print($id)
         {
+            $this->_template = $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
+            
             $modelPedido = new models\PedidoModel();
             $modelPedido->_idGabinetePedido = $id;
             $this->result = $this->_model["Gabinete"]->Select($modelPedido);
-            var_dump($this->result);
+            if(count($this->result) == 1)
+            {
+                $this->Legajo = $this->result[0]["Legajo"];
+                $this->DNI = $this->result[0]["DNI"];
+                $this->IdPedido = $this->result[0]["IdPedido"];
+                $this->Retiro = $this->result[0]["Retiro"];
+                $this->Creado = $this->result[0]["Creado"];
+                $this->Anillado = $this->result[0]["Anillado"] == 1 ? "Si" : "No";
+                
+                // Datos del usuario
+                $modelUsuario = new models\UsuarioModel();
+                $modelUsuario->_idUsuario = $this->result[0]["IdUsuario"];
+                $this->result2 = $this->_model["Usuarios"]->Select($modelUsuario);
+                //var_dump($this->result2);
+                if(count($this->result2) == 1)
+                {
+                    $this->Legajo = $this->result2[0]['Legajo'];
+                    $this->DNI = $this->result2[0]['DNI'];
+                    $this->Nombre = $this->result2[0]['Nombre'];
+                    $this->Apellido = $this->result2[0]['Apellido'];
+                    $this->Telefono = $this->result2[0]['Telefono'];
+                    $this->Celular = $this->result2[0]['Celular'];
+                }
+                unset($this->result2);
+
+                // Franjas
+                $modelFranja = new models\HorarioFranjasModel();
+                $modelFranja->_idFranja = $this->result[0]['IdFranja'];
+                $this->result2 = $this->_model['Franjas']->Select($modelFranja);
+                //var_dump($this->result2);
+                if(count($this->result2) == 1)
+                {
+                    $this->Franja = $this->result2[0]['Desde'] . " hs.";
+                }
+                unset($this->result2);
+                
+                // Posicion
+                $modelPosicionX = new models\PedidoPosicionXModel();
+                $modelPosicionX->_idPosicionX = !empty($this->result[0]['PosicionX']) ? $this->result[0]['PosicionX'] : $posicionX;
+                $this->result2 = $this->_model['PosicionX']->Select($modelPosicionX);
+                //var_dump($this->result2);
+                if(count($this->result2) == 1)
+                {
+                    $this->PosicionX = $this->result2[0]['Descripcion'];
+                }
+                unset($this->result2);
+
+                $modelPosicionY = new models\PedidoPosicionYModel();
+                $modelPosicionY->_idPosicionY = !empty($this->result[0]['PosicionY']) ? $this->result[0]['PosicionY'] : $posicionY;
+                $this->result2 = $this->_model['PosicionY']->Select($modelPosicionY);
+                //var_dump($this->result2);
+                if(count($this->result2) == 1)
+                {
+                    $this->PosicionY = $this->result2[0]['Descripcion'];
+                }
+                unset($this->result2);
+                
+                // Items del pedido
+                $modelGabineteItems = new models\GabineteModel();
+                $modelGabineteItems->_idPedido = $id;
+                $this->result2 = $this->_model["Gabinete"]->SelectItem($modelGabineteItems);
+                //var_dump($this->result2);
+                if(count($this->result2) > 0)
+                {
+                    foreach($this->result2 as $row)
+                    {
+                        if(is_array($row))
+                        {
+                            $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table.html";
+                            $this->table_content .= file_get_contents($filename);
+
+                            foreach($row as $key => $value)
+                            {
+                                switch($key)
+                                {
+                                    case 'Nombre':
+                                        $this->table_content = str_replace("{Descripcion}", $value, $this->table_content);
+                                        break;
+                                    case 'Hojas':
+                                        $this->table_content = str_replace("{CantidadHojas}", $value, $this->table_content);
+                                        break;
+                                    case 'Anillado':
+                                        $this->table_content = str_replace("{" . $key . "}", $value == 1 ? "Si" : "No", $this->table_content);
+                                        break;
+                                    case 'Abrochado':
+                                        $this->table_content = str_replace("{" . $key . "}", $value == 1 ? "Si" : "No", $this->table_content);
+                                        break;
+                                    case 'SimpleFaz':
+                                        $this->table_content = str_replace("{" . $key . "}", $value == 1 ? "Si" : "No", $this->table_content);
+                                        break;
+                                    default:
+                                        $this->table_content = str_replace("{" . $key . "}", $value, $this->table_content);
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                unset($this->result2);
+            }
+            else
+            {
+                // No encontro ningun resultado?
+            }
+            unset($this->result);
         }
         
         public function pedidos_delete($id)
         {
-            
+            $this->_template = $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
         }
         
         public function caja_index()
@@ -417,9 +512,9 @@ namespace CEIT\mvc\controllers
                 {
                     //$reloadFlag = true;
                     
-                    $modelPedido = new models\PedidoModel();
+                    $modelPedido = new models\GabineteModel();
                     $modelPedido->_id = filter_input(INPUT_POST, 'txtLegajo', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    $this->result = $this->_model['Gabinete']->SelectByIdPedidoOrDNI($modelPedido);
+                    $this->result = $this->_model["Gabinete"]->SelectCajaByIdPedidoOrDNI($modelPedido);
                 }
             }
             
@@ -432,9 +527,9 @@ namespace CEIT\mvc\controllers
                 {
                     foreach($tmpArray['TPs'] as $item)
                     {
-                        $model = new models\PedidoModel();
-                        $model->_idPedido = $item;
-                        $this->result2 = $this->_model['Gabinete']->SelectCajaItem($model);
+                        $model = new models\GabineteModel();
+                        $model->_idGabinetePedido = $item;
+                        $this->result2 = $this->_model["Gabinete"]->SelectCajaItem($model);
                         if(count($this->result2) == 1)
                         {
                             $filename = BASE_DIR . "/mvc/templates/gabinete/caja_table_1_content.html";
@@ -475,7 +570,7 @@ namespace CEIT\mvc\controllers
             
             if(empty($this->result))
             {
-                $this->result = $this->_model['Gabinete']->SelectCaja();
+                $this->result = $this->_model["Gabinete"]->SelectCaja();
             }
             
             //var_dump($this->result);
@@ -514,11 +609,10 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
+                var_dump($_POST);
+                
                 if(isset($_POST['btnCobrar']))
                 {
-                    //var_dump($_POST);
-                    
-                    // General
                     $modelCaja = new models\CajaModel();
                     $modelCaja->_creadoPor = $_SESSION['IdUsuario'];
                     $modelCaja->_creado = date('Y-m-d H:i:s');
@@ -536,21 +630,21 @@ namespace CEIT\mvc\controllers
                     $importe = filter_input(INPUT_POST, 'hidImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY);
                     
                     $pedidos = array();
-                    
                     foreach($ids as $item)
                     {
                         $pedidos[$item] = array(
                             'Tipo'              =>  $tipo[$item],
                             'Descripcion'       =>  $descripcion[$item],
-                            'PrecioUnitario'    =>  $preunit[$item],
-                            'Cantidad'          =>  $cantidad[$item],
-                            'Importe'           =>  $importe[$item],
+                            'PrecioUnitario'    =>  (float)$importe[$item],
+                            'Cantidad'          =>  1,
+                            'Importe'           =>  (float)$importe[$item],
                         );
                     }
                     
                     $cajaItems = array();
                     $pedidosAPagar = array();
                     
+                    var_dump($pedidos);
                     foreach($pedidos as $index => $item)
                     {
                         $modelCajaItem = new models\CajaItemModel();
@@ -588,7 +682,7 @@ namespace CEIT\mvc\controllers
                     setcookie('Caja', null, -1);
                     $_COOKIE['Caja'] = null;
                     
-                    //header("Location: index.php?do=/gabinete/caja_index");
+                    header("Location: index.php?do=/gabinete/caja_index");
                 }
                 
                 $pedidos = array();
@@ -644,13 +738,6 @@ namespace CEIT\mvc\controllers
                 // por que entro sin hacer mandado datos?
             }
         }
-        
-        public function update($id)
-        {
-            // seteo el template
-            $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
-        }
-
     }
 }
 

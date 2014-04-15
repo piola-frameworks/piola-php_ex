@@ -115,6 +115,12 @@ namespace CEIT\mvc\controllers
                         case 'ANI':
                             $variosDesc = "Anillado";
                             break;
+                        case 'PES':
+                            $variosDesc = "Pedido Especial Simple Faz";
+                            break;
+                        case 'PED':
+                            $variosDesc = "Pedido Especial Doble Faz";
+                            break;
                         default:
                             //filter_input(INPUT_POST, 'txtDescripcion', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                             break;

@@ -15,10 +15,11 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
-                    'Textos'    =>  new models\TextoModel(),
-                    'Carreras'  =>  new models\CarreraModel(),
-                    'Niveles'   =>  new models\NivelModel(),
-                    'Materias'  =>  new models\MateriaModel(),
+                    'Textos'        =>  new models\TextoModel(),
+                    'Carreras'      =>  new models\CarreraModel(),
+                    'Niveles'       =>  new models\NivelModel(),
+                    'Materias'      =>  new models\MateriaModel(),
+                    "Contenidos"    =>  new models\ContenidoModel(),
                 );
             }
             
@@ -61,6 +62,7 @@ namespace CEIT\mvc\controllers
                     $nombre = filter_input(INPUT_POST, "txtNombre", FILTER_SANITIZE_SPECIAL_CHARS);
                     $paginas = filter_input(INPUT_POST, "txtPaginas", FILTER_SANITIZE_NUMBER_INT);
                     $carrera = filter_input(INPUT_POST, "ddlCarrera", FILTER_SANITIZE_NUMBER_INT);
+                    $nivel = filter_input(INPUT_POST, "ddlNivel", FILTER_SANITIZE_NUMBER_INT);
                     $materia = filter_input(INPUT_POST, "ddlMateria", FILTER_SANITIZE_NUMBER_INT);
                     $autor = filter_input(INPUT_POST, "txtAutor", FILTER_SANITIZE_SPECIAL_CHARS);
                     $docente = filter_input(INPUT_POST, "txtDocente", FILTER_SANITIZE_SPECIAL_CHARS);
@@ -76,34 +78,34 @@ namespace CEIT\mvc\controllers
                                 //$cmd = 'FOR /F "tokens=2*" %a IN ("' . str_replace("", "", BASE_DIR) . '\bin\pdfinfo.exe" "' . $_FILES['filArchivo']['tmp_name'] . '" ^| findstr "Pages:") DO ECHO %a';
                                 //echo shell_exec($cmd) . "<br />";
 
-                                /*$modelTP = new models\TextoModel();
+                                $modelTP = new models\TextoModel();
                                 $modelTP->_creadoPor = $_SESSION['IdUsuario'];
                                 $modelTP->_creadoDia = date("Y-m-d H:i:s");
                                 $modelTP->_modificadoPor = null;
                                 $modelTP->_modificadoDia = null;
                                 $modelTP->_codInterno = null;
-                                $modelTP->_idMateria = null;
+                                $modelTP->_idMateria = $materia;
                                 $modelTP->_idTipoTexto = 4;
                                 $modelTP->_idTipoContenido = null;
-                                $modelTP->_nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                                $modelTP->_autor = null;
-                                $modelTP->_docente = null;
-                                $modelTP->_cantPaginas = 1; //shell_exec($cmd);
-                                $modelTP->_activo = 0;
-                                $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));*/
+                                $modelTP->_nombre = $nombre;
+                                $modelTP->_autor = $autor;
+                                $modelTP->_docente = $docente;
+                                $modelTP->_cantPaginas = $paginas; //shell_exec($cmd);
+                                $modelTP->_activo = $activo;
+                                $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));
 
                                 // Muevo el archivo al directorio donde van a estar todos los PDFs
                                 $uploaddir = BASE_DIR . '/data/texts/asd/';
                                 $uploadfile = $uploaddir . $this->_lastIdTexto . ".pdf";//basename($_FILES['filArchivo']['name']);
 
-                                //unset($modelTP);
+                                unset($modelTP);
 
-                                if($_FILES['filArchivo']['type'] != 'application/pdf')
+                                if($_FILES['fileToUpload']['type'] != 'application/pdf')
                                 {
                                     trigger_error("Me queres hackear la aplicacion web?", E_USER_NOTICE);
                                 }
 
-                                if(move_uploaded_file($_FILES['filArchivo']['tmp_name'], $uploadfile))
+                                if(move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $uploadfile))
                                 {
                                     //echo "El archivo es válido y fue cargado exitosamente.\n";
                                 }
@@ -153,7 +155,7 @@ namespace CEIT\mvc\controllers
             $this->UploadVar = ini_get("session.upload_progress.name");
             
             $this->result = $this->_model['Carreras']->Select();
-            if(count($this->result) > 1)
+            if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
                 {
@@ -165,6 +167,25 @@ namespace CEIT\mvc\controllers
                         foreach($row as $key => $value)
                         {
                             $this->combo_carreras = str_replace('{' . $key . '}', $value, $this->combo_carreras);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            $this->result = $this->_model["Contenidos"]->Select();
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    $filename = BASE_DIR . "/mvc/templates/textos/combo_contenido.html";
+                    $this->combo_contenidos .= file_get_contents($filename);
+                    
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_contenidos = str_replace('{' . $key . '}', $value, $this->combo_contenidos);
                         }
                     }
                 }

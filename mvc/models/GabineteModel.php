@@ -95,6 +95,18 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp);
         }
         
+        public function SelectCajaByIdPedidoOrDNI(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selGabineteCajaByIdPedidoOrDNI";
+            $this->_params = array(
+                ':id'   =>  $model->_id,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function SelectCajaItem(core\AModel $model)
         {
             $this->init();

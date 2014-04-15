@@ -6,7 +6,7 @@ namespace CEIT\mvc\controllers
     use \CEIT\mvc\models;
     use \CEIT\mvc\views;
     
-    final class PreparadorController extends core\AController implements core\ICrud
+    final class PreparadorController extends core\AController
     {
         public function __construct()
         {
@@ -48,16 +48,6 @@ namespace CEIT\mvc\controllers
             }
             
             unset($this->result);
-        }
-        
-        public function create()
-        {
-           // El preparador no puedo crear pedidos.
-        }
-
-        public function delete($id)
-        {
-            // El preparador no puedo borrar un pedido.
         }
 
         public function detail($id)
