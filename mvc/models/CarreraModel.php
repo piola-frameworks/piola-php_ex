@@ -63,7 +63,7 @@ namespace CEIT\mvc\models
             {
                 $this->_sp = "sp_selCarrera";
                 $this->_params = array(
-                    'idCarrera' => (int)$model->_idCarrera,
+                    ':idCarrera' => (int)$model->_idCarrera,
                 );
                 
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);

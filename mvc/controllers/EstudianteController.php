@@ -637,20 +637,6 @@ namespace CEIT\mvc\controllers
                         
                         // Guardo en la db.
                         $modelTP = new models\TextoModel();
-                        /*
-                         *  ':creadoPor'        =>  (int)$item->_creadoPor,
-                            ':creadoDia'        =>  (string)$item->_creadoDia,
-                            ':modificadoPor'    =>  (int)$item->_modificadoPor,
-                            ':modificadoDia'    =>  (string)$item->_modificadoDia,
-                            ':codInterno'       =>  (string)$item->_codInterno,
-                            ':idMateria'        =>  (int)$item->_idMateria,
-                            ':idTipo'           =>  (int)$item->_idTipo,
-                            ':nombre'           =>  (string)$item->_nombre,
-                            ':autor'            =>  (string)$item->_autor,
-                            ':docente'          =>  (string)$item->_docente,
-                            ':cantPaginas'      =>  (int)$item->_cantPaginas,
-                         *  ':activo'           =>  (bool)$item->_activo,
-                         */
                         $modelTP->_creadoPor = $_SESSION['IdUsuario'];
                         $modelTP->_creadoDia = date("Y-m-d H:i:s");
                         $modelTP->_modificadoPor = null;

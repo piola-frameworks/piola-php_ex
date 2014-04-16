@@ -1,0 +1,124 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Crear nuevo texto</h3>
+    </div>
+    <div class="panel-body">
+        <form id="frmCrearTexto" class="form-horizontal" name="frmCrearTexto" method="POST" enctype="multipart/form-data" role="form">
+            <div class="form-group">
+                <label for="txtNombre" class="col-sm-2 control-label">Titulo</label>
+                <div class="col-sm-4">
+                    <input id="txtNombre" class="form-control" type="text" name="txtNombre" maxlength="200" placeholder="Nombre del texto" required="required">
+                </div>
+                <label for="txtCodigo" class="col-sm-2 control-label">Codigo</label>
+                <div class="col-sm-4">
+                    <input id="txtCodigo" class="form-control" type="text" name="txtCodigo" maxlength="20" placeholder="Codigo interno">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ddlCarrera" class="col-sm-2 control-label">Carrera</label>
+                <div class="col-sm-4">
+                    <select id="ddlCarrera" class="form-control" name="ddlCarrera" required="required">
+                        <option disabled="disabled" selected="selected">Carreras</option>
+                        {combo_carreras}
+                    </select>
+                </div>
+                <label for="ddlNivel" class="col-sm-2 control-label">Nivel</label>
+                <div class="col-sm-4">
+                    <select id="ddlNivel" class="form-control" name="ddlNivel" required="required">
+                        <option disabled="disabled" selected="selected">Niveles</option>
+                        {combo_niveles}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ddlMateria" class="col-sm-2 control-label">Materia</label>
+                <div class="col-sm-4">
+                    <select id="ddlMateria" class="form-control" name="ddlMateria" required="required">
+                        <option disabled="disabled" selected="selected">Materias</option>
+                        {combo_materias}
+                    </select>
+                </div>
+                <label for="ddlTipoContenido" class="col-sm-2 control-label">Contenido</label>
+                <div class="col-sm-4">
+                    <select id="ddlTipoContenido" class="form-control" name="ddlTipoContenido" required="required">
+                        <option disabled="disabled" selected="selected">Contenidos</option>
+                        {combo_contenidos}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="txtAutor" class="col-sm-2 control-label">Autor</label>
+                <div class="col-sm-4">
+                    <input id="txtAutor" class="form-control" type="text" name="txtAutor" maxlength="50" placeholder="Autor">
+                </div>
+                <label for="txtDocente" class="col-sm-2 control-label">Docente</label>
+                <div class="col-sm-4">
+                    <input id="txtDocente" class="form-control" type="text" name="txtDocente" maxlength="50" placeholder="Docente">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="fileTextoPDF">Archivo</label>
+                <div class="col-sm-4">
+                    <input id="fileTextoPDF" class="form-control" type="file" name="fileToUpload" accept="application/pdf" required="required">
+                    <p class="help-block">Una breve ayuda sobre el archivo a subir.</p>
+                </div>
+                <div class="col-sm-offset-2 col-sm-4">
+                    <div class="checkbox">
+                        <label for="chkActivo">
+                            <input id="chkActivo" type="checkbox" name="chkActivo"> &iquest;Activo?
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default" name="btnGuardar">
+                        <span class="glyphicon glyphicon-save"></span> Guardar
+                    </button>
+                    <button type="reset" class="btn btn-default">Limpiar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#ddlCarrera").change(function(e) {
+        $.post("index.php?do=/textos/ajax_get_niveles",
+        { idCarrera: $(this).val() },
+        function(data, textStatus, jqHXR) {
+            //alert(data);
+            $('#ddlNivel').empty();
+            $('#ddlNivel').append($('<option>').text('Niveles').attr('disabled', true));
+            $('#ddlMateria').empty();
+            $('#ddlMateria').append($('<option>').text('Materias').attr('disabled', true));
+            
+            $.parseJSON(data).map(function(value, key) {
+                $('#ddlNivel').append($('<option>').val(value.IdNivel).text(value.Descripcion));
+            });
+            
+            $('#ddlNivel').removeAttr('disabled');
+            $('#ddlNivel').prop('selectedIndex', 0);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error(errorThrown);
+        });
+    });
+    
+    $("#ddlNivel").change(function(e) {
+        $.post("index.php?do=/textos/ajax_get_materias",
+        { idNivel: $(this).val() },
+        function(data, textStatus, jqHXR) {
+            //alert(data);
+            $('#ddlMateria').empty();
+            $('#ddlMateria').append($('<option>').text('Materias').attr('disabled', true));
+            
+            $.parseJSON(data).map(function(value) {
+                $('#ddlMateria').append($('<option>').val(value.IdMateria).text(value.Descripcion));
+            });
+            
+            $('#ddlMateria').removeAttr('disabled');
+            $('#ddlMateria').prop('selectedIndex', 0);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error(errorThrown);
+        });
+    });
+</script>

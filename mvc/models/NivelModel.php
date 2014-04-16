@@ -59,7 +59,7 @@ namespace CEIT\mvc\models
             {
                 $this->_sp = "sp_selNivel";
                 $this->_params = array(
-                    ':idNivel' =>  $model->_idNivel,
+                    ':idNivel' =>  (int)$model->_idNivel,
                 );
                 
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);

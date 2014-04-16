@@ -65,7 +65,7 @@ namespace CEIT\mvc\models
             {
                 $this->_sp = "sp_selMateria";
                 $this->_params = array(
-                    'idMateria' =>  $model->_idMateria,
+                    ':idMateria' =>  (int)$model->_idMateria,
                 );
                 
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);

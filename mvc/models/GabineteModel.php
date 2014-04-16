@@ -110,10 +110,10 @@ namespace CEIT\mvc\models
         public function SelectCajaItem(core\AModel $model)
         {
             $this->init();
-            
+                
             $this->_sp = "sp_selGabineteCajaPedido";
             $this->_params = array(
-                ':idPedido' =>  (int)$model->_idPedido,
+                ':idPedido' =>  (int)$model->_idGabinetePedido,
             );
             
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);

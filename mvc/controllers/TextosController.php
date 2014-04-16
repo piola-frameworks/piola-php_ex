@@ -55,56 +55,74 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                var_dump($_POST, $_FILES);
                 
                 if(isset($_POST["btnGuardar"]))
                 {
                     $nombre = filter_input(INPUT_POST, "txtNombre", FILTER_SANITIZE_SPECIAL_CHARS);
-                    $paginas = filter_input(INPUT_POST, "txtPaginas", FILTER_SANITIZE_NUMBER_INT);
+                    $cod_texto = filter_input(INPUT_POST, "txtCodigo", FILTER_SANITIZE_NUMBER_INT);
                     $carrera = filter_input(INPUT_POST, "ddlCarrera", FILTER_SANITIZE_NUMBER_INT);
                     $nivel = filter_input(INPUT_POST, "ddlNivel", FILTER_SANITIZE_NUMBER_INT);
                     $materia = filter_input(INPUT_POST, "ddlMateria", FILTER_SANITIZE_NUMBER_INT);
+                    $contenido = filter_input(INPUT_POST, "ddlTipoContenido", FILTER_SANITIZE_NUMBER_INT);
                     $autor = filter_input(INPUT_POST, "txtAutor", FILTER_SANITIZE_SPECIAL_CHARS);
                     $docente = filter_input(INPUT_POST, "txtDocente", FILTER_SANITIZE_SPECIAL_CHARS);
                     $activo = filter_input(INPUT_POST, "chkActivo", FILTER_SANITIZE_STRING);
                     
                     if(!empty($_FILES))
                     {
-                        var_dump($_FILES);
-
                         switch($_FILES['fileToUpload']['error'])
                         {
                             case UPLOAD_ERR_OK:
-                                //$cmd = 'FOR /F "tokens=2*" %a IN ("' . str_replace("", "", BASE_DIR) . '\bin\pdfinfo.exe" "' . $_FILES['filArchivo']['tmp_name'] . '" ^| findstr "Pages:") DO ECHO %a';
-                                //echo shell_exec($cmd) . "<br />";
+                                $modelCarrera = new models\CarreraModel();
+                                $modelCarrera->_idCarrera = $carrera;
+                                $this->resultCarrera = $this->_model["Carreras"]->Select($modelCarrera);
+                                //var_dump($this->resultCarrera);
+                                $cod_carrera = count($this->resultCarrera) == 1 ? $this->resultCarrera[0]["Codigo"] : null;
+                                unset($modelCarrera);
 
-                                $modelTP = new models\TextoModel();
-                                $modelTP->_creadoPor = $_SESSION['IdUsuario'];
-                                $modelTP->_creadoDia = date("Y-m-d H:i:s");
-                                $modelTP->_modificadoPor = null;
-                                $modelTP->_modificadoDia = null;
-                                $modelTP->_codInterno = null;
-                                $modelTP->_idMateria = $materia;
-                                $modelTP->_idTipoTexto = 4;
-                                $modelTP->_idTipoContenido = null;
-                                $modelTP->_nombre = $nombre;
-                                $modelTP->_autor = $autor;
-                                $modelTP->_docente = $docente;
-                                $modelTP->_cantPaginas = $paginas; //shell_exec($cmd);
-                                $modelTP->_activo = $activo;
-                                $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));
+                                $modelNivel = new models\NivelModel();
+                                $modelNivel->_idNivel = $nivel;
+                                $this->resultNivel = $this->_model["Niveles"]->Select($modelNivel);
+                                //var_dump($this->resultNivel);
+                                $cod_nivel = count($this->resultNivel) == 1 ? $this->resultNivel[0]["Ano"] : null;
+                                unset($modelNivel);
+
+                                $modelMateria = new models\MateriaModel();
+                                $modelMateria->_idMateria = $materia;
+                                $this->resultMateria = $this->_model["Materias"]->Select($modelMateria);
+                                //var_dump($this->resultMateria);
+                                $cod_materia = count($this->resultMateria) == 1 ? $this->resultMateria[0]["CodMateria"] : null;
+                                unset($modelMateria);
+                                
+                                $modelTexto = new models\TextoModel();
+                                $modelTexto->_creadoPor = $_SESSION['IdUsuario'];
+                                $modelTexto->_creadoDia = date("Y-m-d H:i:s");
+                                $modelTexto->_modificadoPor = null;
+                                $modelTexto->_modificadoDia = null;
+                                $modelTexto->_codInterno = $cod_texto;
+                                $modelTexto->_idMateria = $materia;
+                                $modelTexto->_idTipoTexto = 2;
+                                $modelTexto->_idTipoContenido = $contenido;
+                                $modelTexto->_nombre = $nombre;
+                                $modelTexto->_autor = $autor;
+                                $modelTexto->_docente = $docente;
+                                $modelTexto->_cantPaginas = 1; //shell_exec($cmd);
+                                $modelTexto->_activo = $activo == "on" ? true : false;
+                                $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTexto));
+                                unset($modelTexto);
 
                                 // Muevo el archivo al directorio donde van a estar todos los PDFs
-                                $uploaddir = BASE_DIR . '/data/texts/asd/';
-                                $uploadfile = $uploaddir . $this->_lastIdTexto . ".pdf";//basename($_FILES['filArchivo']['name']);
-
-                                unset($modelTP);
-
-                                if($_FILES['fileToUpload']['type'] != 'application/pdf')
+                                $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "asd" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
+                                $uploadfile = $uploaddir . $cod_texto . ".pdf";
+                                
+                                // Verifico de que existan los directorios.
+                                if(!is_dir($uploaddir))
                                 {
-                                    trigger_error("Me queres hackear la aplicacion web?", E_USER_NOTICE);
+                                    mkdir($uploaddir, "0777", true);
                                 }
-
+                                
+                                // Muevo el archivo.
                                 if(move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $uploadfile))
                                 {
                                     //echo "El archivo es válido y fue cargado exitosamente.\n";
@@ -151,10 +169,8 @@ namespace CEIT\mvc\controllers
                 }
             }
             
-            $this->UniqueID = uniqid();
-            $this->UploadVar = ini_get("session.upload_progress.name");
-            
             $this->result = $this->_model['Carreras']->Select();
+            //var_dump($this->result);
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
@@ -174,6 +190,7 @@ namespace CEIT\mvc\controllers
             unset($this->result);
             
             $this->result = $this->_model["Contenidos"]->Select();
+            //var_dump($this->result);
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
@@ -222,6 +239,42 @@ namespace CEIT\mvc\controllers
         {
             // seteo el template
             $this->_template = BASE_DIR . "/mvc/templates/textos/{$this->_action}.html";
+            
+            $modelTexto = new models\TextoModel();
+            $modelTexto->_idTexto = $id;
+            $this->result = $this->_model["Textos"]->Select($modelTexto);
+            //var_dump($this->result);
+            if(count($this->result) == 1)
+            {
+                foreach($this->result[0] as $key => $value)
+                {
+                    switch($key)
+                    {
+                        case "Activo":
+                            $this->{$key} = $value == 1 ? "checked=\"checked\"" : "";
+                            break;
+
+                        default:
+                            $this->{$key} = $value;
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                // Por que no encontro el registro?
+            }
+            
+            $modelContenido = new models\TipoContenidoModel();
+            $modelContenido->_idContenido = $this->result[0]["IdTipoContenido"];
+            $this->result2 = $this->_model["Contenidos"]->Select($modelContenido);
+            //var_dump($this->result2);
+            if(count($this->result2) > 0)
+            {
+                $this->Contenido = $this->result2[0]["Descripcion"];
+            }
+            unset($this->result2);
+            unset($this->result);
         }
 
         public function index()
@@ -279,6 +332,19 @@ namespace CEIT\mvc\controllers
                                         break;
                                     default:
                                         $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
+                                        
+                                        if(in_array($_SESSION['Roles']['Nombre'], array('Administrador')))
+                                        {
+                                            $file_button_delete = BASE_DIR . "/mvc/templates/textos/{$this->_action}_table_row_button_delete.html";
+                                            $button = file_get_contents($file_button_delete);
+                                            $button = str_replace("{IdTexto}", $row["IdTexto"], $button);
+
+                                            $this->table_content = str_replace("{button_delete}", $button, $this->table_content);
+                                        }
+                                        else
+                                        {
+                                            $this->table_content = str_replace("{button_delete}", "", $this->table_content);
+                                        }
                                         break;
                                 }
                             }

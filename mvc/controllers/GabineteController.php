@@ -442,7 +442,7 @@ namespace CEIT\mvc\controllers
 
             $reloadFlag = false;
             
-            if(!isset($_COOKIE['Caja']))
+            if(!isset($_COOKIE['GabineteCaja']))
             {
                 $tmpArray = array(
                     'TPs'   =>  array(),
@@ -455,9 +455,8 @@ namespace CEIT\mvc\controllers
             {
                 //var_dump($_POST);
                 
-                $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'Caja'));
+                $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'GabineteCaja'));
                 
-                // Si se apreto el boton de Agregar un item del sistema.
                 if(isset($_POST['btnAgregarPedido']))
                 {
                     $reloadFlag = true;
@@ -521,15 +520,17 @@ namespace CEIT\mvc\controllers
             if(!empty($_COOKIE))
             {
                 $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'GabineteCaja'));
+                //var_dump($tmpArray);
                 $this->Total = 0;
 
-                if(count($tmpArray['TPs']) >= 1)
+                if(count($tmpArray['TPs']) > 0)
                 {
                     foreach($tmpArray['TPs'] as $item)
                     {
                         $model = new models\GabineteModel();
                         $model->_idGabinetePedido = $item;
                         $this->result2 = $this->_model["Gabinete"]->SelectCajaItem($model);
+                        //var_dump($this->result2);
                         if(count($this->result2) == 1)
                         {
                             $filename = BASE_DIR . "/mvc/templates/gabinete/caja_table_1_content.html";
@@ -679,8 +680,8 @@ namespace CEIT\mvc\controllers
                     $this->_model['CajaItems']->Insert($cajaItems);
                     $this->_model['Gabinete']->Update($pedidosAPagar);
                     
-                    setcookie('Caja', null, -1);
-                    $_COOKIE['Caja'] = null;
+                    setcookie('GabineteCaja', null, -1);
+                    $_COOKIE['GabineteCaja'] = null;
                     
                     header("Location: index.php?do=/gabinete/caja_index");
                 }
