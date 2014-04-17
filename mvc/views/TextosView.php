@@ -38,6 +38,11 @@ namespace CEIT\mvc\views
             }
         }
         
+        public function renderRaw($rawData = null)
+        {
+            parent::renderRaw($rawData);
+        }
+        
         public function redirect($location)
         {
             parent::redirect($location);

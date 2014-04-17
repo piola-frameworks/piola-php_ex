@@ -1,11 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace CEIT\mvc\models
 {
     use \CEIT\core;
@@ -15,6 +9,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -23,17 +19,18 @@ namespace CEIT\mvc\models
             foreach($model as $item)
             {
                 array_push($this->_sp, "sp_delMateria");
-                
                 array_push($this->_params, array(
                     ':idMateria'    =>  (int)$item->_idMateria,
                 ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -42,7 +39,6 @@ namespace CEIT\mvc\models
             foreach($model as $item)
             {
                 array_push($this->_sp, "sp_insMateria");
-                
                 array_push($this->_params, array(
                     ':idNivel'      =>  (int)$item->_idNivel,
                     ':codInterno'   =>  (string)$item->_codInterno,
@@ -55,6 +51,8 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if($model == null)
             {
                 $this->_sp = "sp_selMaterias";
@@ -72,8 +70,27 @@ namespace CEIT\mvc\models
             }
         }
 
+        /*
+         * Start custom selects
+         */
+        
+        public function SelectWithMark(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selMateriasWithMark";
+            $this->_params = array(
+                ':idNivel'  =>  (int)$model->_idNivel,
+                ':idMateria'  =>  (int)$model->_idMateria,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function SelectByIdNivel(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selMateriasByIdNivel";
             $this->_params = array(
                 ':idNivel'  =>  $model->_idNivel,
@@ -82,8 +99,14 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
+        /*
+         * End custom selects
+         */
+        
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -92,7 +115,6 @@ namespace CEIT\mvc\models
             foreach($model as $item)
             {
                 array_push($this->_sp, "sp_updMateria");
-                
                 array_push($this->_params, array(
                     ':idMateria'    =>  (int)$item->_idMateria,
                     ':idNivel'      =>  (int)$item->_idNivel,
@@ -101,7 +123,7 @@ namespace CEIT\mvc\models
                 ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
     }
 }

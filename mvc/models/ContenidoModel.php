@@ -66,6 +66,26 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
 
+        /*
+         * Start custom selects
+         */
+        
+        public function SelectWithMark(core\AModel $model = null)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selTipoContenidoWithMark";
+            $this->_params = array(
+                ":idContenido"  =>  (int)$model->_idContenido,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        /*
+         * End custom selects
+         */
+        
         public function Update(array $model)
         {
             $this->init();

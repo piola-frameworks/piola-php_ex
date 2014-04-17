@@ -628,13 +628,11 @@ namespace CEIT\mvc\controllers
             {
                 //var_dump($_POST, $_FILES);
                 
+                $nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                
                 switch($_FILES['filArchivo']['error'])
                 {
                     case UPLOAD_ERR_OK:
-                        $cmd = 'FOR /F "tokens=2*" %a IN ("' . str_replace("", "", BASE_DIR) . '\bin\pdfinfo.exe" "' . $_FILES['filArchivo']['tmp_name'] . '" ^| findstr "Pages:") DO ECHO %a';
-                        //echo $cmd . "<br />";
-                        //echo shell_exec($cmd) . "<br />";
-                        
                         // Guardo en la db.
                         $modelTP = new models\TextoModel();
                         $modelTP->_creadoPor = $_SESSION['IdUsuario'];
@@ -645,25 +643,14 @@ namespace CEIT\mvc\controllers
                         $modelTP->_idMateria = null;
                         $modelTP->_idTipoTexto = 4;
                         $modelTP->_idTipoContenido = null;
-                        $modelTP->_nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                        $modelTP->_nombre = $nombre;
                         $modelTP->_autor = null;
                         $modelTP->_docente = null;
-                        $modelTP->_cantPaginas = 1/*shell_exec($cmd)*/;
+                        $modelTP->_cantPaginas = 1;
                         $modelTP->_activo = 0;
                         $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));                        
                         
                         $modelPedido = new models\PedidoModel();
-                        /*
-                         *  ':idUsuario'    =>  (int)$item->_idUsuario,
-                         *  ':creadoDia'    =>  (int)$item->_creadoDia,
-                         *  ':creadoPor'    =>  (string)$item->_creadoPor,
-                         *  ':anillado'     =>  (bool)$item->_anillado,
-                         *  ':comentario'   =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
-                         *  ':retiro'       =>  (string)$item->_retiro,
-                         *  ':idFranja'     =>  (int)$item->_idFranja,
-                         *  ':pagado'       =>  (bool)$item->_pagado,
-                         *  ':idEstado'     =>  (int)$item->_idEstado
-                         */
                         $modelPedido->_idUsuario = $_SESSION['IdUsuario'];
                         $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
                         $modelPedido->_creadoDia = date("Y-m-d H:i:s");
@@ -679,14 +666,6 @@ namespace CEIT\mvc\controllers
                         $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
                         
                         $modelPedidoItem = new models\PedidoItemModel();
-                        /*
-                         *  ':idPedido'     =>  (int)$item->_idPedido,
-                         *  ':cantidad'     =>  (int)$item->_cantidad,
-                         *  ':idTexto'      =>  (int)$item->_idTexto,
-                         *  ':anillado'     =>  (bool)$item->_anillado,
-                         *  ':simpleFaz'    =>  (bool)$item->_simpleFaz,
-                         *  ':idEstado'     =>  (int)$item->_idEstado,
-                         */
                         $modelPedidoItem->_idPedido = $this->_lastIdPedido;
                         $modelPedidoItem->_cantidad = 1;
                         $modelPedidoItem->_idTexto = $this->_lastIdTexto;

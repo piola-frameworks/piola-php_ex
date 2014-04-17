@@ -9,6 +9,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -27,6 +29,8 @@ namespace CEIT\mvc\models
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -57,6 +61,8 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if($model != null)
             {
                 $this->_sp = "sp_selTexto";
@@ -102,6 +108,8 @@ namespace CEIT\mvc\models
         
         public function SelectByIdMateria(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selTextosByIdMateria";
             $this->_params = array(
                 ':idMateria' =>  $model->_idMateria,
@@ -112,6 +120,8 @@ namespace CEIT\mvc\models
         
         public function SelectByIdMateriaAndDescripcion(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selTextosByIdMateriaAndDescripcion";
             $this->_params = array(
                 ':idMateria' =>  $model->_idMateria,
@@ -123,6 +133,8 @@ namespace CEIT\mvc\models
         
         public function SelectByIdMateriaAndContenido(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selTextosByIdMateriaAndIdTipoContenido";
             $this->_params = array(
                 ':idMateria'        =>  $model->_idMateria,
@@ -138,6 +150,8 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -145,7 +159,7 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push($this->_sp, "sp_insTexto");
+                array_push($this->_sp, "sp_updTexto");
                 array_push($this->_params, array(
                     ':idTexto'          =>  (int)$item->_idTexto,
                     ':creadoPor'        =>  (int)$item->_creadoPor,

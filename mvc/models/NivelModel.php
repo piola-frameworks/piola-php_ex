@@ -66,6 +66,21 @@ namespace CEIT\mvc\models
             }
         }
         
+        /*
+         * Start custom selects
+         */
+        
+        public function SelectWithMark(core\AModel $model)
+        {
+            $this->_sp = "sp_selNivelesWithMark";
+            $this->_params = array(
+                ":idCarrera" =>  (int)$model->_idCarrera,
+                ":idNivel" =>  (int)$model->_idNivel,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function SelectByIdCarrera(core\AModel $model)
         {
             $this->_sp = "sp_selNivelByIdCarrera";
@@ -76,6 +91,10 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
 
+        /*
+         * End custom selects
+         */
+        
         public function Update(array $model)
         {
             if(count($model) > 1)

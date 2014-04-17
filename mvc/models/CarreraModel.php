@@ -39,7 +39,6 @@ namespace CEIT\mvc\models
             foreach($model as $item)
             {
                 array_push($this->_sp, "sp_insCarrera");
-                
                 array_push($this->_params, array(
                     ':codInterno'   =>  (int)$item->_codInterno,
                     ':descripcion'  =>  (string)$item->_descripcion,
@@ -69,7 +68,23 @@ namespace CEIT\mvc\models
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);
             }
         }
+        
+        /*
+         * Start custom selects
+         */
 
+        public function SelectWithMark(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selCarreraWithMark";
+            $this->_params = array(
+                ':idCarrera' => (int)$model->_idCarrera,
+            );
+
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function SelectByIdUsuario(core\AModel $model)
         {
             $this->init();
@@ -81,6 +96,10 @@ namespace CEIT\mvc\models
             
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
+        
+        /*
+         * End custom selects
+         */
         
         public function Update(array $model)
         {
