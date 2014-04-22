@@ -691,6 +691,8 @@ namespace CEIT\mvc\controllers
                         if(move_uploaded_file($_FILES['filArchivo']['tmp_name'], $uploadfile))
                         {
                             //echo "El archivo es válido y fue cargado exitosamente.\n";
+                            
+                            header("Location: index.php?do=/estudiante/index");
                         }
                         else
                         {
@@ -732,14 +734,14 @@ namespace CEIT\mvc\controllers
                 }
             }
             
-            $this->result = $this->_model['Pedidos']->SelectDisponibilidad();
+            /*$this->result = $this->_model['Pedidos']->SelectDisponibilidad();
             if(count($this->result) == 1)
             {
                 foreach($this->result[0] as $key => $value)
                 {
                     $this->{$key} = $value;
                 }
-            }
+            }*/
         }
         
         public function delete($id)

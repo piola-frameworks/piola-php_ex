@@ -1,27 +1,27 @@
 <tr>
     <td>
         {IdItem}
-        <input name="hidIdItem[]" type="hidden" value="{IdItem}" />
+        <input name="hidIdItem[{IdUnique}]" type="hidden" value="{IdItem}" />
     </td>
     <td>
         {Descripcion}
-        <input name="hidDescripcion[{IdItem}]" type="hidden" value="{Descripcion}" />
+        <input name="hidDescripcion[{IdUnique}]" type="hidden" value="{Descripcion}" />
     </td>
     <td>
         {PrecioUnitario}
-        <input name="hidPrecioUnitario[{IdItem}]" type="hidden" value="{PrecioUnitario}" />
+        <input name="hidPrecioUnitario[{IdUnique}]" type="hidden" value="{PrecioUnitario}" />
     </td>
     <td>
         {Cantidad}
-        <input name="hidCantidad[{IdItem}]" type="hidden" value="{Cantidad}" />
+        <input name="hidCantidad[{IdUnique}]" type="hidden" value="{Cantidad}" />
     </td>
     <td>
         {Importe}
-        <input name="hidImporte[{IdItem}]" type="hidden" value="{Importe}" />
+        <input name="hidImporte[{IdUnique}]" type="hidden" value="{Importe}" />
     </td>
     <td>
-        <input name="hidType" type="hidden" value="Item" />
-        <button class="btn btn-danger btn-sm" type="submit" name="btnQuitarPedido" value="{IdItem}">
+        <input type="hidden" name="hidIdUnique[]" value="{IdUnique}" />
+        <button class="btn btn-danger btn-sm" type="submit" name="btnQuitarPedido" value="{IdUnique}">
             <span class="glyphicon glyphicon-minus"></span>
         </button>
     </td>

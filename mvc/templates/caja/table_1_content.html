@@ -1,26 +1,26 @@
 <tr>
     <td>
         {IdPedido}
-        <input name="hidIdPedido[]" type="hidden" value="{IdPedido}" />
+        <input name="hidIdPedido[{IdUnique}]" type="hidden" value="{IdPedido}" />
     </td>
     <td>
         {Descripcion}
-        <input name="hidDescripcion[{IdPedido}]" type="hidden" value="{Descripcion}" />
+        <input name="hidDescripcion[{IdUnique}]" type="hidden" value="{Descripcion}" />
     </td>
     <td>
         {PrecioUnitario}
-        <input name="hidPrecioUnitario[{IdPedido}]" type="hidden" value="{PrecioUnitario}" />
+        <input name="hidPrecioUnitario[{IdUnique}]" type="hidden" value="{PrecioUnitario}" />
     </td>
     <td>
         {Cantidad}
-        <input name="hidCantidad[{IdPedido}]" type="hidden" value="{Cantidad}" />
+        <input name="hidCantidad[{IdUnique}]" type="hidden" value="{Cantidad}" />
     </td>
     <td>
         {Importe}
-        <input name="hidImporte[{IdPedido}]" type="hidden" value="{Importe}" />
+        <input name="hidImporte[{IdUnique}]" type="hidden" value="{Importe}" />
     </td>
     <td>
-        <input name="hidType" type="hidden" value="Pedido" />
+        <input type="hidden" name="hidIdUnique[]" value="{IdUnique}" />
         <button class="btn btn-danger btn-sm" type="submit" name="btnQuitarPedido" value="{IdPedido}">
             <span class="glyphicon glyphicon-minus"></span>
         </button>

@@ -62,16 +62,17 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                //var_dump($_POST);
+                var_dump($_POST);
                 
                 $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'Caja'));
                 
                 // Si se apreto el boton de Agregar un item del sistema.
                 if(isset($_POST['btnAgregarPedido']))
                 {
-                    $reloadFlag = true;
+                    //$reloadFlag = true;
                     
                     $pedidoItem = filter_input(INPUT_POST, 'btnAgregarPedido', FILTER_SANITIZE_NUMBER_INT);
+                    $uniqueId = filter_input(INPUT_POST, "hidIdUnique", FILTER_SANITIZE_STRING);
                     
                     if(!empty($pedidoItem))
                     {
@@ -88,7 +89,10 @@ namespace CEIT\mvc\controllers
                         
                         if(!$flagExist)
                         {
-                            $tmpArray['Pedidos'][] = (int)$pedidoItem;
+                            $tmpArray['Pedidos'][] = array(
+                                "IdPedido"      =>  (int)$pedidoItem,
+                                "UniqueId"      =>  (string)$uniqueId,
+                            ); 
                         }
                     }
                     
@@ -100,6 +104,7 @@ namespace CEIT\mvc\controllers
                 {
                     $reloadFlag = true;
                     
+                    $variosIdUnique = filter_input(INPUT_POST, "hidIdUnique", FILTER_SANITIZE_STRING);
                     $variosIdItem = filter_input(INPUT_POST, 'ddlItemTipo', FILTER_SANITIZE_SPECIAL_CHARS);
                     switch($variosIdItem)
                     {
@@ -154,11 +159,12 @@ namespace CEIT\mvc\controllers
                         }*/
                         
                         $tmpArray['Items'][] = array(
-                            'IdItem'    =>  (string)$variosIdItem,
-                            'Descripcion'      =>  (string)$variosDesc,
-                            'PrecioUnitario'   =>  (float)$variosPU,
-                            'Cantidad'  =>  (int)$variosCant,
-                            'Importe'   =>  (float)$variosImp,
+                            'IdUnique'          =>  (string)$variosIdUnique,
+                            'IdItem'            =>  (string)$variosIdItem,
+                            'Descripcion'       =>  (string)$variosDesc,
+                            'PrecioUnitario'    =>  (float)$variosPU,
+                            'Cantidad'          =>  (int)$variosCant,
+                            'Importe'           =>  (float)$variosImp,
                         );
                     }
                     
@@ -171,35 +177,22 @@ namespace CEIT\mvc\controllers
                     $reloadFlag = true;
                     
                     $btnValor = filter_input(INPUT_POST, 'btnQuitarPedido', FILTER_SANITIZE_SPECIAL_CHARS);
-                    $hidType = filter_input(INPUT_POST, 'hidType', FILTER_SANITIZE_SPECIAL_CHARS);
-                    
-                    if(!empty($btnValor) && !empty($hidType))
+                    if(!empty($btnValor))
                     {
-                        switch($hidType)
+                        foreach($tmpArray['Pedidos'] as $index => $item)
                         {
-                            case 'Pedido':
-                                foreach($tmpArray['Pedidos'] as $index => $item)
-                                {
-                                    if($btnValor == $item)
-                                    {
-                                        unset($tmpArray['Pedidos'][$index]);
-                                    }
-                                }
-                                break;
-
-                            case 'Item':
-                                foreach($tmpArray['Items'] as $index => $item)
-                                {
-                                    if($btnValor == $item['IdItem'])
-                                    {
-                                        unset($tmpArray['Items'][$index]);
-                                    }
-                                }
-                                break;
-                            
-                            default:
-                                trigger_error("Alguien modifico el valor del campo input hidType!", E_USER_ERROR);
-                                break;
+                            if($btnValor == $item["IdPedido"])
+                            {
+                                unset($tmpArray['Pedidos'][$index]);
+                            }
+                        }
+                        
+                        foreach($tmpArray['Items'] as $index => $item)
+                        {
+                            if($btnValor == $item['IdUnique'])
+                            {
+                                unset($tmpArray['Items'][$index]);
+                            }
                         }
                     }
                     
@@ -214,6 +207,7 @@ namespace CEIT\mvc\controllers
                     $modelPedido = new models\PedidoModel();
                     $modelPedido->_id = filter_input(INPUT_POST, 'txtDNI_IDPedido', FILTER_SANITIZE_NUMBER_INT);
                     $this->result = $this->_model['Pedidos']->SelectByIdPedidoOrDNI($modelPedido);
+                    unset($modelPedido);
                     //var_dump($this->result);
                 }
             }
@@ -223,13 +217,15 @@ namespace CEIT\mvc\controllers
                 $tmpArray = unserialize(filter_input(INPUT_COOKIE, 'Caja'));
                 $this->Total = 0;
 
-                if(count($tmpArray['Pedidos']) >= 1)
+                // Agrego los pedidos a la lista temporal a confirmar
+                if(count($tmpArray["Pedidos"]) > 0)
                 {
-                    foreach($tmpArray['Pedidos'] as $item)
+                    foreach($tmpArray["Pedidos"] as $item)
                     {
                         $model = new models\PedidoModel();
-                        $model->_idPedido = $item;
+                        $model->_idPedido = $item["IdPedido"];
                         $this->result2 = $this->_model['Pedidos']->SelectItemCaja($model);
+                        
                         if(count($this->result2) == 1)
                         {
                             $filename = BASE_DIR . "/mvc/templates/caja/table_1_content.html";
@@ -237,37 +233,32 @@ namespace CEIT\mvc\controllers
 
                             foreach($this->result2[0] as $key => $value)
                             {
-                                $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
-
-                                if($key == 'Importe')
+                                switch($key)
                                 {
-                                    $this->Total += floatval($value);
+                                    case "Importe":
+                                        $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
+                                        $this->Total += floatval($value);
+                                        break;
+                                    default:
+                                        $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
+                                        break;
                                 }
                             }
                         }
+                        else
+                        {
+                            // Si entro aca es por que no encontro el pedido.
+                        }
+                        unset($this->result2);
                     }
-                    unset($this->result2);
                 }
                 else
                 {
-                    $filename = BASE_DIR . "/mvc/templates/caja/table_1_content.html";
-                    $this->table_1_content .= file_get_contents($filename);
-
-                    $default = array(
-                        'IdPedido'  =>  '',
-                        'Descripcion'   =>  '',
-                        'PrecioUnitario'    =>  '',
-                        'Cantidad'  =>  '',
-                        'Importe'   =>  '',
-                    );
-
-                    foreach($default as $key => $value)
-                    {
-                        $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
-                    }
+                    $this->table_1_content = "";
                 }
 
-                if(count($tmpArray['Items']) >= 1)
+                // Agrego los item a la lista temporal a confirmar.
+                if(count($tmpArray['Items']) > 0)
                 {
                     foreach($tmpArray['Items'] as $row)
                     {
@@ -278,11 +269,15 @@ namespace CEIT\mvc\controllers
                         {
                             foreach($row as $key => $value)
                             {
-                                $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
-
-                                if($key == 'Importe')
+                                switch($key)
                                 {
-                                    $this->Total += floatval($value);
+                                    case "Importe":
+                                        $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
+                                        $this->Total += floatval($value);
+                                        break;
+                                    default:
+                                        $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
+                                        break;
                                 }
                             } 
                         }
@@ -316,7 +311,9 @@ namespace CEIT\mvc\controllers
                 $this->PrecioCEIT = $this->result2[0]['Valor'];
             }
             unset($this->result2);
-                    
+            
+            $this->IdUnique = uniqid();
+            
             if(empty($this->result))
             {
                 $this->result = $this->_model['Pedidos']->SelectFinished();
@@ -356,10 +353,10 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
+                var_dump($_POST);
+                
                 if(isset($_POST['btnCobrar']))
                 {
-                    //var_dump($_POST);
-                    
                     // General
                     $modelCaja = new models\CajaModel();
                     $modelCaja->_creadoPor = $_SESSION['IdUsuario'];
@@ -367,7 +364,8 @@ namespace CEIT\mvc\controllers
                     $modelCaja->_subTotal = filter_input(INPUT_POST, 'txtSubTotal', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
                     $modelCaja->_pago = filter_input(INPUT_POST, 'txtPaga', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
                     $modelCaja->_vuelto = filter_input(INPUT_POST, 'txtVuelto', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
-                    $idCaja = $this->_model['Caja']->Insert(array($modelCaja));
+                    $idCaja = 1;
+                    //$idCaja = $this->_model['Caja']->Insert(array($modelCaja));
                     
                     // Items
                     $ids = filter_input(INPUT_POST, 'hidId', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
@@ -379,16 +377,18 @@ namespace CEIT\mvc\controllers
                     
                     $pedidos = array();
                     
-                    foreach($ids as $item)
+                    foreach($ids as $key => $value)
                     {
-                        $pedidos[$item] = array(
-                            'Tipo'              =>  $tipo[$item],
-                            'Descripcion'       =>  $descripcion[$item],
-                            'PrecioUnitario'    =>  $preunit[$item],
-                            'Cantidad'          =>  $cantidad[$item],
-                            'Importe'           =>  $importe[$item],
+                        $pedidos[$key] = array(
+                            'Tipo'              =>  $tipo[$key],
+                            'Descripcion'       =>  $descripcion[$key],
+                            'PrecioUnitario'    =>  $preunit[$key],
+                            'Cantidad'          =>  $cantidad[$key],
+                            'Importe'           =>  $importe[$key],
                         );
                     }
+                    
+                    var_dump($pedidos);
                     
                     $cajaItems = array();
                     $pedidosAPagar = array();
@@ -435,7 +435,7 @@ namespace CEIT\mvc\controllers
                                 $modelCajaItem = new models\CajaItemModel();
                                 $modelCajaItem->_idCaja = $idCaja;
                                 $modelCajaItem->_idPedido = null;
-                                $modelCajaItem->_idItem = $index;
+                                $modelCajaItem->_idItem = $item["IdItem"]; //$index;
                                 $modelCajaItem->_descripcion = $item['Descripcion'];
                                 $modelCajaItem->_precioUnitario = $item['PrecioUnitario'];
                                 $modelCajaItem->_cantidad = $item['Cantidad'];
@@ -448,13 +448,13 @@ namespace CEIT\mvc\controllers
                         }
                     }
                     
-                    $this->_model['CajaItems']->Insert($cajaItems);
-                    $this->_model['Pedidos']->Update($pedidosAPagar);
+                    //$this->_model['CajaItems']->Insert($cajaItems);
+                    //$this->_model['Pedidos']->Update($pedidosAPagar);
                     
-                    setcookie('Caja', null, -1);
-                    $_COOKIE['Caja'] = null;
+                    //setcookie('Caja', null, -1);
+                    //$_COOKIE['Caja'] = null;
                     
-                    header("Location: index.php?do=/caja/index");
+                    //header("Location: index.php?do=/caja/index");
                 }
                 
                 $pedidos = array();
@@ -462,6 +462,7 @@ namespace CEIT\mvc\controllers
                 $this->SubTotal = 0;
                 
                 // armo arrays para poder meterlos en tablas.
+                $idUnique = filter_input(INPUT_POST, "hidIdUnique", FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
                 $idPedidos = filter_input(INPUT_POST, 'hidIdPedido', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                 $idItems = filter_input(INPUT_POST, 'hidIdItem', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
                 $descripcion = filter_input(INPUT_POST, 'hidDescripcion', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
@@ -469,13 +470,31 @@ namespace CEIT\mvc\controllers
                 $cantidad = filter_input(INPUT_POST, 'hidCantidad', FILTER_SANITIZE_NUMBER_INT, FILTER_REQUIRE_ARRAY);
                 $importe = filter_input(INPUT_POST, 'hidImporte', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY);
                 
-                if(count($idPedidos) > 0)
+                if(count($idUnique) > 0)
                 {
-                    foreach($idPedidos as $item)
+                    foreach($idUnique as $item)
+                    {
+                        var_dump($item);
+                        
+                        $items[$item] = array(
+                            'IdItem'            =>  empty($idPedidos[$item]) ? (string)$idItems[$item] : (int)$idPedidos[$item],
+                            'Tipo'              =>  empty($idPedidos[$item]) ? "Item" : "Pedido",
+                            'Descripcion'       =>  $descripcion[$item],
+                            'PrecioUnitario'    =>  $preunit[$item],
+                            'Cantidad'          =>  $cantidad[$item],
+                            'Importe'           =>  $importe[$item],
+                        );
+                    }
+                }
+                
+                /*if(count($idUnique) > 0)
+                {
+                    foreach($idUnique as $item)
                     {
                         if(!empty($item))
                         {
                             $pedidos[$item] = array(
+                                "IdItem"            =>  $idPedidos[$item],
                                 'Tipo'              =>  "Pedido",
                                 'Descripcion'       =>  $descripcion[$item],
                                 'PrecioUnitario'    =>  $preunit[$item],
@@ -486,11 +505,12 @@ namespace CEIT\mvc\controllers
                     }
                 }
                 
-                if(count($idItems) > 0)
+                if(count($idUnique) > 0)
                 {
-                    foreach($idItems as $item)
+                    foreach($idUnique as $item)
                     {
                         $items[$item] = array(
+                            'IdItem'            =>  $idItems[$item],
                             'Tipo'              =>  "Item",
                             'Descripcion'       =>  $descripcion[$item],
                             'PrecioUnitario'    =>  $preunit[$item],
@@ -498,9 +518,9 @@ namespace CEIT\mvc\controllers
                             'Importe'           =>  $importe[$item],
                         );
                     }
-                }
+                }*/
                 
-                if(count($pedidos) >= 1)
+                if(count($pedidos) > 0)
                 {
                     foreach($pedidos as $itemKey => $itemValue)
                     {
@@ -513,35 +533,51 @@ namespace CEIT\mvc\controllers
                         {
                             foreach($itemValue as $key => $value)
                             {
-                                $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
-                                
-                                if($key == 'Importe')
+                                switch($key)
                                 {
-                                    $this->SubTotal += floatval($value);
+                                    case "Importe":
+                                        $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
+                                        $this->SubTotal += floatval($value);
+                                        break;
+                                    default:
+                                        $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
+                                        break;
                                 }
                             }
                         }
                     }
                 }
-
-                if(count($items) >= 1)
+                else
                 {
-                    foreach($items as $itemKey => $itemValue)
+                    $this->table_content = "";
+                }
+
+                if(count($items) > 0)
+                {
+                    foreach($items as $element)
                     {
                         $filename = BASE_DIR . "/mvc/templates/caja/{$this->_action}_table_content.html";
                         $this->table_content .= file_get_contents($filename);
 
-                        $this->table_content = str_replace('{Id}', $itemKey, $this->table_content);
-                        
-                        if(is_array($itemValue))
+                        if(is_array($element))
                         {
-                            foreach($itemValue as $key => $value)
+                            foreach($element as $key => $value)
                             {
-                                $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
-                                
-                                if($key == 'Importe')
+                                switch($key)
                                 {
-                                    $this->SubTotal += floatval($value);
+                                    case "Id":
+                                        $this->table_content = str_replace('{IdUnique}', $value, $this->table_content);
+                                        break;
+                                    case "IdItem":
+                                        $this->table_content = str_replace('{Id}', $value, $this->table_content);
+                                        break;
+                                    case "Importe":
+                                        $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
+                                        $this->SubTotal += floatval($value);
+                                        break;
+                                    default:
+                                        $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
+                                        break;
                                 }
                             } 
                         }

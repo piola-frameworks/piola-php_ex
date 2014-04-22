@@ -412,6 +412,16 @@ namespace CEIT\mvc\controllers
             // cierro session
             if(session_status() == PHP_SESSION_ACTIVE)
             {
+                // borro todas las cookies del dominio.
+                foreach($_COOKIE as $key => $value)
+                {
+                    if($key != "PHPSESSID")
+                    {
+                        setcookie($key, null);
+                        setcookie($key, null, -1, "/");
+                    }
+                }
+                
                 session_destroy();
             }
             
