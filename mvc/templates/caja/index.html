@@ -99,7 +99,7 @@
                     <input type="hidden" name="hidAnillado" value="{Anillado}" />
                     <input type="hidden" name="hidSimpleFaz" value="{SimpleFaz}" />
                     <input type="hidden" name="hidDobleFaz" value="{PrecioCEIT}" />
-                    <input type="hidden" name="hidIdUnique" value="{IdUnique}" />
+                    <input type="hidden" name="hidIdUniqueItem" value="{IdUniqueItem}" />
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
@@ -168,7 +168,8 @@
                 $("input[name=txtImporte]").val($("input[name=hidAnillado]").val());
                 $("input[name=txtImporte]").attr("readonly", "readonly");
                 $('input[name=txtCantidad]').val(1);
-                $('input[name=txtCantidad]').attr("readonly", "readonly");
+                //$('input[name=txtCantidad]').attr("readonly", "readonly");
+                $('input[name=txtCantidad]').removeAttr("readonly");
             break;
            
             case "LIB":

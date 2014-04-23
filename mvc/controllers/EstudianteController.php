@@ -626,122 +626,137 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST) && !empty($_FILES))
             {
-                //var_dump($_POST, $_FILES);
-                
                 $nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 
-                switch($_FILES['filArchivo']['error'])
+                // Valido el tipo de archivo que es
+                $mimePdf = array(
+                    "application/pdf",
+                    "application/x-pdf",
+                    "application/acrobat",
+                    "applications/vnd.pdf",
+                    "text/pdf",
+                    "text/x-pdf"
+                );
+                
+                if(in_array($_FILES['filArchivo']['type'], $mimePdf))
                 {
-                    case UPLOAD_ERR_OK:
-                        // Guardo en la db.
-                        $modelTP = new models\TextoModel();
-                        $modelTP->_creadoPor = $_SESSION['IdUsuario'];
-                        $modelTP->_creadoDia = date("Y-m-d H:i:s");
-                        $modelTP->_modificadoPor = null;
-                        $modelTP->_modificadoDia = null;
-                        $modelTP->_codInterno = null;
-                        $modelTP->_idMateria = null;
-                        $modelTP->_idTipoTexto = 4;
-                        $modelTP->_idTipoContenido = null;
-                        $modelTP->_nombre = $nombre;
-                        $modelTP->_autor = null;
-                        $modelTP->_docente = null;
-                        $modelTP->_cantPaginas = 1;
-                        $modelTP->_activo = 0;
-                        $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));                        
-                        
-                        $modelPedido = new models\PedidoModel();
-                        $modelPedido->_idUsuario = $_SESSION['IdUsuario'];
-                        $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
-                        $modelPedido->_creadoDia = date("Y-m-d H:i:s");
-                        $modelPedido->_modificadoPor = null;
-                        $modelPedido->_modificadoDia = null;
-                        $modelPedido->_anillado = false;
-                        $modelPedido->_comentario = null;
-                        $modelPedido->_retiro = filter_input(INPUT_POST, 'hidRetiro', FILTER_SANITIZE_STRING);
-                        $modelPedido->_idFranja = filter_input(INPUT_POST, 'hidFranja', FILTER_SANITIZE_NUMBER_INT);
-                        $modelPedido->_pagado = false;
-                        $modelPedido->_idEstado = 1;
-                        $modelPedido->_especial = false;
-                        $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
-                        
-                        $modelPedidoItem = new models\PedidoItemModel();
-                        $modelPedidoItem->_idPedido = $this->_lastIdPedido;
-                        $modelPedidoItem->_cantidad = 1;
-                        $modelPedidoItem->_idTexto = $this->_lastIdTexto;
-                        $modelPedidoItem->_anillado = false;
-                        $modelPedidoItem->_abrochado = false;
-                        $modelPedidoItem->_simpleFaz = false;
-                        $modelPedidoItem->_idEstado = 1;
-                        $this->_model['PedidoItems']->Insert(array($modelPedidoItem));
-                        
-                        // Muevo el archivo al directorio donde van a estar todos los PDFs
-                        $uploaddir = BASE_DIR . '/data/tps/';
-                        $uploadfile = $uploaddir . $this->_lastIdTexto . ".pdf";//basename($_FILES['filArchivo']['name']);
+                    switch($_FILES['filArchivo']['error'])
+                    {
+                        case UPLOAD_ERR_OK:
+                            // Guardo en la db.
+                            $modelTP = new models\TextoModel();
+                            $modelTP->_creadoPor = $_SESSION['IdUsuario'];
+                            $modelTP->_creadoDia = date("Y-m-d H:i:s");
+                            $modelTP->_modificadoPor = null;
+                            $modelTP->_modificadoDia = null;
+                            $modelTP->_codInterno = null;
+                            $modelTP->_idMateria = null;
+                            $modelTP->_idTipoTexto = 4;
+                            $modelTP->_idTipoContenido = null;
+                            $modelTP->_nombre = $nombre;
+                            $modelTP->_autor = null;
+                            $modelTP->_docente = null;
+                            $modelTP->_cantPaginas = 1;
+                            $modelTP->_activo = 0;
+                            $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));                        
 
-                        unset($modelTP);
-                        unset($modelPedido);
-                        unset($modelPedidoItem);
-                        
-                        if($_FILES['filArchivo']['type'] != 'application/pdf')
-                        {
-                            trigger_error("Me queres hackear la aplicacion web?", E_USER_NOTICE);
-                        }
+                            $modelPedido = new models\PedidoModel();
+                            $modelPedido->_idUsuario = $_SESSION['IdUsuario'];
+                            $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
+                            $modelPedido->_creadoDia = date("Y-m-d H:i:s");
+                            $modelPedido->_modificadoPor = null;
+                            $modelPedido->_modificadoDia = null;
+                            $modelPedido->_anillado = false;
+                            $modelPedido->_comentario = null;
+                            $modelPedido->_retiro = filter_input(INPUT_POST, 'hidRetiro', FILTER_SANITIZE_STRING);
+                            $modelPedido->_idFranja = filter_input(INPUT_POST, 'hidFranja', FILTER_SANITIZE_NUMBER_INT);
+                            $modelPedido->_pagado = false;
+                            $modelPedido->_idEstado = 1;
+                            $modelPedido->_especial = false;
+                            $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
 
-                        if(move_uploaded_file($_FILES['filArchivo']['tmp_name'], $uploadfile))
-                        {
-                            //echo "El archivo es válido y fue cargado exitosamente.\n";
-                            
-                            header("Location: index.php?do=/estudiante/index");
-                        }
-                        else
-                        {
-                            echo "¡Posible ataque de carga de archivos!\n";
-                        }                    
-                        break;
-                        
-                    case UPLOAD_ERR_INI_SIZE:
-                        trigger_error("El archivo subido excede la directiva upload_max_filesize en php.ini.", E_USER_ERROR);
-                        break;
-                    
-                    case UPLOAD_ERR_FORM_SIZE:
-                        trigger_error("El archivo subido excede la directiva MAX_FILE_SIZE que fue especificada en el formulario HTML.", E_USER_ERROR);
-                        break;
-                    
-                    case UPLOAD_ERR_PARTIAL:
-                        trigger_error("El archivo subido fue sólo parcialmente cargado.", E_USER_ERROR);    
-                        break;
-                    
-                    case UPLOAD_ERR_NO_FILE:
-                        trigger_error("Ningún archivo fue subido.", E_USER_WARNING);
-                        break;
-                    
-                    case UPLOAD_ERR_NO_TMP_DIR:
-                        trigger_error("Falta la carpeta temporal.", E_USER_ERROR);    
-                        break;
-                    
-                    case UPLOAD_ERR_CANT_WRITE:
-                        trigger_error("No se pudo escribir el archivo en el disco.", E_USER_ERROR);    
-                        break;
-                    
-                    case UPLOAD_ERR_EXTENSION:
-                        trigger_error("Una extensión de PHP detuvo la carga de archivos.", E_USER_ERROR);    
-                        break;
-                    
-                    default:
-                        // Por que entro aca?    
-                        break;
+                            $modelPedidoItem = new models\PedidoItemModel();
+                            $modelPedidoItem->_idPedido = $this->_lastIdPedido;
+                            $modelPedidoItem->_cantidad = 1;
+                            $modelPedidoItem->_idTexto = $this->_lastIdTexto;
+                            $modelPedidoItem->_anillado = false;
+                            $modelPedidoItem->_abrochado = false;
+                            $modelPedidoItem->_simpleFaz = false;
+                            $modelPedidoItem->_idEstado = 1;
+                            $this->_model['PedidoItems']->Insert(array($modelPedidoItem));
+
+                            // Muevo el archivo al directorio donde van a estar todos los PDFs
+                            $uploaddir = BASE_DIR . '/data/tps/';
+                            $uploadfile = $uploaddir . $this->_lastIdTexto . ".pdf";//basename($_FILES['filArchivo']['name']);
+
+                            unset($modelTP);
+                            unset($modelPedido);
+                            unset($modelPedidoItem);
+
+                            if($_FILES['filArchivo']['type'] != 'application/pdf')
+                            {
+                                trigger_error("Me queres hackear la aplicacion web?", E_USER_NOTICE);
+                            }
+
+                            if(move_uploaded_file($_FILES['filArchivo']['tmp_name'], $uploadfile))
+                            {
+                                //echo "El archivo es válido y fue cargado exitosamente.\n";
+
+                                header("Location: index.php?do=/estudiante/index");
+                            }
+                            else
+                            {
+                                echo "¡Posible ataque de carga de archivos!\n";
+                            }                    
+                            break;
+
+                        case UPLOAD_ERR_INI_SIZE:
+                            trigger_error("El archivo subido excede la directiva upload_max_filesize en php.ini.", E_USER_ERROR);
+                            break;
+
+                        case UPLOAD_ERR_FORM_SIZE:
+                            trigger_error("El archivo subido excede la directiva MAX_FILE_SIZE que fue especificada en el formulario HTML.", E_USER_ERROR);
+                            break;
+
+                        case UPLOAD_ERR_PARTIAL:
+                            trigger_error("El archivo subido fue sólo parcialmente cargado.", E_USER_ERROR);    
+                            break;
+
+                        case UPLOAD_ERR_NO_FILE:
+                            trigger_error("Ningún archivo fue subido.", E_USER_WARNING);
+                            break;
+
+                        case UPLOAD_ERR_NO_TMP_DIR:
+                            trigger_error("Falta la carpeta temporal.", E_USER_ERROR);    
+                            break;
+
+                        case UPLOAD_ERR_CANT_WRITE:
+                            trigger_error("No se pudo escribir el archivo en el disco.", E_USER_ERROR);    
+                            break;
+
+                        case UPLOAD_ERR_EXTENSION:
+                            trigger_error("Una extensión de PHP detuvo la carga de archivos.", E_USER_ERROR);    
+                            break;
+
+                        default:
+                            // Por que entro aca?    
+                            break;
+                    }
+                }
+                else
+                {
+                    //echo "El archivo subido no es un PDF.";
                 }
             }
             
-            /*$this->result = $this->_model['Pedidos']->SelectDisponibilidad();
+            $this->result = $this->_model['Pedidos']->SelectDisponibilidad();
             if(count($this->result) == 1)
             {
                 foreach($this->result[0] as $key => $value)
                 {
                     $this->{$key} = $value;
                 }
-            }*/
+            }
         }
         
         public function delete($id)
@@ -1262,6 +1277,34 @@ namespace CEIT\mvc\controllers
                 $materiaModel->_idNivel = filter_input(INPUT_POST, 'idNivel', FILTER_SANITIZE_NUMBER_INT);
                 $this->result = $this->_model['Materias']->SelectByIdNivel($materiaModel);
             }
+        }
+        
+        private function getPDFPages($document)
+        {
+            $output = null;
+            $matches = null;
+            
+            //$cmd = "/usr/bin/pdfinfo";          // Linux
+            //$cmd = "C:\\pdfinfo.exe";           // Windows
+
+            $cmd = 'C:\Users\Puesto 2\Downloads\xpdfbin-win-3.03\xpdfbin-win-3.03\bin32\pdfinfo.exe';
+            
+            // Parse entire output
+            exec("$cmd $document", $output);
+
+            // Iterate through lines
+            $pagecount = 0;
+            foreach($output as $op)
+            {
+                // Extract the number
+                if(preg_match("/Pages:\s*(\d+)/i", $op, $matches) === 1)
+                {
+                    $pagecount = intval($matches[1]);
+                    break;
+                }
+            }
+
+            return $pagecount;
         }
     }
 }

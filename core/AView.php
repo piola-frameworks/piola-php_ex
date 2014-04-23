@@ -42,7 +42,18 @@ namespace CEIT\core
                                             . '</ul>'
                                         . '</li>',
                 'Caja'              =>  '<li><a href="index.php?do=/caja/index">Caja</a></li>',
-                'Reportes'          =>  '<li><a href="index.php?do=/reportes/index">Reportes</a></li>',
+                'Reportes'          =>  '<li class="dropdown">'
+                                        . '<a class="dropdown-toggle" href="index.php?do=/reportes/index" data-toggle="dropdown">Reportes <b class="caret"></b></a>'
+                                            . '<ul class="dropdown-menu">'
+                                                . '<li><a href="index.php?do=/reportes/fotocopias">Fotocopias</a></li>'
+                                                . '<li><a href="index.php?do=/reportes/pedidos">Pedidos</a></li>'
+                                                . '<li><a href="index.php?do=/reportes/caja">Caja</a></li>'
+                                                . '<li><a href="index.php?do=/reportes/facturacion">Facturacion</a></li>'
+                                                . '<li><a href="index.php?do=/reportes/usuarios">Usuarios</a></li>'
+                                                . '<li><a href="index.php?do=/reportes/textos">Textos</a></li>'
+                                                . '<li><a href="index.php?do=/reportes/carreras">Carreras</a></li>'
+                                            . '</ul>'
+                                        . '</li>',
                 'Administracion'    =>  '<li><a href="index.php?do=/admin/index">Administraci&oacute;n</a></li>'
             );
             
