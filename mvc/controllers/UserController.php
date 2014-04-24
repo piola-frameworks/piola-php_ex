@@ -51,50 +51,145 @@ namespace CEIT\mvc\controllers
         {
             $this->_template = BASE_DIR . "/mvc/templates/user/{$this->_action}.html";
             
+            if(isset($_POST))
+            {
+                // var_dump($_POST, $_SESSION);
+                
+                if(isset($_POST["btnGuardar"]))
+                {
+                    $idpersona = filter_input(INPUT_POST, "hidIdPersona", FILTER_SANITIZE_NUMBER_INT);
+                    $nombre = filter_input(INPUT_POST, "hidNombre", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $apellido = filter_input(INPUT_POST, "hidApellido", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $dni = filter_input(INPUT_POST, "hidDNI", FILTER_SANITIZE_NUMBER_INT);
+                    $legajo = filter_input(INPUT_POST, "hidLegajo", FILTER_SANITIZE_NUMBER_INT);
+                    $carrera = filter_input(INPUT_POST, "ddlCarrera", FILTER_SANITIZE_NUMBER_INT);
+                    $email = filter_input(INPUT_POST, "txtEmail", FILTER_SANITIZE_EMAIL);
+                    $telefono = filter_input(INPUT_POST, "txtTelefono", FILTER_SANITIZE_NUMBER_INT);
+                    $celular = filter_input(INPUT_POST, "txtCelular", FILTER_SANITIZE_NUMBER_INT);
+                    $tipo = filter_input(INPUT_POST, "hidTipoUsuario", FILTER_SANITIZE_SPECIAL_CHARS);
+                    
+                    switch($tipo)
+                    {
+                        case "Estudiante":
+                            $modelPersona = new models\PersonaModel();
+                            $modelPersona->_idPersona = $idpersona;
+                            $modelPersona->_nombre = $nombre;
+                            $modelPersona->_apellido = $apellido;
+                            $modelPersona->_dni = $dni;
+                            $modelPersona->_telefono = $telefono;
+                            $modelPersona->_celular = $celular;
+                            $modelPersona->_email = $email;
+                            $this->result = $this->_model["Personas"]->Update(array($modelPersona));
+                            unset($modelPersona);
+                            
+                            $modelEstudiante = new models\EstudianteModel();
+                            $modelEstudiante->_idPersona = $idpersona;
+                            $modelEstudiante->_legajo = $legajo;
+                            $modelEstudiante->_idCarrera = $carrera;
+                            
+                            $this->result = $this->_model["Estudiantes"]->UpdateByIdPersona($modelEstudiante);
+                            unset($modelEstudiante);
+                            
+                            /*$modelUsuario = new models\UsuarioModel();
+                            $modelUsuario->_idUsuario = $id;
+                            $modelUsuario->_idPersona = $idpersona;
+                            $modelUsuario->_usuario = $_SESSION["Usuario"];
+                            $modelUsuario->_contrasena = "";
+                            $modelUsuario->_comentario = "";
+                            $modelUsuario->_email = true;
+                            
+                            $this->_model["Usuarios"]->Update(array($modelUsuario));
+                            unset($modelUsuario);*/
+                            break;
+
+                        case "Docente":
+                            $modelPersona = new models\PersonaModel();
+                            $modelPersona->_idPersona = $idpersona;
+                            $modelPersona->_nombre = $nombre;
+                            $modelPersona->_apellido = $apellido;
+                            $modelPersona->_dni = $dni;
+                            $modelPersona->_telefono = $telefono;
+                            $modelPersona->_celular = $celular;
+                            $modelPersona->_email = $email;
+                            $this->result = $this->_model["Personas"]->Update(array($modelPersona));
+                            unset($modelPersona);
+                            
+                            $modelDocente = new models\DocenteModel();
+                            $modelDocente->_idPersona = $idpersona;
+                            $modelDocente->_legajo = $legajo;
+                            $this->result = $this->_model["Docentes"]->UpdateByIdPersona($modelDocente);
+                            unset($modelDocente);
+                            break;
+
+                        case "Operario":
+                            $modelPersona = new models\PersonaModel();
+                            $modelPersona->_idPersona = $idpersona;
+                            $modelPersona->_nombre = $nombre;
+                            $modelPersona->_apellido = $apellido;
+                            $modelPersona->_dni = $dni;
+                            $modelPersona->_telefono = $telefono;
+                            $modelPersona->_celular = $celular;
+                            $modelPersona->_email = $email;
+                            $this->result = $this->_model["Personas"]->Update(array($modelPersona));
+                            unset($modelPersona);
+                            break;
+                        
+                        default:
+                            break;
+                    }
+                }
+            }
+            
             $param = new models\UsuarioModel();
             $param->_idUsuario = $id;
             $this->result = $this->_model['Usuarios']->Select($param);
-            if(count($this->result))
+            //var_dump($this->result);
+            
+            if(count($this->result) == 1)
             {
                 foreach($this->result[0] as $key => $value)
                 {
                     switch($key)
                     {
                         case "TipoUsuario":
-                            if($value == "Estudiante")
+                            $this->{$key} = $value;
+                            
+                            switch($value)
                             {
-                                $fil_div = BASE_DIR . "/mvc/templates/user/div_carrera.html";
-                                $this->div_carrera = file_get_contents($fil_div);
-                                
-                                $modelCarrera = new models\CarreraModel();
-                                $modelCarrera->_idUsuario = $id;
-                                $this->result2 = $this->_model['Carreras']->SelectByIdUsuario($modelCarrera);
-                                //var_dump($this->result2);
-                                if(count($this->result2) > 0)
-                                {
-                                    foreach($this->result2 as $row)
-                                    {
-                                        if(is_array($row) && $row['IdCarrera'] != 1)
-                                        {
-                                            $filename = BASE_DIR . "/mvc/templates/user/combo_carrera.html";
-                                            $this->combo_carrera .= file_get_contents($filename);
+                                case "Estudiante":
+                                    $fil_div = BASE_DIR . "/mvc/templates/user/div_carrera.html";
+                                    $this->div_carrera = file_get_contents($fil_div);
 
-                                            foreach($row as $key => $value)
+                                    $modelCarrera = new models\CarreraModel();
+                                    $modelCarrera->_idCarrera = $this->result[0]["IdCarrera"];
+                                    $this->result2 = $this->_model["Carreras"]->SelectWithMark($modelCarrera);
+                                    if(count($this->result2) > 0)
+                                    {
+                                        foreach($this->result2 as $row)
+                                        {
+                                            if(is_array($row) && $row['IdCarrera'] != 1)
                                             {
-                                                $this->combo_carrera = str_replace('{' . $key . '}', $value, $this->combo_carrera);
+                                                $filename = BASE_DIR . "/mvc/templates/user/combo_carrera.html";
+                                                $this->combo_carrera .= file_get_contents($filename);
+
+                                                foreach($row as $key => $value)
+                                                {
+                                                    $this->combo_carrera = str_replace('{' . $key . '}', $value, $this->combo_carrera);
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                unset($this->result2);
+                                    unset($this->result2);
 
-                                $this->div_carrera = str_replace('{combo_carrera}', $this->combo_carrera, $this->div_carrera);
-                            }
-                            else
-                            {
-                                $this->div_carrera = "";
+                                    $this->div_carrera = str_replace('{combo_carrera}', $this->combo_carrera, $this->div_carrera);
+                                    break;
+                                
+                                default:
+                                    $this->div_carrera = "";
+                                    break;
                             }
                             break;
+                            
                         default:
                             $this->{$key} = $value;
                             break;

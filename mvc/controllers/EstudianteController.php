@@ -626,6 +626,8 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST) && !empty($_FILES))
             {
+                var_dump($_POST, $_FILES);
+                
                 $nombre = filter_input(INPUT_POST, 'txtNombre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 
                 // Valido el tipo de archivo que es
@@ -693,49 +695,42 @@ namespace CEIT\mvc\controllers
                             unset($modelPedido);
                             unset($modelPedidoItem);
 
-                            if($_FILES['filArchivo']['type'] != 'application/pdf')
-                            {
-                                trigger_error("Me queres hackear la aplicacion web?", E_USER_NOTICE);
-                            }
-
                             if(move_uploaded_file($_FILES['filArchivo']['tmp_name'], $uploadfile))
                             {
-                                //echo "El archivo es válido y fue cargado exitosamente.\n";
-
-                                header("Location: index.php?do=/estudiante/index");
+                                header("Location: index.php?do=/estudiante/create_tp_sucess/" . $this->_lastIdPedido);
                             }
                             else
                             {
-                                echo "¡Posible ataque de carga de archivos!\n";
+                                header("Location: index.php?do=/estudiante/create_tp_error/9");
                             }                    
                             break;
 
                         case UPLOAD_ERR_INI_SIZE:
-                            trigger_error("El archivo subido excede la directiva upload_max_filesize en php.ini.", E_USER_ERROR);
+                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
                             break;
 
                         case UPLOAD_ERR_FORM_SIZE:
-                            trigger_error("El archivo subido excede la directiva MAX_FILE_SIZE que fue especificada en el formulario HTML.", E_USER_ERROR);
+                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
                             break;
 
                         case UPLOAD_ERR_PARTIAL:
-                            trigger_error("El archivo subido fue sólo parcialmente cargado.", E_USER_ERROR);    
+                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
                             break;
 
                         case UPLOAD_ERR_NO_FILE:
-                            trigger_error("Ningún archivo fue subido.", E_USER_WARNING);
+                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
                             break;
 
                         case UPLOAD_ERR_NO_TMP_DIR:
-                            trigger_error("Falta la carpeta temporal.", E_USER_ERROR);    
+                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
                             break;
 
                         case UPLOAD_ERR_CANT_WRITE:
-                            trigger_error("No se pudo escribir el archivo en el disco.", E_USER_ERROR);    
+                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
                             break;
 
                         case UPLOAD_ERR_EXTENSION:
-                            trigger_error("Una extensión de PHP detuvo la carga de archivos.", E_USER_ERROR);    
+                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
                             break;
 
                         default:
@@ -745,7 +740,7 @@ namespace CEIT\mvc\controllers
                 }
                 else
                 {
-                    //echo "El archivo subido no es un PDF.";
+                    header("Location: index.php?do=/estudiante/create_tp_error/10");
                 }
             }
             
@@ -756,6 +751,87 @@ namespace CEIT\mvc\controllers
                 {
                     $this->{$key} = $value;
                 }
+            }
+        }
+        
+        public function create_tp_sucess($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
+            
+            $pedido = new models\PedidoModel();
+            $pedido->_idPedido = $id;
+            $this->result = $this->_model['Pedidos']->Select($pedido);
+            unset($pedido);
+            
+            if(count($this->result) == 1)
+            {
+                foreach($this->result[0] as $key => $value)
+                {
+                    $this->{$key} = $value;
+                }     
+            }
+            unset($this->result);
+            
+            $pedidosItems = new models\PedidoModel();
+            $pedidosItems->_idPedido = $id;
+            $this->result = $this->_model['Pedidos']->SelectItem($pedidosItems);
+            unset($pedidosItems);
+            
+            if(count($this->result) == 1)
+            {
+                foreach($this->result[0] as $key => $value)
+                {
+                    $this->{$key} = $value;
+                }     
+            }
+            unset($this->result);
+        }
+        
+        public function create_tp_error($idError)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
+            
+            switch($idError)
+            {
+                case UPLOAD_ERR_INI_SIZE:
+                    $this->DescripcionError = "El archivo subido excede la directiva upload_max_filesize en php.ini.";
+                    break;
+                
+                case UPLOAD_ERR_FORM_SIZE:
+                    $this->DescripcionError = "El archivo subido excede la directiva MAX_FILE_SIZE que fue especificada en el formulario HTML.";
+                    break;
+
+                case UPLOAD_ERR_PARTIAL:
+                    $this->DescripcionError = "El archivo subido fue sólo parcialmente cargado.";
+                    break;
+
+                case UPLOAD_ERR_NO_FILE:
+                    $this->DescripcionError = "Ningún archivo fue subido.";
+                    break;
+
+                case UPLOAD_ERR_NO_TMP_DIR:
+                    $this->DescripcionError = "Falta la carpeta temporal.";
+                    break;
+
+                case UPLOAD_ERR_CANT_WRITE:
+                    $this->DescripcionError = "No se pudo escribir el archivo en el disco.";
+                    break;
+
+                case UPLOAD_ERR_EXTENSION:
+                    $this->DescripcionError = "Una extensión de PHP detuvo la carga de archivos.";
+                    break;
+                
+                case 9: // Posible ataque de carga de archivos.
+                    $this->DescripcionError = "¡Posible ataque de carga de archivos!";
+                    break;
+                
+                case 10: // Fallo el mimetype.
+                    $this->DescripcionError = "El archivo subido no es un PDF.";
+                    break;
+                
+                default:
+                    $this->DescripcionError = "Error desconocido. Comuniqueselo al administrador.";
+                    break;
             }
         }
         
@@ -803,22 +879,6 @@ namespace CEIT\mvc\controllers
                     $pedido->_idPedido = filter_input(INPUT_POST, "txtIdPedido", FILTER_SANITIZE_NUMBER_INT);
                     $this->result = $this->_model['Pedidos']->Select($pedido);
 
-                    /*
-                     *  'IdPedido' => int 1
-                        'IdUsuario' => int 1
-                        'Creado' => string '2014-02-06 16:12:05' (length=19)
-                        'CreadoPor' => int 1
-                        'Modificado' => string '2014-03-10 12:50:08' (length=19)
-                        'ModificadoPor' => int 1
-                        'Anillado' => int 0
-                        'Comentario' => string 'Comentario' (length=10)
-                        'Posicion' => string '' (length=0)
-                        'Retiro' => string '2014-02-06' (length=10)
-                        'IdFranja' => int 1
-                        'Pagado' => int 1
-                        'IdEstado' => int 4
-                     */
-
                     $pedido->_idUsuario = $this->result[0]['IdUsuario'];
                     $pedido->_creado = $this->result[0]['Creado'];
                     $pedido->_creadoPor = $this->result[0]['CreadoPor'];
@@ -836,7 +896,6 @@ namespace CEIT\mvc\controllers
                 }
             }
             
-            // seteo el modelo para trabajar con los items del pedido
             $pedidosItems = new models\PedidoModel();
             $pedidosItems->_idPedido = $id;
             $this->result = $this->_model['Pedidos']->SelectItem($pedidosItems);

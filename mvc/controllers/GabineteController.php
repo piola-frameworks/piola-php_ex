@@ -36,11 +36,18 @@ namespace CEIT\mvc\controllers
         
         public function __destruct()
         {
-            parent::__destruct();
-            
-            $this->_view->render($this->_template, $this->_dataCollection);
+            if($this->_ajaxRequest)
+            {
+                $this->_view->json($this->result);
+            }
+            else
+            {
+                $this->_view->render($this->_template, $this->_dataCollection);
+            }
             
             unset($this->result);
+            
+            parent::__destruct();
         }
 
         public function pedidos_index()
@@ -51,13 +58,29 @@ namespace CEIT\mvc\controllers
             if(!empty($_POST))
             {
                 //var_dump($_POST);
+                
+                if(isset($_POST["btnFiltrar"]))
+                {
+                    $estado = filter_input(INPUT_POST, "ddlEstado", FILTER_SANITIZE_NUMBER_INT);
+                    
+                    $pedido = new models\GabineteModel();   
+                    $pedido->_idEstado = $estado;
+
+                    $this->result = $this->_model['Gabinete']->SelectByIdEstado($pedido);
+                }
+            }
+            else
+            {
+                $this->result = $this->_model['Gabinete']->Select();
             }
             
+            //var_dump($this->result);
+            
             // traigo datos de la db.
-            $this->result = $this->_model['Carreras']->Select();
-            if(count($this->result) > 1)
+            $this->result2 = $this->_model['Carreras']->Select();
+            if(count($this->result2) > 1)
             {
-                foreach($this->result as $row)
+                foreach($this->result2 as $row)
                 {
                     $filename = BASE_DIR . "/mvc/templates/gabinete/combo_carrera.html";
                     $this->combo_carreras .= file_get_contents($filename);
@@ -71,12 +94,12 @@ namespace CEIT\mvc\controllers
                     }
                 }
             }
-            unset($this->result);
+            unset($this->result2);
             
-            $this->result = $this->_model['Estados']->Select();
-            if(count($this->result) > 1)
+            $this->result2 = $this->_model['Estados']->Select();
+            if(count($this->result2) > 1)
             {
-                foreach($this->result as $row)
+                foreach($this->result2 as $row)
                 {
                     $filename = BASE_DIR . "/mvc/templates/gabinete/combo_estado.html";
                     $this->combo_estados .= file_get_contents($filename);
@@ -90,9 +113,8 @@ namespace CEIT\mvc\controllers
                     }
                 }
             }
-            unset($this->result);
+            unset($this->result2);
             
-            $this->result = $this->_model['Gabinete']->Select();
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
@@ -113,6 +135,7 @@ namespace CEIT\mvc\controllers
             {
                 $this->table_content = "";
             }
+            unset($this->result);
         }
         
         public function pedidos_detail($id)
@@ -187,21 +210,14 @@ namespace CEIT\mvc\controllers
             {
                 foreach($this->result as $row)
                 {
-                    if($row['Descripcion'] == "Entregado" || $row['Descripcion'] == "Cancelado")
-                    {
-                        break;
-                    }
-                    else
+                    if(is_array($row))
                     {
                         $filename = BASE_DIR . "/mvc/templates/gabinete/combo_estado.html";
                         $this->combo_estado_pedido .= file_get_contents($filename);
-
-                        if(is_array($row))
+                        
+                        foreach($row as $key => $value)
                         {
-                            foreach($row as $key => $value)
-                            {
-                                $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
-                            }
+                            $this->combo_estado_pedido = str_replace('{' . $key . '}', $value, $this->combo_estado_pedido);
                         }
                     }
                 }
@@ -436,6 +452,19 @@ namespace CEIT\mvc\controllers
             $this->_template = $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
         }
         
+        public function ajax_pedido_estado()
+        {
+            if(!empty($_POST))
+            {
+                $this->_ajaxRequest = true;
+                
+                $modelPedido = new models\PedidoModel();
+                $modelPedido->_idPedido = filter_input(INPUT_POST, "idPedido", FILTER_SANITIZE_NUMBER_INT);
+                
+                $this->result = $this->_model["Gabinete"]->SelectEstado($modelPedido);
+            }
+        }
+        
         public function caja_index()
         {
             $this->_template = $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
@@ -645,7 +674,7 @@ namespace CEIT\mvc\controllers
                     $cajaItems = array();
                     $pedidosAPagar = array();
                     
-                    var_dump($pedidos);
+                    //var_dump($pedidos);
                     foreach($pedidos as $index => $item)
                     {
                         $modelCajaItem = new models\CajaItemModel();
@@ -660,7 +689,7 @@ namespace CEIT\mvc\controllers
                         $pedido = new models\PedidoModel();
                         $pedido->_idGabinetePedido = $index;
                         $this->result = $this->_model['Gabinete']->Select($pedido);
-                        var_dump($this->result);
+                        //var_dump($this->result);
 
                         $pedido->_idUsuario = $this->result[0]['IdUsuario'];
                         $pedido->_creado = $this->result[0]['Creado'];
@@ -673,15 +702,15 @@ namespace CEIT\mvc\controllers
                         $pedido->_retiro = $this->result[0]['Retiro'];
                         $pedido->_idFranja = $this->result[0]['IdFranja'];
                         $pedido->_pagado = true;
-                        $pedido->_idEstado = $this->result[0]['IdEstado'];
+                        $pedido->_idEstado = 5;
                         array_push($pedidosAPagar, $pedido);
                     }
                     
                     $this->_model['CajaItems']->Insert($cajaItems);
                     $this->_model['Gabinete']->Update($pedidosAPagar);
                     
+                    //$_COOKIE['GabineteCaja'] = null;
                     setcookie('GabineteCaja', null, -1);
-                    $_COOKIE['GabineteCaja'] = null;
                     
                     header("Location: index.php?do=/gabinete/caja_index");
                 }

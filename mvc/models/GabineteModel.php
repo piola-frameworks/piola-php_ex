@@ -86,6 +86,30 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
+        public function SelectByIdEstado(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selGabinetePedidosByIdEstado";
+            $this->_params = array(
+                ':idEstado'     => (int)$model->_idEstado,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        public function SelectEstado(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selGabinetePedidoEstado";
+            $this->_params = array(
+                ":idPedido" =>  (int)$model->_idPedido,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         public function SelectCaja()
         {
             $this->init();

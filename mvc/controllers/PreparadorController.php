@@ -414,7 +414,7 @@ namespace CEIT\mvc\controllers
             {
                 //var_dump($_POST);
                 
-                $pedido = new models\PedidoModel();   
+                $pedido = new models\PedidoModel();
                 $pedido->_idEstado = filter_input(INPUT_POST, 'ddlEstado', FILTER_SANITIZE_NUMBER_INT);
                 
                 $this->result = $this->_model['Pedidos']->SelectByIdEstado($pedido);

@@ -10,8 +10,8 @@ namespace CEIT\core
         private $_pdoExtended;
         
         private static $servidor = 'localhost';
-        private static $usuario = 'root';
-        private static $contrasena = 'qs33712503829';
+        private static $usuario = 'apuntec';
+        private static $contrasena = 'c3n7r0357ud14n735';
         private static $basedato = 'ceit';
         
         private $_lastError = '00000';

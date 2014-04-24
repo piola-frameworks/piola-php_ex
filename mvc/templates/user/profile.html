@@ -1,51 +1,62 @@
 <div class="well">
-    &iquest;Desea cambiar su <a class="btn btn-success btn-sm" href="index.php?do=/user/change_password" role="button">contrase&ntilde;a</a>?
+    &iquest;Desea cambiar su <a class="btn btn-success" href="index.php?do=/user/change_password" role="button">contrase&ntilde;a</a>?
 </div>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">Mi perfil</h3>
     </div>
     <div class="panel-body">
-        <form class="form-horizontal" role="form">
-            <fieldset>
-                <div class="form-group">
-                    <label for="txtNombre" class="col-sm-2 control-label">Nombre</label>
-                    <div class="col-sm-4">
-                        <p class="form-control-static">{Nombre}</p>
-                        <!-- <input type="text" class="form-control" id="txtNombre" placeholder="Nombre" value="{Nombre}" readonly="readonly"> -->
-                    </div>
-                    <label for="txtApellido" class="col-sm-2 control-label">Apellido</label>
-                    <div class="col-sm-4">
-                        <p class="form-control-static">{Apellido}</p>
-                        <!-- <input type="text" class="form-control" id="txtApellido" placeholder="Apellido" value="{Apellido}" readonly="readonly"> -->
-                    </div>
+        <form class="form-horizontal" name="frmPerfil" method="POST" role="form">
+            <div class="form-group">
+                <label for="txtNombre" class="col-sm-2 control-label">Nombre</label>
+                <div class="col-sm-4">
+                    <p class="form-control-static">{Nombre}</p>
+                    <input type="hidden" name="hidNombre" value="{Nombre}" />
                 </div>
-                <div class="form-group">
-                    <label for="txtDNI" class="col-sm-2 control-label">DNI</label>
-                    <div class="col-sm-4">
-                        <p class="form-control-static">{DNI}</p>
-                    </div>
+                <label for="txtApellido" class="col-sm-2 control-label">Apellido</label>
+                <div class="col-sm-4">
+                    <p class="form-control-static">{Apellido}</p>
+                    <input type="hidden" name="hidApellido" value="{Apellido}" />
                 </div>
-                {div_carrera}
-                <div class="form-group">
-                    <label for="txtEmail" class="col-sm-2 control-label">Email</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="txtEmail" placeholder="Correo electronico" value="{Email}">
-                    </div>
+            </div>
+            <div class="form-group">
+                <label for="txtDNI" class="col-sm-2 control-label">DNI</label>
+                <div class="col-sm-4">
+                    <p class="form-control-static">{DNI}</p>
+                    <input type="hidden" name="hidDNI" value="{DNI}" />
                 </div>
-                <div class="form-group">
-                    <label for="txtTelefono" class="col-sm-2 control-label">Telefono</label>
-                    <div class="col-sm-4">
-                        <input type="tel" class="form-control" id="txtTelefono" placeholder="Telefono" value="{Telefono}">
-                    </div>
-                    <label for="txtCelular" class="col-sm-2 control-label">Celular</label>
-                    <div class="col-sm-4">
-                        <input type="tel" class="form-control" id="txtCelular" placeholder="Celuar" value="{Celular}">
-                    </div>
+                <!-- <label for="txtLegajo" class="col-sm-2 control-label">Legajo</label> -->
+                <div class="col-sm-6">
+                    <input type="hidden" name="hidLegajo" value="{Legajo}" />
                 </div>
-            </fieldset>
-            <button class="btn btn-success" name="btnGuardar" type="submit">Guardar</button>
-            <button class="btn btn-default" type="reset">Limpiar</button>
+            </div>
+            {div_carrera}
+            <div class="form-group">
+                <label for="txtEmail" class="col-sm-2 control-label">Email</label>
+                <div class="col-sm-10">
+                    <input id="txtEmail" class="form-control" type="email" name="txtEmail" value="{Email}" placeholder="Correo electronico" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="txtTelefono" class="col-sm-2 control-label">Telefono</label>
+                <div class="col-sm-4">
+                    <input type="tel" class="form-control" id="txtTelefono" name="txtTelefono" placeholder="Telefono" value="{Telefono}">
+                </div>
+                <label for="txtCelular" class="col-sm-2 control-label">Celular</label>
+                <div class="col-sm-4">
+                    <input type="tel" class="form-control" id="txtCelular" name="txtCelular" placeholder="Celuar" value="{Celular}">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="hidden" name="hidIdPersona" value="{IdPersona}" />
+                    <input type="hidden" name="hidTipoUsuario" value="{TipoUsuario}" />
+                    <button class="btn btn-success" name="btnGuardar" type="submit">
+                        <span class="glyphicon glyphicon-save"></span> Guardar
+                    </button>
+                    <button class="btn btn-default" type="reset">Limpiar</button>
+                </div>
+            </div>            
         </form>
     </div>
 </div>

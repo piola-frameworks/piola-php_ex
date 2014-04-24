@@ -9,6 +9,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -27,6 +29,8 @@ namespace CEIT\mvc\models
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -47,6 +51,8 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if($model != null)
             {
                 $this->_sp = "sp_selEstudiante";
@@ -70,6 +76,8 @@ namespace CEIT\mvc\models
         
         public function SelectByIdUsuario(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selEstudianteByIdUsuario";
             $this->_params = array(
                 ':idUsuario'   =>  (int)$model->_idUsuario,
@@ -84,6 +92,8 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -109,6 +119,8 @@ namespace CEIT\mvc\models
         
         public function UpdateByIdPersona(core\AModel $model)
         {
+            $this->init();
+            
             array_push($this->_sp, "sp_updEstudianteByIdPersona");
             array_push($this->_params, array(
                 ':idPersona'    =>  (int)$model->_idPersona,
