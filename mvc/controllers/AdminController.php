@@ -248,6 +248,122 @@ namespace CEIT\mvc\controllers
             unset($this->result);
         }
 
+        /*
+         * Usuarios
+         */
+        public function estydoc_index()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function estydoc_create()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function estydoc_detail($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function estydoc_update($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function estydoc_delete($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        /*
+         * Empleados
+         */
+        public function oper_index()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function oper_create()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function oper_detail($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function oper_update($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function oper_delete($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        /*
+         * Roles
+         */
+        public function roles_index()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function roles_create()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function roles_detail($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function roles_update($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function roles_delete($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        /*
+         * Permisos
+         */
+        public function perms_index()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function perms_create()
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function perms_detail($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function perms_update($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        public function perms_delete($id)
+        {
+            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+        }
+        
+        /*
+         * Configuracion
+         */
+        
         public function update_user($id)
         {
             $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";

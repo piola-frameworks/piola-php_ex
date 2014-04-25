@@ -634,17 +634,21 @@ namespace CEIT\mvc\controllers
                 $mimePdf = array(
                     "application/pdf",
                     "application/x-pdf",
+                    "application/x-bzpdf",
+                    "application/x-gzpdf",
                     "application/acrobat",
-                    "applications/vnd.pdf",
+                    "application/vnd.pdf",
                     "text/pdf",
                     "text/x-pdf"
                 );
                 
-                if(in_array($_FILES['filArchivo']['type'], $mimePdf))
+                echo $_FILES['filArchivo']['type'];
+                
+                switch($_FILES['filArchivo']['error'])
                 {
-                    switch($_FILES['filArchivo']['error'])
-                    {
-                        case UPLOAD_ERR_OK:
+                    case UPLOAD_ERR_OK:
+                        if(in_array($_FILES['filArchivo']['type'], $mimePdf))
+                        {
                             // Guardo en la db.
                             $modelTP = new models\TextoModel();
                             $modelTP->_creadoPor = $_SESSION['IdUsuario'];
@@ -702,45 +706,45 @@ namespace CEIT\mvc\controllers
                             else
                             {
                                 header("Location: index.php?do=/estudiante/create_tp_error/9");
-                            }                    
-                            break;
+                            }
+                        }
+                        else
+                        {
+                            header("Location: index.php?do=/estudiante/create_tp_error/10");
+                        }
+                        break;
 
-                        case UPLOAD_ERR_INI_SIZE:
-                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
-                            break;
+                    case UPLOAD_ERR_INI_SIZE:
+                        header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
+                        break;
 
-                        case UPLOAD_ERR_FORM_SIZE:
-                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
-                            break;
+                    case UPLOAD_ERR_FORM_SIZE:
+                        header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
+                        break;
 
-                        case UPLOAD_ERR_PARTIAL:
-                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
-                            break;
+                    case UPLOAD_ERR_PARTIAL:
+                        header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
+                        break;
 
-                        case UPLOAD_ERR_NO_FILE:
-                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
-                            break;
+                    case UPLOAD_ERR_NO_FILE:
+                        header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
+                        break;
 
-                        case UPLOAD_ERR_NO_TMP_DIR:
-                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
-                            break;
+                    case UPLOAD_ERR_NO_TMP_DIR:
+                        header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
+                        break;
 
-                        case UPLOAD_ERR_CANT_WRITE:
-                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
-                            break;
+                    case UPLOAD_ERR_CANT_WRITE:
+                        header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
+                        break;
 
-                        case UPLOAD_ERR_EXTENSION:
-                            header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
-                            break;
+                    case UPLOAD_ERR_EXTENSION:
+                        header("Location: index.php?do=/estudiante/create_tp_error/" . $_FILES['filArchivo']['error']);
+                        break;
 
-                        default:
-                            // Por que entro aca?    
-                            break;
-                    }
-                }
-                else
-                {
-                    header("Location: index.php?do=/estudiante/create_tp_error/10");
+                    default:
+                        // Por que entro aca?    
+                        break;
                 }
             }
             

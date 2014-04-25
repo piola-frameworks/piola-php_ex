@@ -1,0 +1,34 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Modificacion de nuevo usuario:</h2>
+    </div>
+    <div class="panel-body">
+        <form name="frmModificarUsuario" method="POST" enctype="multipart/form-data">
+            <fieldset>
+                <legend>Datos</legend>
+                <div class="form-group">
+                    <label for="txtUsuario">Usuario:</label>
+                    <input id="txtUsuario" class="form-control" name="txtUsuario" type="text" value="{IdUsuario}" size="20" maxlength="20" disabled="disabled" readonly="readonly" />
+                </div>
+                <div class="form-group">
+                    <label for="txtNombre">Nombre:</label>
+                    <input id="txtNombre" class="form-control" name="txtNombre" type="text" value="{Nombre}" size="50" maxlength="50" />
+                </div>
+                <div class="form-group">
+                    <label for="txtApellido">Apellido:</label>
+                    <input id="txtApellido" class="form-control" type="text" name="txtApellido" value="{Apellido}" size="50" maxlength="50" />
+                </div>
+                <div class="form-group">
+                    <label for="txtContrasena">Contrse&ntilde;a:</label>
+                    <input id="txtContrasena" class="form-control" type="password" name="txtContrasena" value="{Contrasena}" size="20" maxlength="20" />
+                </div>
+                <div class="form-group">
+                    <label for="txtComentario">Comentario:</label>
+                    <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4">{Comentario}</textarea>
+                </div>
+            </fieldset>
+            <input class="btn btn-default" type="submit" name="txtEnviar" />
+            <input class="btn btn-default" type="reset" name="txtLimpiar" />
+        </form>
+    </div>
+</div>

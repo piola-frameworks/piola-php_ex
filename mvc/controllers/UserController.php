@@ -226,7 +226,7 @@ namespace CEIT\mvc\controllers
                     {
                         $modelUsuario = new models\UsuarioModel();
                         $modelUsuario->_idUsuario = $_SESSION['IdUsuario'];
-                        $modelUsuario->_contrasena = $nueva; //crypt($nueva);
+                        $modelUsuario->_contrasena = $nueva;
                         $this->_model['Usuarios']->UpdateContrasena($modelUsuario);
                         
                         // se deberia mandar un mail con la nueva contraseña.
@@ -293,7 +293,7 @@ namespace CEIT\mvc\controllers
                         $modelUsuario->_idUsuario = $_SESSION['IdUsuario'];
                         $modelUsuario->_idPersona = $persona;
                         $modelUsuario->_usuario = $usuario;
-                        $modelUsuario->_contrasena = $contrasena1; //crypt($contrasena1);
+                        $modelUsuario->_contrasena = $contrasena1;
                         $modelUsuario->_emailValidado = false;
                         $this->result = $this->_model['Usuarios']->Update(array($modelUsuario));
                         unset($this->result);
@@ -392,7 +392,7 @@ namespace CEIT\mvc\controllers
                         $modelUsuario->_idUsuario = $_SESSION['IdUsuario'];
                         $modelUsuario->_idPersona = $persona;
                         $modelUsuario->_usuario = $usuario;
-                        $modelUsuario->_contrasena = $contrasena1; //crypt($contrasena1);
+                        $modelUsuario->_contrasena = $contrasena1;
                         $modelUsuario->_emailValidado = false;
                         $this->result = $this->_model['Usuarios']->Update(array($modelUsuario));
                         unset($this->result);
@@ -462,7 +462,7 @@ namespace CEIT\mvc\controllers
                         $modelUsuario->_idUsuario = $_SESSION['IdUsuario'];
                         $modelUsuario->_idPersona = $persona;
                         $modelUsuario->_usuario = $usuario;
-                        $modelUsuario->_contrasena = $contrasena1; //crypt($contrasena1);
+                        $modelUsuario->_contrasena = $contrasena1;
                         $modelUsuario->_emailValidado = false;
                         $this->result = $this->_model['Usuarios']->Update(array($modelUsuario));
                         unset($this->result);

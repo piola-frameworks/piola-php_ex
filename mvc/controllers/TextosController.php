@@ -99,7 +99,7 @@ namespace CEIT\mvc\controllers
                                     $cod_materia = count($this->resultMateria) == 1 ? $this->resultMateria[0]["CodMateria"] : null;
                                     unset($modelMateria);
 
-                                    $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "asd" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
+                                    $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "texts" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
                                     $uploadfile = $uploaddir . $cod_texto . ".pdf";
                                     
                                     // Verifico de que existan los directorios.

@@ -54,7 +54,17 @@ namespace CEIT\core
                                                 . '<li><a href="index.php?do=/reportes/carreras">Carreras</a></li>'
                                             . '</ul>'
                                         . '</li>',
-                'Administracion'    =>  '<li><a href="index.php?do=/admin/index">Administraci&oacute;n</a></li>'
+                'Administracion'    =>  '<li><a href="index.php?do=/admin/index">Administraci&oacute;n</a></li>',
+                /*'Administracion'    =>  '<li class="dropdown">'
+                                        . '<a class="dropdown-toggle" href="index.php?do=/admin/index" data-toggle="dropdown">Administraci&oacute;n <b class="caret"></b></a>'
+                                            . '<ul class="dropdown-menu">'
+                                                . '<li><a href="index.php?do=/admin/estydoc_index">Est y Doc</a></li>'
+                                                . '<li><a href="index.php?do=/admin/oper_index">Operarios</a></li>'
+                                                . '<li><a href="index.php?do=/admin/roles_index">Roles</a></li>'
+                                                . '<li><a href="index.php?do=/admin/perms_index">Permisos</a></li>'
+                                                . '<li><a href="index.php?do=/admin/conf_index">Configuracion</a></li>'
+                                            . '</ul>'
+                                        . '</li>',*/
             );
             
             if(isset($_SESSION['Roles']))
