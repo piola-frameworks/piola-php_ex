@@ -59,7 +59,7 @@
                 </div>
             </fieldset>
             <div class="col-sm-offset-10 col-sm-2">
-                <button id="btnTerminar" class="btn btn-warning hidden-print" type="submit" name="btnTerminar">
+                <button id="btnTerminar" class="btn btn-warning hidden-print" type="submit" name="btnTerminar" disabled="disabled">
                     <span class="glyphicon glyphicon-floppy-disk"></span> Terminar
                 </button>
                 <a class="btn btn-default hidden-print" href="index.php?do=/atpublico/especiales_index">
@@ -116,6 +116,7 @@
         if (countChk == countChkTrue) {
             $("#ddlPosicionX").removeAttr("disabled");
             $("#ddlPosicionY").removeAttr("disabled");
+            $("#btnTerminar").removeAttr("disabled");
         }
         
         $("input[type=checkbox]:checked").each(function(index, item) {

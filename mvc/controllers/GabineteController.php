@@ -22,7 +22,7 @@ namespace CEIT\mvc\controllers
                     "CajaItems"     =>  new models\CajaItemModel(),
                     'Franjas'       =>  new models\HorarioFranjasModel(),
                     'Carreras'      =>  new models\CarreraModel(),
-                    'Estados'       =>  new models\PedidoItemEstadosModel(),
+                    'Estados'       =>  new models\PedidoEstadosModel(),
                     'PosicionX'     =>  new models\PedidoPosicionXModel(),
                     'PosicionY'     =>  new models\PedidoPosicionYModel(),
                 );
@@ -74,59 +74,32 @@ namespace CEIT\mvc\controllers
                 $this->result = $this->_model['Gabinete']->Select();
             }
             
-            //var_dump($this->result);
-            
-            // traigo datos de la db.
-            $this->result2 = $this->_model['Carreras']->Select();
-            if(count($this->result2) > 1)
-            {
-                foreach($this->result2 as $row)
-                {
-                    $filename = BASE_DIR . "/mvc/templates/gabinete/combo_carrera.html";
-                    $this->combo_carreras .= file_get_contents($filename);
-                    
-                    if(is_array($row))
-                    {
-                        foreach($row as $key => $value)
-                        {
-                            $this->combo_carreras = str_replace('{' . $key . '}', $value, $this->combo_carreras);
-                        }
-                    }
-                }
-            }
-            unset($this->result2);
-            
-            $this->result2 = $this->_model['Estados']->Select();
-            if(count($this->result2) > 1)
-            {
-                foreach($this->result2 as $row)
-                {
-                    $filename = BASE_DIR . "/mvc/templates/gabinete/combo_estado.html";
-                    $this->combo_estados .= file_get_contents($filename);
-                    
-                    if(is_array($row))
-                    {
-                        foreach($row as $key => $value)
-                        {
-                            $this->combo_estados = str_replace('{' . $key . '}', $value, $this->combo_estados);
-                        }
-                    }
-                }
-            }
-            unset($this->result2);
-            
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
                 {
-                    $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table.html";
-                    $this->table_content .= file_get_contents($filename);
-                    
                     if(is_array($row))
                     {
-                        foreach($row as $innerKey => $innerValue)
+                        $filename = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table.html";
+                        $this->table_content .= file_get_contents($filename);
+                        
+                        foreach($row as $key => $value)
                         {
-                            $this->table_content = str_replace("{" . $innerKey . "}", $innerValue, $this->table_content);
+                            $this->table_content = str_replace("{" . $key . "}", $value, $this->table_content);
+                            
+                            // Boton de borrar pedido digital.
+                            if(in_array($_SESSION['Roles']['Nombre'], array('Administrador')))
+                            {
+                                $file_button_delete = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}_table_button_delete.html";
+                                $button = file_get_contents($file_button_delete);
+                                $button = str_replace('{IdGabinetePedido}', $row["IdGabinetePedido"], $button);
+                                
+                                $this->table_content = str_replace('{button_delete}', $button, $this->table_content);
+                            }
+                            else
+                            {
+                                $this->table_content = str_replace('{button_delete}', "", $this->table_content);
+                            }
                         }
                     }
                 }
@@ -134,6 +107,48 @@ namespace CEIT\mvc\controllers
             else
             {
                 $this->table_content = "";
+            }
+            unset($this->result);
+            
+            $this->result = $this->_model['Carreras']->Select();
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/gabinete/combo_carrera.html";
+                        $this->combo_carreras .= file_get_contents($filename);
+                        
+                        foreach($row as $key => $value)
+                        {
+                            $this->combo_carreras = str_replace('{' . $key . '}', $value, $this->combo_carreras);
+                        }
+                    }
+                }
+            }
+            unset($this->result);
+            
+            $this->result = $this->_model['Estados']->Select();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        if($row["Descripcion"] != "Entregado" && $row["Descripcion"] != "Cancelado")
+                        {
+                            $filename = BASE_DIR . "/mvc/templates/gabinete/combo_estado.html";
+                            $this->combo_estados .= file_get_contents($filename);
+
+                            foreach($row as $key => $value)
+                            {
+                                $this->combo_estados = str_replace('{' . $key . '}', $value, $this->combo_estados);
+                            }
+                        }
+                    }
+                }
             }
             unset($this->result);
         }
@@ -450,6 +465,24 @@ namespace CEIT\mvc\controllers
         public function pedidos_delete($id)
         {
             $this->_template = $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);                
+                
+                if(isset($_POST["btnBorrar"]))
+                {
+                    $idGabinetPedido = filter_input(INPUT_POST, "hidIdGabinetePedido", FILTER_SANITIZE_NUMBER_INT);
+                    
+                    $modelPedido = new models\PedidoModel();
+                    $modelPedido->_idPedido = $idGabinetPedido;
+                    $this->result = $this->_model["Gabinete"]->Delete(array($modelPedido));
+                    unset($modelPedido);
+                    unset($this->result);
+                }
+            }
+            
+            $this->IdGabinetePedido = $id;
         }
         
         public function ajax_pedido_estado()
@@ -580,21 +613,7 @@ namespace CEIT\mvc\controllers
                 }
                 else
                 {
-                    $filename = BASE_DIR . "/mvc/templates/gabinete/caja_table_1_content.html";
-                    $this->table_1_content .= file_get_contents($filename);
-
-                    $default = array(
-                        'IdPedido'  =>  '',
-                        'Descripcion'   =>  '',
-                        'PrecioUnitario'    =>  '',
-                        'Cantidad'  =>  '',
-                        'Importe'   =>  '',
-                    );
-
-                    foreach($default as $key => $value)
-                    {
-                        $this->table_1_content = str_replace('{' . $key . '}', $value, $this->table_1_content);
-                    }
+                    $this->table_1_content = "";
                 }
             }
             
@@ -639,7 +658,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 if(isset($_POST['btnCobrar']))
                 {

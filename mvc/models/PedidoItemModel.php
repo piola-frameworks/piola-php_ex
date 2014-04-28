@@ -9,6 +9,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -27,6 +29,8 @@ namespace CEIT\mvc\models
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -51,6 +55,8 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if(empty($model))
             {
                 // No deberia entrar aca por que no se puede obtener directamente todos los items de todos los pedidos.
@@ -60,8 +66,10 @@ namespace CEIT\mvc\models
             {
                 $this->_sp = "sp_selPedidoItems";
                 $this->_params = array(
-                    ':idPedido' =>  (int)$this->_idPedido,
+                    ':idPedido' =>  (int)$model->_idPedido,
                 );
+                
+                //var_dump($this->_sp, $this->_params);
                 
                 return Database::getInstance()->DoQuery($this->_sp, $this->_params);
             }
@@ -73,6 +81,8 @@ namespace CEIT\mvc\models
         
         public function SelectEstadosAndMarkByIdPedidoItem(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selPedidoItemEstadoListAndSelected";
             $this->_params = array(
                 ':idItem' =>  (int)$model->_idItem
@@ -87,6 +97,8 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -116,6 +128,8 @@ namespace CEIT\mvc\models
         
         public function UpdateEstado(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;

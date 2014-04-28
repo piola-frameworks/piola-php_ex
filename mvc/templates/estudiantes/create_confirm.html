@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <h3 class="panel-title">Confirmar pedido</h3>
     </div>
-    <form class="form-horizontal" method="POST" role="form">
+    <form id="frmConfirmarPedido" class="form-horizontal" name="frmConfirmarPedido" method="POST" role="form">
         <div class="panel-body">
             <div class="well well-sm">
                 <p class="lead">Franja Horaria</p>
@@ -71,8 +71,12 @@
             <div class="form-group">
                 <label for="btnSi" class="col-sm-offset-6 col-sm-4 control-label">&iquest;Son correctos los items del pedido?</label>
                 <div class="col-sm-2">
-                    <button id="btnSi" class="btn btn-success" type="submit" name="btnSi">Si</button>
-                    <a id="btnNo" class="btn btn-danger" href="index.php?do=/estudiante/create" role="button">No</a>
+                    <button id="btnSi" class="btn btn-success" type="submit" name="btnSi">
+                        <span class="glyphicon glyphicon-ok"></span> Si
+                    </button>
+                    <a id="btnNo" class="btn btn-danger" href="index.php?do=/estudiante/create" role="button">
+                        <span class="glyphicon glyphicon-remove"></span> No
+                    </a>
                 </div>
             </div>
         </div>
@@ -127,5 +131,13 @@
     
     $("#btnMostrarCalendario").click(function() {
         $("#txtRetiro").datetimepicker("show");
+    });
+    
+    $("#frmConfirmarPedido").submit(function(e) {
+        var selectedDate = new Date($("#txtRetiro").val());
+        if (selectedDate <= limitDate) {
+            e.preventDefault();
+            alert("La fecha y horario que eligio para retirar el pedido no esta dentro del rango aceptado.");
+        }
     });
 </script>

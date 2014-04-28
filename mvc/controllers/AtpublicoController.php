@@ -347,11 +347,12 @@ namespace CEIT\mvc\controllers
                 {
                     $dni_legajo = filter_input(INPUT_POST, 'txtDNILegajo', FILTER_SANITIZE_NUMBER_INT);
                     
-                    // Panel Usuario
                     $modelUsuario = new models\UsuarioModel();
                     $modelUsuario->_legajoDNI = $dni_legajo;
                     $this->result = $this->_model['Usuarios']->SelectByLegajoOrDNI($modelUsuario);
+                    unset($modelUsuario);
                     //var_dump($this->result);
+                    
                     if(count($this->result) == 1)
                     {
                         foreach($this->result[0] as $key => $value)
@@ -360,11 +361,69 @@ namespace CEIT\mvc\controllers
                         }
                     }
                 }
+                
+                if(isset($_POST["btnGuardar"]))
+                {
+                    $idUsuario = filter_input(INPUT_POST, 'hidIdUsuario', FILTER_SANITIZE_NUMBER_INT);
+                    $creado = filter_input(INPUT_POST, 'txtCreado', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
+                    $descripcion = filter_input(INPUT_POST, 'txtDescripcionItem', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $hojas = filter_input(INPUT_POST, 'txtHojas', FILTER_SANITIZE_NUMBER_INT);
+                    $anillado = filter_input(INPUT_POST, 'chkAnillado', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $abrochado = filter_input(INPUT_POST, 'chkAbrochado', FILTER_SANITIZE_SPECIAL_CHARS);
+                    $simplefaz = filter_input(INPUT_POST, 'chkSimpleFaz', FILTER_SANITIZE_SPECIAL_CHARS);
+                    
+                    $modelTextoEspecial = new models\TextoModel();
+                    $modelTextoEspecial->_creadoPor = $_SESSION['IdUsuario'];
+                    $modelTextoEspecial->_creadoDia = $creado;
+                    $modelTextoEspecial->_modificadoPor = null;
+                    $modelTextoEspecial->_modificadoDia = null;
+                    $modelTextoEspecial->_codInterno = null;
+                    $modelTextoEspecial->_idMateria = null;
+                    $modelTextoEspecial->_idTipoTexto = 1;
+                    $modelTextoEspecial->_idTipoContenido = null;
+                    $modelTextoEspecial->_nombre = $descripcion;
+                    $modelTextoEspecial->_autor = null;
+                    $modelTextoEspecial->_docente = null;
+                    $modelTextoEspecial->_cantPaginas = $hojas;
+                    $modelTextoEspecial->_activo = 0;
+                    $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTextoEspecial));      
+                    unset($modelTextoEspecial);
+
+                    $modelPedido = new models\PedidoModel();
+                    $modelPedido->_idUsuario = $idUsuario;
+                    $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
+                    $modelPedido->_creadoDia = date("Y-m-d H:i:s");
+                    $modelPedido->_modificadoPor = null;
+                    $modelPedido->_modificadoDia = null;
+                    $modelPedido->_anillado = false;
+                    $modelPedido->_comentario = null;
+                    $modelPedido->_retiro = $retiro;
+                    $modelPedido->_idFranja = $idFranja;
+                    $modelPedido->_pagado = false;
+                    $modelPedido->_idEstado = 1;
+                    $modelPedido->_especial = true;
+                    $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
+                    unset($modelPedido);
+
+                    $modelPedidoItem = new models\PedidoItemModel();
+                    $modelPedidoItem->_idPedido = $this->_lastIdPedido;
+                    $modelPedidoItem->_cantidad = 1;
+                    $modelPedidoItem->_idTexto = $this->_lastIdTexto;
+                    $modelPedidoItem->_anillado = !empty($anillado) ? true : false;
+                    $modelPedidoItem->_abrochado = !empty($abrochado) ? true : false;
+                    $modelPedidoItem->_simpleFaz = !empty($simplefaz) ? true : false;
+                    $modelPedidoItem->_idEstado = 1;
+                    $this->_model['PedidoItems']->Insert(array($modelPedidoItem));
+                    unset($modelPedidoItem);
+                    
+                    header("Location: index.php?do=/atpublico/print_create/" . $this->_lastIdPedido);
+                }
             }
             
             // Combo de franjas horarias
             $this->result = $this->_model['Franjas']->Select();
-            //var_dump($this->result);
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
@@ -384,102 +443,86 @@ namespace CEIT\mvc\controllers
             unset($this->result);
         }
         
-        public function print_create()
+        public function print_create($id)
         {
             $this->_template = BASE_DIR . "/mvc/templates/at_publico/{$this->_action}.html";
             
-            if(!empty($_POST))
+            $modelPedido = new models\PedidoModel();
+            $modelPedido->_idPedido = $id;
+            $this->result = $this->_model["Pedidos"]->Select($modelPedido);
+            unset($modelPedido);
+            //var_dump($this->result);
+            if(count($this->result) == 1)
             {
-                //var_dump($_POST);
-                
-                $idUsuario = filter_input(INPUT_POST, 'hidIdUsuario', FILTER_SANITIZE_NUMBER_INT);
-                $this->Creado = $creado = filter_input(INPUT_POST, 'txtCreado', FILTER_SANITIZE_SPECIAL_CHARS);
-                $this->Retiro = $retiro = filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS);
-                $idFranja = filter_input(INPUT_POST, 'ddlFranja', FILTER_SANITIZE_NUMBER_INT);
-                $this->Descripcion = $descripcion = filter_input(INPUT_POST, 'txtDescripcionItem', FILTER_SANITIZE_SPECIAL_CHARS);
-                $this->CantidadHojas = $hojas = filter_input(INPUT_POST, 'txtHojas', FILTER_SANITIZE_NUMBER_INT);
-                $anillado = filter_input(INPUT_POST, 'chkAnillado', FILTER_SANITIZE_SPECIAL_CHARS);
-                $this->Anillado = !empty($anillado) ? "Si" : "No";
-                $abrochado = filter_input(INPUT_POST, 'chkAbrochado', FILTER_SANITIZE_SPECIAL_CHARS);
-                $this->Abrochado = !empty($abrochado) ? "Si" : "No";
-                $simplefaz = filter_input(INPUT_POST, 'chkSimpleFaz', FILTER_SANITIZE_SPECIAL_CHARS);
-                $this->SimpleFaz = !empty($simplefaz) ? "Si" : "No";
-                
-                if(isset($_POST['btnGuardar']))
+                foreach($this->result[0] as $key => $value)
                 {
-                    if(!empty($idUsuario) && !empty($creado) && !empty($retiro) && !empty($idFranja) && !empty($descripcion) && strlen($hojas) > 0)
+                    switch($key)
                     {
-                        // Guardo en la db.
-                        $modelTextoEspecial = new models\TextoModel();
-                        $modelTextoEspecial->_creadoPor = $_SESSION['IdUsuario'];
-                        $modelTextoEspecial->_creadoDia = $creado;
-                        $modelTextoEspecial->_modificadoPor = null;
-                        $modelTextoEspecial->_modificadoDia = null;
-                        $modelTextoEspecial->_codInterno = null;
-                        $modelTextoEspecial->_idMateria = null;
-                        $modelTextoEspecial->_idTipoTexto = 1;
-                        $modelTextoEspecial->_idTipoContenido = null;
-                        $modelTextoEspecial->_nombre = $descripcion;
-                        $modelTextoEspecial->_autor = null;
-                        $modelTextoEspecial->_docente = null;
-                        $modelTextoEspecial->_cantPaginas = $hojas;
-                        $modelTextoEspecial->_activo = 0;
-                        $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTextoEspecial));                        
-                        
-                        $modelPedido = new models\PedidoModel();
-                        $modelPedido->_idUsuario = $idUsuario;
-                        $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
-                        $modelPedido->_creadoDia = date("Y-m-d H:i:s");
-                        $modelPedido->_modificadoPor = null;
-                        $modelPedido->_modificadoDia = null;
-                        $modelPedido->_anillado = false;
-                        $modelPedido->_comentario = null;
-                        $modelPedido->_retiro = $retiro;
-                        $modelPedido->_idFranja = $idFranja;
-                        $modelPedido->_pagado = false;
-                        $modelPedido->_idEstado = 1;
-                        $modelPedido->_especial = true;
-                        $this->_lastIdPedido = $this->_model['Pedidos']->Insert(array($modelPedido));
-                        
-                        $this->IdPedido = $this->_lastIdPedido;
-                        
-                        $modelPedidoItem = new models\PedidoItemModel();
-                        $modelPedidoItem->_idPedido = $this->_lastIdPedido;
-                        $modelPedidoItem->_cantidad = 1;
-                        $modelPedidoItem->_idTexto = $this->_lastIdTexto;
-                        $modelPedidoItem->_anillado = !empty($anillado) ? true : false;
-                        $modelPedidoItem->_abrochado = !empty($abrochado) ? true : false;
-                        $modelPedidoItem->_simpleFaz = !empty($simplefaz) ? true : false;
-                        $modelPedidoItem->_idEstado = 1;
-                        $this->_model['PedidoItems']->Insert(array($modelPedidoItem));
+                        case "IdPedido":
+                            $this->IdPedido = $value;
+                            break;
+                        case "Creado":
+                            $this->Creado = $value;
+                            break;
+                        case "Retiro":
+                            $this->Retiro = $value;
+                            break;
+                        /*case "IdUsuario":
+                            $this->_idUsuario = $value;
+                            break;*/
+                        case "IdFranja":
+                            $this->_idFranja = $value;
+                            break;
+                        default:
+                            break;
                     }
-                    else
-                    {
-                        // falta completar campos obligatorios
-                    }
-                }
-                
-                $modelUsuario = new models\UsuarioModel();
-                $modelUsuario->_idUsuario = $idUsuario;
-                $this->result = $this->_model['Usuarios']->Select($modelUsuario);
-                //var_dump($this->result);
-                if(count($this->result) == 1)
-                {
-                    foreach($this->result[0] as $key => $value)
-                    {
-                        $this->{$key} = $value;
-                    }
-                }
-                
-                $modelFranjas = new models\HorarioFranjasModel();
-                $modelFranjas->_idFranja = $idFranja;
-                $this->result = $this->_model['Franjas']->Select($modelFranjas);
-                //var_dump($this->result);
-                if(count($this->result) == 1)
-                {
-                    $this->Franja = $this->result[0]['Desde'] . " hs.";
                 }
             }
+            unset($this->result);
+            
+            $modelFranjas = new models\HorarioFranjasModel();
+            $modelFranjas->_idFranja = $this->_idFranja;
+            $this->result = $this->_model["Franjas"]->Select($modelFranjas);
+            unset($modelFranjas);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->Franja = $this->result[0]['Desde'] . " hs.";
+            }
+            unset($this->result);
+            
+            $modelPedidoItems = new models\PedidoItemModel();
+            $modelPedidoItems->_idPedido = $id;
+            $this->result = $this->_model["PedidoItems"]->Select($modelPedidoItems);
+            unset($modelPedidoItems);
+            //var_dump($this->result);
+            if(count($this->result) == 1)
+            {
+                foreach($this->result[0] as $key => $value)
+                {
+                    switch($key)
+                    {
+                        case "Nombre":
+                            $this->Descripcion = $value;
+                            break;
+                        /*case "Anillado":
+                            $this->Anillado = $value == 0 ? "No" : "Si";
+                            break;
+                        case "Abrochado":
+                            $this->Abrochado = $value == 0 ? "No" : "Si";
+                            break;
+                        case "SimpleFaz":
+                            $this->SimpleFaz = $value == 0 ? "No" : "Si";
+                            break;
+                        case "Hojas":
+                            $this->CantidadHojas = $value;
+                            break;*/
+                        default:
+                            break;
+                    }
+                }
+            }
+            unset($this->result);
         }
         
         public function update($id)

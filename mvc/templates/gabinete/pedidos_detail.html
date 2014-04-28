@@ -78,7 +78,7 @@
                 </div>
             </fieldset>
             <div class="col-sm-offset-10 col-sm-2">
-                <button class="btn btn-warning hidden-print" type="submit" name="btnTerminar">
+                <button id="btnTerminar" class="btn btn-warning hidden-print" type="submit" name="btnTerminar" disabled="disabled">
                     <span class="glyphicon glyphicon-floppy-disk"></span> Terminar
                 </button>
                 <a class="btn btn-default hidden-print" href="index.php?do=/gabinete/pedidos_index">
@@ -125,44 +125,6 @@
     </div>
 </div>
 <script type="text/javascript">
-    /*function PrintThisDiv() {
-        var divDatos = document.getElementById('pnlPedidoDatos');
-        var divItems = document.getElementById('pnlPedidoItems');
-        var popup = window.open('about:blank', 'Datos del pedido', 'width=1170,height=500,scrollbars=yes');
-        var htmlContent = '<html lang="es-AR">\n\
-        <head>\n\
-        <meta charset="UTF-8">\n\
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">\n\
-        <meta name="viewport" content="width=device-width, initial-scale=1">\n\
-        \n\
-        <link rel="stylesheet" type="text/css" href="/public/css/bootstrap.min.css">\n\
-        <!--[if lt IE 9]>\n\
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"><\/script>\n\
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"><\/script>\n\
-        <![endif]-->\n\
-        <link rel="stylesheet" type="text/css" href="/public/css/smoothness/jquery-ui-1.10.4.custom.min.css">\n\
-        \n\
-        <script type="text/javascript" src="/public/js/jquery-2.1.0.min.js"><\/script>\n\
-        <script type="text/javascript" src="/public/js/jquery-ui-1.10.4.custom.min.js"><\/script>\n\
-        </head>\n\
-        <body>\n\
-            <div class="container">\n\
-                <div class="center-block">\n\
-                    <img class="img-responsive" src="/public/img/ceit_logo.png" width="259" height="50" alt="Ceit Logo" />\n\
-                    <img class="img-responsive" src="/public/img/logo3.png" width="146" height="50" alt="Apuntec Logo" />\n\
-                </div>\n\
-                ' + divDatos.innerHTML + '\n\
-                ' + divItems.innerHTML + '\n\
-                <a class="btn btn-success hidden-print" href="javascript:;" onclick="window.print();" role="button"><span class="glyphicon glyphicon-print"></span> Imprimir</a>\n\
-            </div>\n\
-            </body>\n\
-        </html>';
-
-        popup.document.write(htmlContent);
-        popup.document.close();
-        popup.focus();
-    }*/
-
     $(document).ready(function() {
         var countChk = 0;
         var countChkTrue = 0;
@@ -177,6 +139,7 @@
         if (countChk == countChkTrue) {
             $("#ddlPosicionX").removeAttr("disabled");
             $("#ddlPosicionY").removeAttr("disabled");
+            $("#btnTerminar").removeAttr("disabled");
         }
     });
 
