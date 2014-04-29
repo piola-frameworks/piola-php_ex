@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-sm-6">
-        <div class="panel panel-default">
+        <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Filtro</h3>
             </div>
@@ -18,18 +18,18 @@
         </div>
     </div>
     <div class="col-sm-6">
-        <div class="panel panel-default">
+        <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Verificar estado</h3>
             </div>
             <div class="panel-body">
-                <form class="form-inline" name="frmVericarPedido" role="form">
+                <form id="frmVerificarPedido" class="form-inline" role="form">
                     <div class="form-group">
                         <label class="sr-only" for="txtEstadoIDPedido">ID Pedido</label>
-                        <input type="text" class="form-control" id="txtEstadoIDPedido" name="txtEstadoIDPedido" placeholder="ID Pedido" required="required" onsubmit="return false;">
+                        <input type="text" class="form-control" id="txtEstadoIDPedido" name="txtEstadoIDPedido" placeholder="ID Pedido" required="required">
                     </div>
                     <div class="form-group">
-                        <button id="btnVerEstadoPedido" type="button" class="btn btn-default">
+                        <button id="btnVerEstadoPedido" type="submit" class="btn btn-default">
                             <span class="glyphicon glyphicon-search"></span> Verificar
                         </button>
                     </div>
@@ -95,6 +95,26 @@
         location.reload();
     });
 
+    $("#frmVerificarPedido").submit(function(e) {
+        e.preventDefault();
+        if($("#txtEstadoIDPedido").val().length > 0) {
+            $.ajax({
+                url: "index.php?do=/atpublico/ajax_pedido_estado",
+                type: "POST",
+                data: {idPedido: $("#txtEstadoIDPedido").val()},
+                success: function(data, textStatus, jqXHR) {
+                    var ret = JSON.parse(data);
+                    console.debug(ret[0]);
+                    $("#sEstadoIDPedido").text(ret[0].Descripcion);
+                    $("#sPagadoIDPedido").text(ret[0].Pagado);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error(jqXHR, textStatus, errorThrown);
+                }
+            });
+        };
+    });
+
     function postChangeItemStatus(item, value) {
         $.post(
                 "index.php?do=/atpublico/ajax_detail_item_change_status",
@@ -113,24 +133,5 @@
         } else {
             postChangeItemStatus(this.value, false);
         }
-    });
-
-    $("#btnVerEstadoPedido").click(function() {
-        if($("#txtEstadoIDPedido").val().length > 0) {
-            $.ajax({
-                url: "index.php?do=/atpublico/ajax_pedido_estado",
-                type: "POST",
-                data: {idPedido: $("#txtEstadoIDPedido").val()},
-                success: function(data, textStatus, jqXHR) {
-                    var ret = JSON.parse(data);
-                    console.debug(ret[0]);
-                    $("#sEstadoIDPedido").text(ret[0].Descripcion);
-                    $("#sPagadoIDPedido").text(ret[0].Pagado);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error(jqXHR, textStatus, errorThrown);
-                }
-            });
-        };
     });
 </script>

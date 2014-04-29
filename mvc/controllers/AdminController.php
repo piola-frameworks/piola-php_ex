@@ -253,27 +253,55 @@ namespace CEIT\mvc\controllers
          */
         public function estydoc_index()
         {
-            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/admin/estydoc/{$this->_action}.html";
+            
+            $this->result = $this->_model['Usuarios']->Select();
+            //var_dump($this->result);
+            
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/admin/estydoc/{$this->_action}_table.html";
+                        $this->table_user_content .= file_get_contents($filename);
+
+                        foreach($row as $key => $value)
+                        {
+                            if(!is_array($value))
+                            {
+                                $this->table_user_content = str_replace('{' . $key . '}', $value, $this->table_user_content);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                $this->table_user_content = "";
+            }
+            unset($this->result);
         }
         
         public function estydoc_create()
         {
-            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/admin/estydoc/{$this->_action}.html";
         }
         
         public function estydoc_detail($id)
         {
-            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/admin/estydoc/{$this->_action}.html";
         }
         
         public function estydoc_update($id)
         {
-            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/admin/estydoc/{$this->_action}.html";
         }
         
         public function estydoc_delete($id)
         {
-            $this->_template = BASE_DIR . "/mvc/templates/admin/{$this->_action}.html";
+            $this->_template = BASE_DIR . "/mvc/templates/admin/estydoc/{$this->_action}.html";
         }
         
         /*

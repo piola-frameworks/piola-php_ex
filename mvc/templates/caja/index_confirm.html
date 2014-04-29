@@ -3,7 +3,7 @@
         <h3 class="panel-title">Confirmar pago</h3>
     </div>
     <div class="panel-body">
-        <form class="form-horizontal" method="POST" role="form">
+        <form id="frmConfirmarPago" class="form-horizontal" method="POST" role="form">
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
@@ -47,10 +47,14 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-10 col-sm-1">
-                            <button type="submit" class="btn btn-success" name="btnCobrar">Cobrar</button>
+                            <button type="submit" class="btn btn-success" name="btnCobrar">
+                                <span class="glyphicon glyphicon-ok"></span> Cobrar
+                            </button>
                         </div>
                         <div class="col-sm-1">
-                            <a class="btn btn-danger" href="index.php?do=/caja/index">Volver</a>
+                            <a class="btn btn-danger" href="index.php?do=/caja/index">
+                                <span class="glyphicon glyphicon-remove"></span> Volver
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -64,5 +68,15 @@
         var paga = $(this).val();
 
         $('#txtVuelto').val((paga - subtotal).toFixed(2));
+    });
+    
+    $("#frmConfirmarPago").submit(function(e) {
+        var subtotal = $("#txtSubTotal").val();
+        var paga = $("#txtPaga").val();
+        
+        if(paga < subtotal) {
+            e.preventDefault();
+            alert("Cantidad de dinero a pagar es menor al subtotal.");
+        }
     });
 </script>

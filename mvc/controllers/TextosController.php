@@ -175,8 +175,8 @@ namespace CEIT\mvc\controllers
                             {
                                 case UPLOAD_ERR_OK:
                                     // Muevo el archivo al directorio donde van a estar todos los PDFs
-                                    $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "asd" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
-                                    $uploadfile = $uploaddir . $cod_texto . explode($_FILES["filePreview"]["type"], "/")[1];
+                                    $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "texts" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
+                                    $uploadfile = $uploaddir . $cod_texto . explode("/", $_FILES["filePreview"]["type"])[1];
 
                                     // Verifico de que existan los directorios.
                                     if(!is_dir($uploaddir))
@@ -208,7 +208,7 @@ namespace CEIT\mvc\controllers
                                     break;
 
                                 case UPLOAD_ERR_NO_FILE:
-                                    trigger_error("Ningún archivo fue subido.", E_USER_WARNING);
+                                    //trigger_error("Ningún archivo fue subido.", E_USER_WARNING);
                                     break;
 
                                 case UPLOAD_ERR_NO_TMP_DIR:
@@ -483,7 +483,7 @@ namespace CEIT\mvc\controllers
                     
                     if(!empty($_FILES))
                     {
-                        var_dump($_FILES);
+                        //var_dump($_FILES);
                         
                         $uploadDir = null;
                         
@@ -788,7 +788,7 @@ namespace CEIT\mvc\controllers
                                         
                                         if(in_array($_SESSION['Roles']['Nombre'], array('Administrador')))
                                         {
-                                            $file_button_delete = BASE_DIR . "/mvc/templates/textos/{$this->_action}_table_row_button_delete.html";
+                                            $file_button_delete = BASE_DIR . "/mvc/templates/textos/index_table_row_button_delete.html";
                                             $button = file_get_contents($file_button_delete);
                                             $button = str_replace("{IdTexto}", $row["IdTexto"], $button);
 
