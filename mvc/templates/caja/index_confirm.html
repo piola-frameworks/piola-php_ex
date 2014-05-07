@@ -74,7 +74,7 @@
         var subtotal = $("#txtSubTotal").val();
         var paga = $("#txtPaga").val();
         
-        if(paga < subtotal) {
+        if((paga - subtotal) < 0) {
             e.preventDefault();
             alert("Cantidad de dinero a pagar es menor al subtotal.");
         }

@@ -72,10 +72,11 @@ namespace CEIT\mvc\controllers
                     
                     $this->result = $this->_model["Reportes"]->SelectFotocopia($modelReporte);
                     unset($modelReporte);
-                    var_dump($this->result);
+                    //var_dump($this->result);
                     if(count($this->result) > 0)
                     {
-                        $this->Resultado = $this->result[0][0];
+                        $this->Resultado = $this->result[0]["CantPaginas"];
+                        //$this->Consulta = $this->result[0]["ConsultaFinal"];
                     }
                 }
             }

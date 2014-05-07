@@ -154,28 +154,6 @@ namespace CEIT\mvc\controllers
                     // Verfiico que esten enviado todos los datos y que ademas sean correctos.
                     if(!empty($variosIdItem) && !empty($variosDesc) && !empty($variosPU) && !empty($variosCant) && !empty($variosImp))
                     {
-                        /*$flagExist = false;
-                        
-                        foreach($tmpArray['Items'] as $item)
-                        {
-                            if($item['IdItem'] == $variosIdItem)
-                            {
-                                $flagExist = true;
-                                break;
-                            }
-                        }
-                                                
-                        if(!$flagExist)
-                        {
-                            $tmpArray['Items'][] = array(
-                                'IdItem'    =>  (string)$variosIdItem,
-                                'Descripcion'      =>  (string)$variosDesc,
-                                'PrecioUnitario'   =>  (float)$variosPU,
-                                'Cantidad'  =>  (int)$variosCant,
-                                'Importe'   =>  (float)$variosImp,
-                            );
-                        }*/
-                        
                         // Los agrego la lista de items.
                         $tmpArray['Items'][] = array(
                             'IdUnique'          =>  (string)$variosIdUnique,
@@ -208,8 +186,6 @@ namespace CEIT\mvc\controllers
                                 unset($tmpArray['Pedidos'][$index]);
                             }
                         }
-                        
-                        
                     }
                     
                     $_COOKIE['Caja'] = serialize($tmpArray);

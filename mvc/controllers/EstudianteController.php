@@ -662,10 +662,10 @@ namespace CEIT\mvc\controllers
                             $modelTP->_nombre = $nombre;
                             $modelTP->_autor = null;
                             $modelTP->_docente = null;
-                            $modelTP->_cantPaginas = $this->count_pages($_FILES['filArchivo']['tmp_name']);
+                            $modelTP->_cantPaginas = $this->getPDFPages($_FILES['filArchivo']['tmp_name']);
                             $modelTP->_activo = 0;
-                            var_dump($modelTP);
-                            return 0;
+                            //var_dump($modelTP);
+                            //return 0;
                             $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));                        
                             
                             $modelPedido = new models\PedidoModel();
@@ -767,6 +767,7 @@ namespace CEIT\mvc\controllers
             $pedido = new models\PedidoModel();
             $pedido->_idPedido = $id;
             $this->result = $this->_model['Pedidos']->Select($pedido);
+            //var_dump($this->result);
             unset($pedido);
             
             if(count($this->result) == 1)
@@ -781,6 +782,7 @@ namespace CEIT\mvc\controllers
             $pedidosItems = new models\PedidoModel();
             $pedidosItems->_idPedido = $id;
             $this->result = $this->_model['Pedidos']->SelectItem($pedidosItems);
+            //var_dump($this->result);
             unset($pedidosItems);
             
             if(count($this->result) == 1)
@@ -789,6 +791,79 @@ namespace CEIT\mvc\controllers
                 {
                     $this->{$key} = $value;
                 }     
+            }
+            unset($this->result);
+            
+            if(!empty($_POST))
+            {
+                //var_dump($_POST);
+                
+                if(isset($_POST["btnVolver"]))
+                {
+                    $retiro = filter_input(INPUT_POST, "txtRetiro", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $franja = filter_input(INPUT_POST, "ddlFranja", FILTER_SANITIZE_NUMBER_INT);
+                    $anillado = filter_input(INPUT_POST, "chkAnillado", FILTER_SANITIZE_STRING);
+                    $abrochado = filter_input(INPUT_POST, "chkAbrochado", FILTER_SANITIZE_STRING);
+                    $simplefaz = filter_input(INPUT_POST, "chkSimpleFaz", FILTER_SANITIZE_STRING);
+                    
+                    $modelPedido = new models\PedidoModel();
+                    $modelPedido->_idPedido = $this->IdPedido;
+                    $modelPedido->_idUsuario = $this->IdUsuario;
+                    $modelPedido->_creado = $this->Creado;
+                    $modelPedido->_creadoPor = $this->CreadoPor;
+                    $modelPedido->_modificado = date("Y-m-d H:i:s");
+                    $modelPedido->_modificadoPor = $_SESSION['IdUsuario'];
+                    $modelPedido->_anillado = false;
+                    $modelPedido->_comentario = null;
+                    $modelPedido->_retiro = $retiro;
+                    $modelPedido->_idFranja = $franja;
+                    $modelPedido->_pagado = false;
+                    $modelPedido->_idEstado = 1;
+                    $modelPedido->_especial = false;
+                    $this->_model['Pedidos']->Update(array($modelPedido));
+
+                    $modelPedidoItem = new models\PedidoItemModel();
+                    $modelPedidoItem->_idItem = $this->IdItem;
+                    $modelPedidoItem->_cantidad = 1;
+                    $modelPedidoItem->_idTexto = $this->RutaArchivo;
+                    $modelPedidoItem->_anillado = !empty($anillado) ? true : false;
+                    $modelPedidoItem->_abrochado = !empty($abrochado) ? true : false;
+                    $modelPedidoItem->_simpleFaz = !empty($simplefaz) ? true : false;
+                    $modelPedidoItem->_idEstado = 1;
+                    $this->_model['PedidoItems']->Update(array($modelPedidoItem));
+                    
+                    header("Location: index.php?do=/estudiante/index");
+                }
+            }
+            
+            $this->result = $this->_model["Franjas"]->Select();
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/estudiantes/combo_franja.html";
+                        $this->combo_franja .= file_get_contents($filename);
+                        
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case "IdHorarioFranja":
+                                    $this->combo_franja = str_replace("{IdHorarioFranja}", $value, $this->combo_franja);
+                                    $this->combo_franja = str_replace("{Seleccionado}", $this->IdFranja == $value ? "selected" : "", $this->combo_franja);
+                                    break;
+                                case "Descripcion":
+                                    $this->combo_franja = str_replace("{Descripcion}", $value, $this->combo_franja);
+                                    break;
+                                default:
+                                    $this->combo_franja = str_replace("{" . $key . "}", $value, $this->combo_franja);
+                                    break;
+                            }
+                        }
+                    }
+                }
             }
             unset($this->result);
         }
@@ -1349,10 +1424,10 @@ namespace CEIT\mvc\controllers
             $output = null;
             $matches = null;
             
-            //$cmd = "/usr/bin/pdfinfo";          // Linux
+            //$cmd = "/var/pdfinfo";          // Linux
             //$cmd = "C:\\pdfinfo.exe";           // Windows
 
-            $cmd = 'C:\Users\Puesto 2\Downloads\xpdfbin-win-3.03\xpdfbin-win-3.03\bin32\pdfinfo.exe';
+            $cmd = "E:\\pdfinfo.exe";
             
             // Parse entire output
             exec("$cmd $document", $output);
@@ -1395,6 +1470,8 @@ namespace CEIT\mvc\controllers
             
             return $num;
         }
+        
+        
     }
 }
 

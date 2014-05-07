@@ -1,48 +1,100 @@
 <div class="panel panel-success">
-  <div class="panel-heading">
-      <h3 class="panel-title">&iexcl;Carga existosa!</h3>
-  </div>
-  <div class="panel-body">
-      <div class="row">
-          <div class="col-sm-2">
-              <p class="text-right">
-                  <strong>N&ordm; pedido:</strong>
-              </p>
-          </div>
-          <div class="col-sm-4">
-              <p>{IdPedido}</p>
-          </div>
-          <div class="col-sm-2">
-              <p class="text-right">
-                  <strong>Retiro:</strong>
-              </p>
-          </div>
-          <div class="col-sm-4">
-              <p>{Retiro}</p>
-          </div>
-      </div>
-      <div class="row">
-          <div class="col-sm-2">
-              <p class="text-right">
-                  <strong>Descripcion:</strong>
-              </p>
-          </div>
-          <div class="col-sm-4">
-              <p>{Nombre}</p>
-          </div>
-          <div class="col-sm-2">
-              <p class="text-right">
-                  <strong>Hojas:</strong>
-              </p>
-          </div>
-          <div class="col-sm-4">
-              <p>{Hojas}</p>
-          </div>
-      </div>
-      <div class="row">
-            <div class="col-sm-offset-10 col-sm-2">
-                <a class="btn btn-default" href="index.php?do=/estudiante/index" role="button">Volver</a>
+    <div class="panel-heading">
+        <h3 class="panel-title">&iexcl;Carga existosa!</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" name="frmConfirmarDigital" method="POST" role="form">
+            <div class="form-group">
+                <label class="control-label col-sm-2">N&ordm; pedido:</label>
+                <div class="col-sm-2">
+                    <p class="form-control-static">{IdPedido}</p>
+                </div>
+                <label class="control-label col-sm-2">Descripci&oacute;n:</label>
+                <div class="col-sm-3">
+                    <p class="form-control-static">{Nombre}</p>
+                </div>
+                <label class="control-label col-sm-1">Hojas:</label>
+                <div class="col-sm-2">
+                    <p class="form-control-static">{Hojas}</p>
+                </div>
             </div>
-        </div>
-  </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">Retiro:</label>
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <input  class="form-control" type="text" name="txtRetiro" value="{Retiro}" required="required" readonly="readonly" />
+                        <span class="input-group-btn">
+                            <button id="btnMostrarCalendario" class="btn btn-primary" type="button">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <label class="control-label col-sm-2">Franja:</label>
+                <div class="col-sm-4">
+                    <select id="ddlFranja" class="form-control" name="ddlFranja" disabled="disabled">
+                        {combo_franja}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <label class="control-label col-sm-2">Opciones:</label>
+                </div>
+                <div class="col-sm-10">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="chkAnillado" name="chkAnillado" disabled="disabled"> Anillado
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="chkAbrochado" name="chkAbrochado" disabled="disabled"> Abrochado
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="chkSimpleFaz" name="chkSimpleFaz" disabled="disabled"> Simple Faz
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-11 col-sm-1">
+                    <button class="btn btn-default" type="submit" name="btnVolver">
+                        <span class="glyphicon glyphicon-arrow-left"></span> Volver
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
+<script>
+    var initDate = new Date({Retiro});
+    
+    $("input[name=txtRetiro]").datepicker({
+        dateFormat: "yy-mm-dd",
+        defaultDate: initDate,
+        minDate: 0,
+        beforeShowDay: $.datepicker.noWeekends
+    });
+    
+    $("#btnMostrarCalendario").click(function() {
+        $("input[name=txtRetiro]").datepicker("show");
+    })
+    
+    $("#chkAnillado").click(function() {
+        if(this.checked) {
+            $("#chkAbrochado").prop("checked", false);
+        }
+    });
+    
+    $("#chkAbrochado").click(function() {
+        if(this.checked) {
+            $("#chkAnillado").prop("checked", false);
+        }
+    });
+    
+    $(document).ready(function() {
+        if({Hojas} >= 50) {
+            $("#ddlFranja").removeAttr("disabled");
+            $("input[name=chkAnillado]").removeAttr("disabled");
+            $("input[name=chkAbrochado]").removeAttr("disabled");
+            $("input[name=chkSimpleFaz]").removeAttr("disabled");
+        }
+    });
+</script>

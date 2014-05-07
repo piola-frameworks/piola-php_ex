@@ -301,7 +301,7 @@ namespace CEIT\core
             
             if(is_null($parameter))
             {
-                return 'NULL';
+                return "NULL";
             }
             else if(is_bool($parameter))
             {

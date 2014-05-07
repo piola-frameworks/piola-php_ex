@@ -108,7 +108,6 @@ namespace CEIT\mvc\models
             {
                 array_push($this->_sp, "sp_updPedidoItem");
                 array_push($this->_params, array(
-                    ':idPedido'     =>  (int)$item->_idPedido,
                     ':idItem'       =>  (int)$item->_idItem,
                     ':cantidad'     =>  (int)$item->_cantidad,
                     ':idTexto'      =>  (int)$item->_idTexto,

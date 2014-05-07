@@ -124,7 +124,7 @@ namespace CEIT\mvc\controllers
                                         $modelTexto->_nombre = $nombre;
                                         $modelTexto->_autor = $autor;
                                         $modelTexto->_docente = $docente;
-                                        $modelTexto->_cantPaginas = $this->count_pages($uploadfile); //shell_exec("/usr/bin/pdfinfo " . $uploadfile . " | grep Pages: | awk '{print $2}'") or die("Error en la lectura de cantidad de paginas del PDF.");
+                                        $modelTexto->_cantPaginas = $this->getPDFPages($uploadfile); //shell_exec("/usr/bin/pdfinfo " . $uploadfile . " | grep Pages: | awk '{print $2}'") or die("Error en la lectura de cantidad de paginas del PDF.");
                                         $modelTexto->_activo = $activo == "on" ? true : false;
                                         $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTexto));
                                         unset($modelTexto);
@@ -297,8 +297,28 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                //var_dump($_POST);
+                var_dump($_POST);
+                
+                if(isset($_POST["btnBorrar"]))
+                {
+                    
+                }
             }
+            
+            $modelTexto = new models\TextoModel();
+            $modelTexto->_idTexto = $id;
+            $this->result = $this->_model["Textos"]->Select($modelTexto);
+            unset($modelTexto);
+            //var_dump($this->result);
+            
+            if(count($this->result) == 1)
+            {
+                foreach($this->result[0] as $key => $value)
+                {
+                    $this->{$key} = $value;
+                }
+            }
+            unset($this->result);
         }
 
         public function detail($id)
@@ -514,7 +534,7 @@ namespace CEIT\mvc\controllers
                                     $cod_materia = count($this->resultMateria) == 1 ? $this->resultMateria[0]["CodMateria"] : null;
                                     unset($modelMateria);
 
-                                    $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "asd" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
+                                    $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "texts" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
                                     $uploadfile = $uploaddir . $cod_texto . ".pdf";
                                     
                                     // Verifico de que existan los directorios.
@@ -526,7 +546,7 @@ namespace CEIT\mvc\controllers
                                     // Muevo el archivo.
                                     if(move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $uploadfile))
                                     {
-                                        $modelTexto->_cantPaginas = 1; //shell_exec("/usr/bin/pdfinfo " . $uploadfile . " | grep Pages: | awk '{print $2}'") or die("Error en la lectura de cantidad de paginas del PDF.");
+                                        $modelTexto->_cantPaginas = $this->getPDFPages($uploadfile); //shell_exec("/usr/bin/pdfinfo " . $uploadfile . " | grep Pages: | awk '{print $2}'") or die("Error en la lectura de cantidad de paginas del PDF.");
                                     }
                                     else
                                     {
@@ -574,8 +594,8 @@ namespace CEIT\mvc\controllers
                             {
                                 case UPLOAD_ERR_OK:
                                     // Muevo el archivo al directorio donde van a estar todos los PDFs
-                                    $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "asd" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
-                                    $uploadfile = $uploaddir . $cod_texto . explode($_FILES["filePreview"]["type"], "/")[1];
+                                    $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "texts" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
+                                    $uploadfile = $uploaddir . $cod_texto . ".jpg"; //explode("/", $_FILES["filePreview"]["type"])[1];
 
                                     // Verifico de que existan los directorios.
                                     if(!is_dir($uploaddir))
@@ -842,6 +862,34 @@ namespace CEIT\mvc\controllers
             $num = preg_match_all("/\/Page\W/", $pdftext, $dummy);
             
             return $num;
+        }
+        
+        private function getPDFPages($document)
+        {
+            $output = null;
+            $matches = null;
+            
+            //$cmd = "/var/pdfinfo";          // Linux
+            //$cmd = "C:\\pdfinfo.exe";           // Windows
+
+            $cmd = "E:\\pdfinfo.exe";
+            
+            // Parse entire output
+            exec("$cmd $document", $output);
+
+            // Iterate through lines
+            $pagecount = 0;
+            foreach($output as $op)
+            {
+                // Extract the number
+                if(preg_match("/Pages:\s*(\d+)/i", $op, $matches) === 1)
+                {
+                    $pagecount = intval($matches[1]);
+                    break;
+                }
+            }
+
+            return $pagecount;
         }
     }
 }

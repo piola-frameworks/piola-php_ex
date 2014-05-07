@@ -148,7 +148,7 @@
     </div>
 </div>
 <script type="text/javascript">    
-    var initDate = new Date();
+    /* var initDate = new Date();
     var plusOffset = 3;
     if(initDate.getDay() == 3) {
         plusOffset = 5;
@@ -160,6 +160,22 @@
         var date = new Date();
         date.setDate(date.getDate() + plusOffset);
         $('#txtRetiro').val(date.toISOString().slice(0, 10));
+    }); */
+    
+    $("form[name=frmPedido]").submit(function(e) {
+        //console.debug($("#txtRetiro").val());
+        if($("#txtRetiro").val() == "") {
+            e.preventDefault();
+            alert("Eliga una fecha para el retiro del pedido.");
+        }
+    });
+    
+    $('#txtRetiro').datepicker({
+        minDate: 0,
+        //defaultDate: plusOffset,
+        dateFormat: "yy-mm-dd",
+        showAnim: "slideDown",
+        beforeShowDay: $.datepicker.noWeekends
     });
     
     $("#chkAnillado").click(function() {
@@ -172,13 +188,5 @@
         if(this.checked) {
             $("#chkAnillado").prop("checked", false);
         }
-    });
-    
-    $('#txtRetiro').datepicker({
-        minDate: 0,
-        defaultDate: plusOffset,
-        dateFormat: "yy-mm-dd",
-        showAnim: "slideDown",
-        beforeShowDay: $.datepicker.noWeekends
     });
 </script>
