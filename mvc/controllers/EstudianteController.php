@@ -662,10 +662,12 @@ namespace CEIT\mvc\controllers
                             $modelTP->_nombre = $nombre;
                             $modelTP->_autor = null;
                             $modelTP->_docente = null;
-                            $modelTP->_cantPaginas = 1;
+                            $modelTP->_cantPaginas = $this->count_pages($_FILES['filArchivo']['tmp_name']);
                             $modelTP->_activo = 0;
+                            var_dump($modelTP);
+                            return 0;
                             $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTP));                        
-
+                            
                             $modelPedido = new models\PedidoModel();
                             $modelPedido->_idUsuario = $_SESSION['IdUsuario'];
                             $modelPedido->_creadoPor = $_SESSION['IdUsuario'];
@@ -1368,6 +1370,30 @@ namespace CEIT\mvc\controllers
             }
 
             return $pagecount;
+        }
+        
+        public function count_pages($pdfname)
+        {    
+            $num = 0;
+            
+            $pdftext = file_get_contents($pdfname);
+            if($pdftext === false)
+            {
+                echo 'No leyo el archivo.';
+            }
+            else
+            {
+                var_dump($pdftext);
+                
+                $num = preg_match_all("/\/Page\W/", $pdftext, $dummy);
+                
+                if($num == false)
+                {
+                    echo 'No funco la funcion.';
+                }
+            }
+            
+            return $num;
         }
     }
 }

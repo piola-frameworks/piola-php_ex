@@ -124,10 +124,11 @@ namespace CEIT\mvc\controllers
                                         $modelTexto->_nombre = $nombre;
                                         $modelTexto->_autor = $autor;
                                         $modelTexto->_docente = $docente;
-                                        $modelTexto->_cantPaginas = 1; //shell_exec("/usr/bin/pdfinfo " . $uploadfile . " | grep Pages: | awk '{print $2}'") or die("Error en la lectura de cantidad de paginas del PDF.");
+                                        $modelTexto->_cantPaginas = $this->count_pages($uploadfile); //shell_exec("/usr/bin/pdfinfo " . $uploadfile . " | grep Pages: | awk '{print $2}'") or die("Error en la lectura de cantidad de paginas del PDF.");
                                         $modelTexto->_activo = $activo == "on" ? true : false;
                                         $this->_lastIdTexto = $this->_model['Textos']->Insert(array($modelTexto));
                                         unset($modelTexto);
+                                        echo "CARGA CORRECTA DEL TEXTO\n";
                                     }
                                     else
                                     {
@@ -176,7 +177,7 @@ namespace CEIT\mvc\controllers
                                 case UPLOAD_ERR_OK:
                                     // Muevo el archivo al directorio donde van a estar todos los PDFs
                                     $uploaddir = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "texts" . DIRECTORY_SEPARATOR . $cod_carrera . DIRECTORY_SEPARATOR . $cod_nivel . DIRECTORY_SEPARATOR . $cod_materia . DIRECTORY_SEPARATOR . $contenido . DIRECTORY_SEPARATOR;
-                                    $uploadfile = $uploaddir . $cod_texto . explode("/", $_FILES["filePreview"]["type"])[1];
+                                    $uploadfile = $uploaddir . $cod_texto . ".jpg"; //. explode("/", $_FILES["filePreview"]["type"])[1];
 
                                     // Verifico de que existan los directorios.
                                     if(!is_dir($uploaddir))
@@ -832,6 +833,15 @@ namespace CEIT\mvc\controllers
                 $materiaModel->_idNivel = filter_input(INPUT_POST, 'idNivel', FILTER_SANITIZE_NUMBER_INT);
                 $this->result = $this->_model['Materias']->SelectByIdNivel($materiaModel);
             }
+        }
+        
+        public function count_pages($pdfname)
+        {
+            
+            $pdftext = file_get_contents($pdfname);
+            $num = preg_match_all("/\/Page\W/", $pdftext, $dummy);
+            
+            return $num;
         }
     }
 }

@@ -1,24 +1,104 @@
-<div class="panel panel-default">
+<div class="panel panel-primary">
     <div class="panel-heading">
-        <h3 class="panel-title">Por mes</h3>
+        <h3 class="panel-title">Fotocopias</h3>
     </div>
     <div class="panel-body">
-        Panel content
+        <form class="form-horizontal" name="frmFotocopia" method="POST" role="form">
+            <div class="form-group">
+                <label for="txtDesde" class="col-sm-1 control-label">Desde</label>
+                <div class="col-sm-5">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="txtDesde" name="txtDesde" placeholder="Desde" readonly="readonly">
+                        <span class="input-group-btn">
+                            <button id="btnDesde" class="btn btn-info" type="button">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <label for="txtHasta" class="col-sm-1 control-label">Hasta</label>
+                <div class="col-sm-5">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="txtHasta" name="txtHasta" placeholder="Hasta" readonly="readonly">
+                        <span class="input-group-btn">
+                            <button id="btnHasta" class="btn btn-info" type="button">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label">Faz</label>
+                <div class="col-sm-5">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="chkSimple" value="1"> Simple
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="chkDoble" value="1"> Doble
+                    </label>
+                </div>
+                <label for="ddlTurno" class="col-sm-1 control-label">Turno</label>
+                <div class="col-sm-5">
+                    <select id="ddlTurno" class="form-control" name="ddlTurno">
+                        <option value="0" selected="selected">Todos</option>
+                        <option value="1">Ma&ntilde;ana</option>
+                        <option value="2">Tarde</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label">Tipo</label>
+                <div class="col-sm-5">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="chkSistema" value="1"> Sistema
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="chkEspecial" value="1"> Especial
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="chkSuelta" value="1"> Suelta
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-11 col-sm-1">
+                    <button type="submit" name="btnGenerar" class="btn btn-success">
+                        <span class="glyphicon glyphicon-refresh"></span> Generar
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="well">
+            <strong>Resultado:</strong> {Resultado}
+        </div>
     </div>
 </div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Por dia</h3>
-    </div>
-    <div class="panel-body">
-        Panel content
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Por empleado</h3>
-    </div>
-    <div class="panel-body">
-        Panel content
-    </div>
-</div>
+<script type="text/javascript">
+    $(function() {
+        $("#txtDesde").datepicker({
+            dateFormat: "yy-mm-dd",
+            changeMonth: true,
+            changeYear: true,
+            onClose: function(selectedDate) {
+                $("#txtHasta").datepicker("option", "minDate", selectedDate);
+            }
+        });
+        $("#txtHasta").datepicker({
+            dateFormat: "yy-mm-dd",
+            changeMonth: true,
+            changeYear: true,
+            onClose: function(selectedDate) {
+                $("#txtDesde").datepicker("option", "maxDate", selectedDate);
+            }
+        });
+
+        $("#btnDesde").click(function() {
+            $("#txtDesde").datepicker("show");
+        });
+
+        $("#btnHasta").click(function() {
+            $("#txtHasta").datepicker("show");
+        });
+    });
+</script>

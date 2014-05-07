@@ -88,8 +88,7 @@
     var limitDate = new Date("{DiaRetiro} {HoraRetiro}");
     
     var logic = function(selectedDateTime) {
-        // 'this' is jquery object datetimepicker
-	if(limitDate >= selectedDateTime){
+        if(limitDate >= selectedDateTime){
             this.setOptions({
                 minDate: "{DiaRetiro}",
                 minTime: "{HoraRetiro}"
@@ -135,7 +134,7 @@
     
     $("#frmConfirmarPedido").submit(function(e) {
         var selectedDate = new Date($("#txtRetiro").val());
-        if (selectedDate <= limitDate) {
+        if (limitDate >= selectedDate) {
             e.preventDefault();
             alert("La fecha y horario que eligio para retirar el pedido no esta dentro del rango aceptado.");
         }

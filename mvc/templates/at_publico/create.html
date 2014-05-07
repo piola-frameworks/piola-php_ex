@@ -148,9 +148,17 @@
     </div>
 </div>
 <script type="text/javascript">    
+    var initDate = new Date();
+    var plusOffset = 3;
+    if(initDate.getDay() == 3) {
+        plusOffset = 5;
+    } else if (initDate.getDay() == 4) {
+        plusOffset = 4;
+    }
+    
     $(document).ready(function() {
         var date = new Date();
-        date.setDate(date.getDate() + 3);
+        date.setDate(date.getDate() + plusOffset);
         $('#txtRetiro').val(date.toISOString().slice(0, 10));
     });
     
@@ -168,7 +176,7 @@
     
     $('#txtRetiro').datepicker({
         minDate: 0,
-        defaultDate: +3,
+        defaultDate: plusOffset,
         dateFormat: "yy-mm-dd",
         showAnim: "slideDown",
         beforeShowDay: $.datepicker.noWeekends
