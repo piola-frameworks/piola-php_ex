@@ -8,6 +8,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -21,11 +23,13 @@ namespace CEIT\mvc\models
                 ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -40,6 +44,7 @@ namespace CEIT\mvc\models
                     ':subTotal'     =>  (float)$item->_subTotal,
                     ':pago'         =>  (float)$item->_pago,
                     ':vuelto'       =>  (float)$item->_vuelto,
+                    ':gabinete'     =>  (bool)$item->_gabinete,
                 ));
             }
             
@@ -48,6 +53,8 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if(!empty($model))
             {
                 $this->_sp = "sp_sel";
@@ -71,6 +78,8 @@ namespace CEIT\mvc\models
         
         public function SelectCierraCaja()
         {
+            $this->init();
+            
             $this->_sp = "sp_selCajaCierreParcial";
             
             return Database::getInstance()->DoQuery($this->_sp);
@@ -82,6 +91,8 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -89,13 +100,19 @@ namespace CEIT\mvc\models
             
             foreach($model as $item)
             {
-                array_push($this->_sp, "sp_");
+                array_push($this->_sp, "sp_updCaja");
                 array_push($this->_params, array(
-                    ''  =>  $item,
+                    ':idCaja'       =>  (int)$item->_idCaja,
+                    ':creadoPor'    =>  (int)$item->_creadoPor,
+                    ':creado'       =>  (string)$item->_creado,
+                    ':subTotal'     =>  (float)$item->_subTotal,
+                    ':pago'         =>  (float)$item->_pago,
+                    ':vuelto'       =>  (float)$item->_vuelto,
+                    ':gabinete'     =>  (bool)$item->_gabinete,
                 ));
             }
             
-            Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
+            return Database::getInstance()->DoNonQuery($this->_sp, $this->_params, $this->_trans);
         }
     }
 }

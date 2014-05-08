@@ -5,16 +5,12 @@
     <div class="panel-body">
         <form id="frmCrearTexto" class="form-horizontal" name="frmCrearTexto" method="POST" enctype="multipart/form-data" role="form">
             <div class="form-group">
+                <!-- Titulo -->
                 <label for="txtNombre" class="col-sm-2 control-label">Titulo</label>
                 <div class="col-sm-4">
                     <input id="txtNombre" class="form-control" type="text" name="txtNombre" maxlength="200" placeholder="Nombre del texto" required="required">
                 </div>
-                <label for="txtCodigo" class="col-sm-2 control-label">Codigo</label>
-                <div class="col-sm-4">
-                    <input id="txtCodigo" class="form-control" type="text" name="txtCodigo" maxlength="20" placeholder="Codigo interno">
-                </div>
-            </div>
-            <div class="form-group">
+                <!-- Carrera -->
                 <label for="ddlCarrera" class="col-sm-2 control-label">Carrera</label>
                 <div class="col-sm-4">
                     <select id="ddlCarrera" class="form-control" name="ddlCarrera" required="required">
@@ -22,6 +18,14 @@
                         {combo_carreras}
                     </select>
                 </div>
+            </div>
+            <div class="form-group">
+                <!-- Autor -->
+                <label for="txtAutor" class="col-sm-2 control-label">Autor</label>
+                <div class="col-sm-4">
+                    <input id="txtAutor" class="form-control" type="text" name="txtAutor" maxlength="50" placeholder="Autor">
+                </div>
+                <!-- Nivel -->
                 <label for="ddlNivel" class="col-sm-2 control-label">Nivel</label>
                 <div class="col-sm-4">
                     <select id="ddlNivel" class="form-control" name="ddlNivel" required="required">
@@ -31,6 +35,12 @@
                 </div>
             </div>
             <div class="form-group">
+                <!-- Docente -->
+                <label for="txtDocente" class="col-sm-2 control-label">Docente</label>
+                <div class="col-sm-4">
+                    <input id="txtDocente" class="form-control" type="text" name="txtDocente" maxlength="50" placeholder="Docente">
+                </div>
+                <!-- Materia -->
                 <label for="ddlMateria" class="col-sm-2 control-label">Materia</label>
                 <div class="col-sm-4">
                     <select id="ddlMateria" class="form-control" name="ddlMateria" required="required">
@@ -38,6 +48,14 @@
                         {combo_materias}
                     </select>
                 </div>
+            </div>
+            <div class="form-group">
+                <!-- Codigo interno -->
+                <label for="txtCodigo" class="col-sm-2 control-label">Codigo</label>
+                <div class="col-sm-4">
+                    <input id="txtCodigo" class="form-control" type="text" name="txtCodigo" maxlength="20" placeholder="Codigo interno">
+                </div>
+                <!-- Tipo contenido -->
                 <label for="ddlTipoContenido" class="col-sm-2 control-label">Contenido</label>
                 <div class="col-sm-4">
                     <select id="ddlTipoContenido" class="form-control" name="ddlTipoContenido" required="required">
@@ -47,22 +65,14 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="txtAutor" class="col-sm-2 control-label">Autor</label>
-                <div class="col-sm-4">
-                    <input id="txtAutor" class="form-control" type="text" name="txtAutor" maxlength="50" placeholder="Autor">
-                </div>
-                <label for="txtDocente" class="col-sm-2 control-label">Docente</label>
-                <div class="col-sm-4">
-                    <input id="txtDocente" class="form-control" type="text" name="txtDocente" maxlength="50" placeholder="Docente">
-                </div>
-            </div>
-            <div class="form-group">
+                <!-- PDF -->
                 <label class="col-sm-2 control-label" for="fileTextoPDF">Archivo</label>
                 <div class="col-sm-4">
                     <input type="hidden" name="MAX_FILE_SIZE" value="104857600" />
                     <input id="fileToUpload" class="form-control" type="file" name="fileToUpload" accept="application/pdf" required="required">
                     <p class="help-block">Este archivo debe ser un PDF y su tamaño menor o igual a 100 MiB.</p>
                 </div>
+                <!-- Activo -->
                 <div class="col-sm-offset-2 col-sm-4">
                     <div class="checkbox">
                         <label for="chkActivo">
@@ -72,6 +82,7 @@
                 </div>
             </div>
             <div class="form-group">
+                <!-- Imagen previsualizacion -->
                 <label class="col-sm-2 control-label" for="filePreview">Previsualizaci&oacute;n</label>
                 <div class="col-sm-4">
                     <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />

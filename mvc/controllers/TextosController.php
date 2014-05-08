@@ -276,6 +276,9 @@ namespace CEIT\mvc\controllers
             unset($this->result);
         }
 
+        /*
+         * @deprecated
+         */
         public function ajax_upload_progress()
         {
             if(!empty($_POST))
@@ -292,16 +295,47 @@ namespace CEIT\mvc\controllers
         
         public function delete($id)
         {
-            // seteo el template
             $this->_template = BASE_DIR . "/mvc/templates/textos/{$this->_action}.html";
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 if(isset($_POST["btnBorrar"]))
                 {
+                    // Borro el archivo localmente.
+                    $modelTexto = new models\TextoModel();
+                    $modelTexto->_idTexto = $id;
+                    $this->resultTexto = $this->_model["Textos"]->Select($modelTexto);
+                    unset($modelTexto);
+                    //var_dump($this->resultTexto);
+                    if(count($this->resultTexto) > 0)
+                    {
+                        $filename = BASE_DIR . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "texts" . DIRECTORY_SEPARATOR . $this->resultTexto[0]["RutaArchivo"];
+                        
+                        if(file_exists($filename . ".pdf"))
+                        {
+                            unlink($filename . ".pdf");
+                        }
+                        
+                        if(file_exists($filename . ".jpg"))
+                        {
+                            unlink($filename . ".jpg");
+                        }
+                    }
+                    else
+                    {
+                        trigger_error("No se encontró el texto.", E_USER_ERROR);
+                    }
+                    unset($this->resultTexto);
                     
+                    // Borro el texto de la base de datos
+                    $modelTexto = new models\TextoModel();
+                    $modelTexto->_idTexto = $id;
+                    $this->_model["Textos"]->Delete(array($modelTexto));
+                    unset($modelTexto);
+                    
+                    header("Location: index.php?do=/textos/index");
                 }
             }
             

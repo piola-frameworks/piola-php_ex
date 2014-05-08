@@ -48,6 +48,7 @@ namespace CEIT\core
                                                 . '<li><a href="index.php?do=/reportes/fotocopias">Fotocopias</a></li>'
                                                 . '<li><a href="index.php?do=/reportes/pedidos">Pedidos</a></li>'
                                                 . '<li><a href="index.php?do=/reportes/caja">Caja</a></li>'
+                                                . '<li><a href="index.php?do=/reportes/gabinete">Gabinete</a></li>'
                                                 . '<li><a href="index.php?do=/reportes/facturacion">Facturacion</a></li>'
                                                 . '<li><a href="index.php?do=/reportes/usuarios">Usuarios</a></li>'
                                                 . '<li><a href="index.php?do=/reportes/textos">Textos</a></li>'

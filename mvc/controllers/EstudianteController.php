@@ -816,11 +816,13 @@ namespace CEIT\mvc\controllers
                     $modelPedido->_anillado = false;
                     $modelPedido->_comentario = null;
                     $modelPedido->_retiro = $retiro;
-                    $modelPedido->_idFranja = $franja;
+                    $modelPedido->_idFranja = !empty($franja) ? $franja : $this->IdFranja;
                     $modelPedido->_pagado = false;
                     $modelPedido->_idEstado = 1;
                     $modelPedido->_especial = false;
+                    var_dump($modelPedido);
                     $this->_model['Pedidos']->Update(array($modelPedido));
+                    unset($modelPedido);
 
                     $modelPedidoItem = new models\PedidoItemModel();
                     $modelPedidoItem->_idItem = $this->IdItem;

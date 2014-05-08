@@ -12,6 +12,10 @@
                                 <tr>
                                     <th>Id</th>
                                     <th>Descripcion</th>
+                                    <th>
+                                        <abbr title="Precio Unitario">PU</abbr>
+                                    </th>
+                                    <th>Cantidad</th>
                                     <th>Importe</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -80,5 +84,100 @@
                 </form>
             </div>
         </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Otros</h3>
+            </div>
+            <div class="panel-body">
+                <form name="frmAgregarItem" method="POST" role="form">
+                    <input type="hidden" name="hidAnillado" value="{Anillado}" />
+                    <input type="hidden" name="hidSimpleFaz" value="{SimpleFaz}" />
+                    <input type="hidden" name="hidDobleFaz" value="{PrecioCEIT}" />
+                    <input type="hidden" name="hidIdUniqueItem" value="{IdUniqueItem}" />
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Id Item</th>
+                                    <th>Cantidad</th>
+                                    <th>Importe</th>
+                                    <th>Acciones</th>
+                                </tr>    
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-control" name="ddlItemTipo">
+                                            <option disabled="disabled" selected="selected">Seleccione un item</option>
+                                            <option value="ANI">Anillado</option>
+                                            <option value="LIB">Art. de Libreria</option>
+                                            <option value="FSF">Fot Sueltas - Simple Faz</option>
+                                            <option value="FDF">Fot Sueltas - Doble Faz</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" name="txtCantidad" type="number" min="1" step="1" value="1" required="required" readonly="readonly" />
+                                    </td>
+                                    <td>
+                                        <input class="form-control" name="txtImporte" type="number" min="0" step="0.05" />
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" name="btnAgregarItem" type="submit">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+<script type="text/javascript">
+    $('select[name=ddlItemTipo]').change(function() {
+        switch($('select[name=ddlItemTipo]').val()) {
+            case "ANI":
+                $("input[name=txtImporte]").val($("input[name=hidAnillado]").val());
+                $("input[name=txtImporte]").attr("readonly", "readonly");
+                $('input[name=txtCantidad]').val(1);
+                $('input[name=txtCantidad]').removeAttr("readonly");
+            break;
+           
+            case "LIB":
+                $("input[name=txtImporte]").val("");
+                $('input[name=txtImporte]').removeAttr("readonly");
+                $('input[name=txtCantidad]').removeAttr("readonly");
+                break;
+                
+            case "FSF":
+                $("input[name=txtImporte]").val($("input[name=hidSimpleFaz]").val());
+                $("input[name=txtImporte]").attr("readonly", "readonly");
+                $('input[name=txtCantidad]').removeAttr("readonly");
+                break;
+            
+            case "FDF":
+                $("input[name=txtImporte]").val($("input[name=hidDobleFaz]").val());
+                $("input[name=txtImporte]").attr("readonly", "readonly");
+                $('input[name=txtCantidad]').removeAttr("readonly");
+                break;
+            
+            default:
+                $("input[name=txtImporte]").val("");
+                break;
+        }
+    });
+
+    $("button[name=btnCierreCaja]").click(function() {
+        $.ajax({
+            url: "index.php?do=/gabinete/ajax_get_cierre_caja",
+            type: "GET",
+            async: true,
+            dataType: "json"
+        })
+        .done(function(msg) {
+            alert("Total hasta el momento: $" + msg[0].Total + " " + msg[0].Tiempo);
+        });
+    });
+</script>

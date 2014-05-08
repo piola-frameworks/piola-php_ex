@@ -141,6 +141,15 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
+        public function SelectOperarios()
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selOperarios";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
         /*
          * End custom selects
          */
