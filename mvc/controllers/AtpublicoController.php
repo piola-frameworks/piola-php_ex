@@ -15,12 +15,13 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
-                    'Usuarios'      =>  new models\UsuarioModel(),
-                    'Textos'        =>  new models\TextoModel(),
-                    'Pedidos'       =>  new models\PedidoModel(),
-                    'PedidoItems'   =>  new models\PedidoItemModel(),
-                    'PedidoEstados' =>  new models\PedidoEstadosModel(),
-                    'Franjas'       =>  new models\HorarioFranjasModel(),
+                    'Usuarios'          =>  new models\UsuarioModel(),
+                    'Textos'            =>  new models\TextoModel(),
+                    'Pedidos'           =>  new models\PedidoModel(),
+                    'PedidoItems'       =>  new models\PedidoItemModel(),
+                    'PedidoEstados'     =>  new models\PedidoEstadosModel(),
+                    'Franjas'           =>  new models\HorarioFranjasModel(),
+                    "Configuraciones"   =>  new models\WebModel(),
                 );
             }
             
@@ -324,6 +325,8 @@ namespace CEIT\mvc\controllers
                 }
             }
             unset($this->result);
+            
+            
         }
         
         public function create()
@@ -439,6 +442,14 @@ namespace CEIT\mvc\controllers
                         }
                     }
                 }
+            }
+            unset($this->result);
+            
+            $this->result = $this->_model["Configuraciones"]->SelectFeriados();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->Feriados = $this->result[0]["ListaFeriado"];
             }
             unset($this->result);
         }

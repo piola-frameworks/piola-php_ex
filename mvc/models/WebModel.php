@@ -9,6 +9,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -27,6 +29,8 @@ namespace CEIT\mvc\models
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1 && count($model) < 0)
             {
                 $this->_trans = true;
@@ -50,6 +54,8 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if($model != null)
             {
                 $this->_sp = "sp_selConfiguracion";
@@ -67,8 +73,27 @@ namespace CEIT\mvc\models
             }
         }
 
+        /*
+         * Start custom selects
+         */
+        
+        public function SelectFeriados()
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selFeriados";
+                
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
+        /*
+         * End custom selects
+         */
+        
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1 && count($model) < 0)
             {
                 $this->_trans = true;
@@ -77,7 +102,6 @@ namespace CEIT\mvc\models
             foreach($model as $item)
             {
                 array_push($this->_sp, "sp_updConfiguracion");
-                
                 array_push(
                     $this->_params,
                     array(

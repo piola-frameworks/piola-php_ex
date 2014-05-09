@@ -15,9 +15,10 @@ namespace CEIT\mvc\controllers
             if(empty($this->_model))
             {
                 $this->_model = array(
-                    "Usuarios"  => new models\UsuarioModel(),
-                    "Franjas"   => new models\HorarioFranjasModel(),
-                    "Reportes"  => new models\ReporteModel(),
+                    "Usuarios"          => new models\UsuarioModel(),
+                    "Franjas"           => new models\HorarioFranjasModel(),
+                    "Reportes"          => new models\ReporteModel(),
+                    "Configuraciones"   => new models\WebModel(),
                 );
             }
             
@@ -82,6 +83,14 @@ namespace CEIT\mvc\controllers
                     }
                 }
             }
+            
+            $this->result = $this->_model["Configuraciones"]->SelectFeriados();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->Feriados = $this->result[0]["ListaFeriado"];
+            }
+            unset($this->result);
         }
         
         public function pedidos()
@@ -92,7 +101,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 if(isset($_POST["btnGenerar"]))
                 {
@@ -109,7 +118,7 @@ namespace CEIT\mvc\controllers
                     
                     $this->result = $this->_model["Reportes"]->SelectPedidos($modelReporte);
                     unset($modelReporte);
-                    var_dump($this->result);
+                    //var_dump($this->result);
                     if(count($this->result) > 0)
                     {
                         $this->Resultado = $this->result[0]["CantPedidos"];
@@ -165,6 +174,14 @@ namespace CEIT\mvc\controllers
                 trigger_error("No existe ningun operario.", E_USER_ERROR);
             }
             unset($this->result);
+            
+            $this->result = $this->_model["Configuraciones"]->SelectFeriados();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->Feriados = $this->result[0]["ListaFeriado"];
+            }
+            unset($this->result);
         }
         
         public function caja()
@@ -175,7 +192,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 if(isset($_POST["btnGenerar"]))
                 {
@@ -222,6 +239,14 @@ namespace CEIT\mvc\controllers
             else
             {
                 trigger_error("No existe ningun operario.", E_USER_ERROR);
+            }
+            unset($this->result);
+            
+            $this->result = $this->_model["Configuraciones"]->SelectFeriados();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->Feriados = $this->result[0]["ListaFeriado"];
             }
             unset($this->result);
         }
@@ -283,6 +308,14 @@ namespace CEIT\mvc\controllers
                 trigger_error("No existe ningun operario.", E_USER_ERROR);
             }
             unset($this->result);
+            
+            $this->result = $this->_model["Configuraciones"]->SelectFeriados();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->Feriados = $this->result[0]["ListaFeriado"];
+            }
+            unset($this->result);
         }
         
         public function facturacion()
@@ -306,14 +339,33 @@ namespace CEIT\mvc\controllers
                     
                     $this->result = $this->_model["Reportes"]->SelectFacturacion($modelReporte);
                     unset($modelReporte);
-                    var_dump($this->result);
+                    //var_dump($this->result);
                     if(count($this->result) > 0)
                     {
-                        $this->Resultado = $this->result[0]["SubTotal"];
-                        //$this->Consulta = $this->result[0]["ConsultaFinal"];
+                        foreach($this->result as $row)
+                        {
+                            if(is_array($row))
+                            {
+                                $filename = BASE_DIR . "/mvc/templates/reportes/{$this->_action}_table.html";
+                                $this->table_content .= file_get_contents($filename);
+                                
+                                foreach($row as $key => $value)
+                                {
+                                    $this->table_content = str_replace('{' . $key . '}', $value, $this->table_content);
+                                }
+                            }
+                        }
                     }
                 }
             }
+            
+            $this->result = $this->_model["Configuraciones"]->SelectFeriados();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->Feriados = $this->result[0]["ListaFeriado"];
+            }
+            unset($this->result);
         }
         
         public function usuarios()

@@ -1,36 +1,80 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h2 class="panel-title">Nuevo usuario:</h2>
-  </div>
-  <div class="panel-body">
-    <form name="frmCrearUsuario" method="POST" role="form">
-        <fieldset>
-            <legend>Datos</legend>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Nuevo usuario:</h2>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" name="frmCrearUsuario" method="POST" role="form">
             <div class="form-group">
-                <label for="txtUsuario">Usuario:</label>
-                <input id="txtUsuario" class="form-control" name="txtUsuario" type="text" size="20" maxlength="20" disabled="disabled" readonly="readonly" />
+                <label for="txtUsuario" class="col-sm-1 control-label">Usuario:</label>
+                <div class="col-sm-4">
+                    <input id="txtUsuario" class="form-control" name="txtUsuario" type="text" maxlength="20" placeholder="Usuario" />
+                </div>
+                <label for="txtContrasena" class="col-sm-offset-1 col-sm-1 control-label">Contrase&ntilde;a:</label>
+                <div class="col-sm-4">
+                    <input id="txtContrasena" class="form-control" name="txtContrasena" type="password" maxlength="20" placeholder="Contrase&ntilde;a" />
+                </div>
             </div>
             <div class="form-group">
-                <label for="txtNombre">Nombre:</label>
-                <input id="txtNombre" class="form-control" name="txtNombre" type="text" size="50" maxlength="50" />
+                <label for="txtNombre" class="col-sm-1 control-label">Nombre:</label>
+                <div class="col-sm-4">
+                    <input id="txtNombre" class="form-control" name="txtNombre" type="text" maxlength="50" placeholder="Nombre" />
+                </div>
+                <label for="txtApellido" class="col-sm-offset-1 col-sm-1 control-label">Apellido:</label>
+                <div class="col-sm-4">
+                    <input id="txtApellido" class="form-control" type="text" name="txtApellido" maxlength="50" placeholder="Apellido" />
+                </div>
             </div>
             <div class="form-group">
-                <label for="txtApellido">Apellido:</label>
-                <input id="txtApellido" class="form-control" type="text" name="txtApellido" size="50" maxlength="50" />
+                <label for="txtEmail" class="col-sm-1 control-label">Email:</label>
+                <div class="col-sm-4">
+                    <input id="txtEmail" class="form-control" name="txtEmail" type="email" maxlength="50" placeholder="Correo electronico" />
+                </div>
+                <div class="col-sm-offset-2 col-sm-4">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="chkEmailValido"> &iquest;Correo valido?
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
-                <label for="txtContrasena">Contrse&ntilde;a:</label>
-                <input id="txtContrasena" class="form-control" type="password" name="txtContrasena" size="20" maxlength="20" />
+                <label for="txtLegajo" class="col-sm-1 control-label">Legajo:</label>
+                <div class="col-sm-4">
+                    <input id="txtLegajo" class="form-control" type="number" name="txtLegajo" min="0" max="99999999" step="1" placeholder="Legajo" />
+                </div>
+                <label for="txtDNI" class="col-sm-offset-1 col-sm-1 control-label">DNI:</label>
+                <div class="col-sm-4">
+                    <input id="txtDNI" class="form-control" type="number" name="txtDNI" min="1" max="99999999" step="1" placeholder="DNI" />
+                </div>
             </div>
             <div class="form-group">
-                <label for="txtComentario">Comentario:</label>
-                <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4"></textarea>
+                <label for="txtTelefono" class="col-sm-1 control-label">Telefono:</label>
+                <div class="col-sm-4">
+                    <input id="txtTelefono" class="form-control" type="number" name="txtTelefono" min="1" max="9999999999" step="1" placeholder="Telefono fijo"/>
+                </div>
+                <label for="txtCelular" class="col-sm-offset-1 col-sm-1 control-label">Celular:</label>
+                <div class="col-sm-4">
+                    <input id="txtCelular" class="form-control" type="number" name="txtCelular" min="1" max="9999999999" step="1" placeholder="Celular" />
+                </div>
             </div>
-        </fieldset>
-        <button class="btn btn-default" type="submit" name="txtEnviar"></button>
-        <button class="btn btn-default" type="reset" name="txtLimpiar"></button>
-    </form>
-  </div>
+            <div class="form-group">
+                <label for="txtComentario" class="col-sm-1 control-label">Comentario:</label>
+                <div class="col-sm-10">
+                    <textarea id="txtComentario" class="form-control" name="txtComentario" rows="4"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-10 col-sm-1">
+                    <button class="btn btn-success" type="submit" name="btnGuardar">
+                        <span class="glyphicon glyphicon-save"></span> Guardar
+                    </button>
+                </div>
+                <div class="col-sm-1">
+                    <a class="btn btn-default" href="#" role="button">
+                        <span class="glyphicon glyphicon-arrow-left"></span> Volver
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
-
-

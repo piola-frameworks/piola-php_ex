@@ -132,9 +132,9 @@
         $("#txtRetiro").datetimepicker("show");
     });
     
-    $("#frmConfirmarPedido").submit(function(e) {
+    $("form[name=frmConfirmarPedido]").submit(function(e) {
         var selectedDate = new Date($("#txtRetiro").val());
-        if (limitDate >= selectedDate) {
+        if (limitDate.getTime() > selectedDate.getTime()) {
             e.preventDefault();
             alert("La fecha y horario que eligio para retirar el pedido no esta dentro del rango aceptado.");
         }

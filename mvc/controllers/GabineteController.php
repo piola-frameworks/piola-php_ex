@@ -518,7 +518,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 $tmpArray = unserialize(filter_input(INPUT_COOKIE, "GabineteCaja"));
                 
@@ -659,7 +659,7 @@ namespace CEIT\mvc\controllers
                     
                     $modelPedido = new models\PedidoModel();
                     $modelPedido->_id = filter_input(INPUT_POST, 'txtDNI_IDPedido', FILTER_SANITIZE_NUMBER_INT);
-                    $this->result = $this->_model["Gabinete"]->SelectByIdPedidoOrDNI($modelPedido);
+                    $this->result = $this->_model["Gabinete"]->SelectCajaByIdPedidoOrDNI($modelPedido);
                     unset($modelPedido);
                 }
             }
@@ -812,7 +812,7 @@ namespace CEIT\mvc\controllers
             
             if(!empty($_POST))
             {
-                var_dump($_POST);
+                //var_dump($_POST);
                 
                 if(isset($_POST['btnCobrar']))
                 {

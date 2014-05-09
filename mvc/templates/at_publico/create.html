@@ -147,20 +147,50 @@
         </form>
     </div>
 </div>
-<script type="text/javascript">    
-    /* var initDate = new Date();
-    var plusOffset = 3;
-    if(initDate.getDay() == 3) {
-        plusOffset = 5;
-    } else if (initDate.getDay() == 4) {
-        plusOffset = 4;
+<script type="text/javascript">        
+    var natDays = [{Feriados}];
+
+    function noWeekendsOrHolidays(date) {
+        var noWeekend = $.datepicker.noWeekends(date);
+        if(noWeekend[0]) {
+            return nationalDays(date);
+        } else {
+            return noWeekend;
+        }
     }
     
-    $(document).ready(function() {
-        var date = new Date();
-        date.setDate(date.getDate() + plusOffset);
-        $('#txtRetiro').val(date.toISOString().slice(0, 10));
-    }); */
+    function nationalDays(date) {
+        for(i = 0; i < natDays.length; i++) {
+            if (date.getMonth() == natDays[i][0] - 1 && date.getDate() == natDays[i][1]) {
+                return [false, natDays[i][2] + '_day'];
+            }
+        }
+        return [true, ''];
+    }
+    
+    function AddWeekDays(weekDaysToAdd) {
+        var daysToAdd = 0;
+        var mydate = new Date();
+        var day = mydate.getDay();
+        weekDaysToAdd = weekDaysToAdd - (5 - day);
+        if((5 - day) < weekDaysToAdd || weekDaysToAdd == 1) {
+            daysToAdd = (5 - day) + 2 + daysToAdd;
+        } else { // (5-day) >= weekDaysToAdd
+            daysToAdd = (5 - day) + daysToAdd;
+        }
+        while(weekDaysToAdd != 0) {
+            var week = weekDaysToAdd - 5;
+            if(week > 0) {
+                daysToAdd = 7 + daysToAdd;
+                weekDaysToAdd = weekDaysToAdd - 5;
+            } else { // week < 0
+                daysToAdd = (5 + week) + daysToAdd;
+                weekDaysToAdd = weekDaysToAdd - (5 + week);
+            }
+        }
+
+        return daysToAdd;
+    }
     
     $("form[name=frmPedido]").submit(function(e) {
         //console.debug($("#txtRetiro").val());
@@ -172,10 +202,11 @@
     
     $('#txtRetiro').datepicker({
         minDate: 0,
-        //defaultDate: plusOffset,
         dateFormat: "yy-mm-dd",
+        changeMonth: true,
+        changeYear: true,
         showAnim: "slideDown",
-        beforeShowDay: $.datepicker.noWeekends
+        beforeShowDay: noWeekendsOrHolidays //$.datepicker.noWeekends
     });
     
     $("#chkAnillado").click(function() {

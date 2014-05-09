@@ -56,7 +56,7 @@ namespace CEIT\core
                                             . '</ul>'
                                         . '</li>',
                 'Administracion'    =>  '<li><a href="index.php?do=/admin/index">Administraci&oacute;n</a></li>', 
-               /* 'Administracion'    =>  '<li class="dropdown">'
+                /*'Administracion'    =>  '<li class="dropdown">'
                                         . '<a class="dropdown-toggle" href="index.php?do=/admin/index" data-toggle="dropdown">Administraci&oacute;n <b class="caret"></b></a>'
                                             . '<ul class="dropdown-menu">'
                                                 . '<li><a href="index.php?do=/admin/estydoc_index">Est y Doc</a></li>'

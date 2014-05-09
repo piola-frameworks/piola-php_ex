@@ -405,34 +405,41 @@ namespace CEIT\mvc\controllers
             {
                 //var_dump($_POST);
                 
-                $this->paginator_total_pages = 0;
-                
-                $materia = filter_input(INPUT_POST, "ddlMateria", FILTER_SANITIZE_NUMBER_INT);
-                $textos = filter_input(INPUT_POST, "txtTexto", FILTER_SANITIZE_SPECIAL_CHARS);
-                
-                $modelTexto = new models\TextoModel();
-                $modelTexto->_idMateria = $materia;
-                
-                if(empty($textos))
+                if(isset($_POST["btnFiltrar"]))
                 {
-                    $modelTexto->_descripcion = $textos;
+                    $this->paginator_total_pages = 0;
                     
-                    $this->resultTextos = $this->_model['Textos']->SelectByIdMateriaAndDescripcion($modelTexto);
+                    $materia = filter_input(INPUT_POST, "ddlMateria", FILTER_SANITIZE_NUMBER_INT);
+                    $textos = filter_input(INPUT_POST, "txtTexto", FILTER_SANITIZE_SPECIAL_CHARS);
+
+                    $modelTexto = new models\TextoModel();
+                    $modelTexto->_idMateria = $materia;
+
+                    if(empty($textos))
+                    {
+                        $modelTexto->_descripcion = $textos;
+
+                        $this->resultTextos = $this->_model['Textos']->SelectByIdMateriaAndDescripcion($modelTexto);
+                    }
+                    else
+                    {
+                        $this->resultTextos = $this->_model['Textos']->SelectByIdMateria($modelTexto);
+                    }
                 }
                 else
                 {
-                    $this->resultTextos = $this->_model['Textos']->SelectByIdMateria($modelTexto);
+                    $this->resultTextos = $this->_model['Textos']->Select();
                 }
             }
             else
             {
+                $this->resultTextos = $this->_model['Textos']->Select();
+                
                 $this->resultTotalTextos = $this->_model['Textos']->SelectCountTotal();
                 $this->paginator_total_pages = $this->resultTotalTextos[0]["Total"];
-
-                $this->resultTextos = $this->_model['Textos']->Select();
             }
             
-            if(count($this->resultTextos) > 1)
+            if(count($this->resultTextos) > 0)
             {
                 foreach($this->resultTextos as $row)
                 {
@@ -479,7 +486,7 @@ namespace CEIT\mvc\controllers
             unset($this->resultTextos);
             
             $this->result = $this->_model['Carreras']->Select();
-            if(count($this->result) > 1)
+            if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
                 {

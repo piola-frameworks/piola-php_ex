@@ -8,7 +8,7 @@
                 <!-- Titulo -->
                 <label for="txtNombre" class="col-sm-2 control-label">Titulo</label>
                 <div class="col-sm-4">
-                    <input id="txtNombre" class="form-control" type="text" name="txtNombre" maxlength="200" placeholder="Nombre del texto" required="required">
+                    <input id="txtNombre" class="form-control" type="text" name="txtNombre" maxlength="255" placeholder="Nombre del texto" required="required">
                 </div>
                 <!-- Carrera -->
                 <label for="ddlCarrera" class="col-sm-2 control-label">Carrera</label>
@@ -23,7 +23,7 @@
                 <!-- Autor -->
                 <label for="txtAutor" class="col-sm-2 control-label">Autor</label>
                 <div class="col-sm-4">
-                    <input id="txtAutor" class="form-control" type="text" name="txtAutor" maxlength="50" placeholder="Autor">
+                    <input id="txtAutor" class="form-control" type="text" name="txtAutor" maxlength="100" placeholder="Autor">
                 </div>
                 <!-- Nivel -->
                 <label for="ddlNivel" class="col-sm-2 control-label">Nivel</label>
@@ -53,7 +53,7 @@
                 <!-- Codigo interno -->
                 <label for="txtCodigo" class="col-sm-2 control-label">Codigo</label>
                 <div class="col-sm-4">
-                    <input id="txtCodigo" class="form-control" type="text" name="txtCodigo" maxlength="20" placeholder="Codigo interno">
+                    <input id="txtCodigo" class="form-control" type="number" name="txtCodigo" min="0" max="65535" step="1" value="0">
                 </div>
                 <!-- Tipo contenido -->
                 <label for="ddlTipoContenido" class="col-sm-2 control-label">Contenido</label>

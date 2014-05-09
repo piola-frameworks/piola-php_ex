@@ -59,11 +59,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    var natDays = [
-        [1, 1, 'uk'],
-        [12, 25, 'uk'],
-        [12, 26, 'uk']
-    ];
+    var natDays = [{Feriados}];
 
     function noWeekendsOrHolidays(date) {
         var noWeekend = $.datepicker.noWeekends(date);
@@ -106,9 +102,6 @@
     }
 
     $(function() {
-        $("#txtDesde").val(new Date().toISOString().slice(0, 10));
-        $("#txtHasta").val(new Date().toISOString().slice(0, 10));
-
         $("#txtDesde").datepicker({
             dateFormat: "yy-mm-dd",
             defaultDate: 0,

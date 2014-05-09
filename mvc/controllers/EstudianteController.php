@@ -446,6 +446,8 @@ namespace CEIT\mvc\controllers
         {
             $this->_template = BASE_DIR . "/mvc/templates/estudiantes/{$this->_action}.html";
             
+            $this->table_detail = "";
+            
             if(!empty($_POST))
             {
                 //var_dump($_POST);
@@ -495,15 +497,19 @@ namespace CEIT\mvc\controllers
                                 
                                 unset($this->result);
                             }
-                        /*}*/
                     }
+                }
+                else
+                {
+                    // Si no hay item, entonces, no se agrego alguno. Regreso a la pagina principal.
+                    header("Location: index.php?do=/estudiante/create");
                 }
 
                 // Si acepto el pedido, persisto en DB.
                 if(isset($_POST['btnSi']))
                 {
                     $fechaRetiro = date("Y-m-d" , strtotime(filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS)));
-                    $horaRetiro = date("H:i", strtotime(filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS)));
+                    $horaRetiro = date("H", strtotime(filter_input(INPUT_POST, 'txtRetiro', FILTER_SANITIZE_SPECIAL_CHARS)));
                     $idFranjaSeleccionada = 1;
                     
                     $this->franjaResult = $this->_model["Franjas"]->Select();
@@ -511,7 +517,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($this->franjaResult as $item)
                         {
-                            if(date("H:i", strtotime($item["Desde"] . ":00")) == $horaRetiro)
+                            if(date("H", strtotime($item["Desde"])) == $horaRetiro)
                             {
                                 $idFranjaSeleccionada = $item["IdHorarioFranja"];
                             }
@@ -567,45 +573,11 @@ namespace CEIT\mvc\controllers
                 }
             }
             
-            //$this->result = $this->_model['Franjas']->Select();
-            /*if(count($this->result) > 1)
-            {
-                foreach($this->result as $row)
-                {
-                    $filename = BASE_DIR . "/mvc/templates/estudiantes/combo_franja.html";
-                    $this->combo_franja .= file_get_contents($filename);
-                    
-                    if(is_array($row))
-                    {
-                        foreach($row as $key => $value)
-                        {
-                            $this->combo_franja = str_replace('{' . $key . '}', htmlentities($value), $this->combo_franja);
-                        }
-                        
-                        // Fila extra que no viene en el resultado de la base de datos.
-                        if($this->result2[0]['FranjaHoraria'] > $row['IdHorarioFranja'])
-                        {
-                            $texto = "disabled";
-                        }
-                        else if($this->result2[0]['FranjaHoraria'] == $row['IdHorarioFranja'])
-                        {
-                            $texto = "selected";
-                        }
-                        else
-                        {
-                            $texto = "";
-                        }
-                        $this->combo_franja = str_replace('{Seleccionado}', $texto, $this->combo_franja);
-                    }
-                }    
-            }*/
-            //unset($this->result);
-            
             $this->result2 = $this->_model['Pedidos']->SelectDisponibilidad();
             //var_dump($this->result2);
             if(count($this->result2) > 0)
             {
-                $this->DiaRetiro = $this->result2[0]['DiaRetiro'];
+                $this->DiaRetiro = str_replace("-", "/", $this->result2[0]['DiaRetiro']) ;
                 $this->HoraRetiro = $this->result2[0]['HoraRetiro'];
             }
             unset($this->result2);
@@ -866,6 +838,14 @@ namespace CEIT\mvc\controllers
                         }
                     }
                 }
+            }
+            unset($this->result);
+            
+            $this->result = $this->_model["Web"]->SelectFeriados();
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                $this->Feriados = $this->result[0]["ListaFeriado"];
             }
             unset($this->result);
         }
