@@ -1,0 +1,36 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Detalles del permiso</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" role="form">
+            <fieldset disabled="disabled">
+                <div class="form-group">
+                <label for="txtIdPermiso" class="col-sm-2 control-label">Identificador</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="txtIdPermiso" value="{IdPermiso}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="txtPermDesc" class="col-sm-2 control-label">Descripci&oacute;n</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="txtPermDesc" value="{Descripcion}" placeholder="Descripc&oacute;n">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="lstRoles" class="col-sm-2 control-label">Roles con el permiso asignado</label>
+                <div class="col-sm-10">
+                    <ul id="lstRoles" class="list-group form-control-static">
+                        {list_role_item}
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="button" class="btn btn-default">Volver</button>
+                </div>
+            </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

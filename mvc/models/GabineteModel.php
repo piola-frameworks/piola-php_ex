@@ -143,6 +143,15 @@ namespace CEIT\mvc\models
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
         }
         
+        public function SelectCierraCaja()
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selGabineteCajaCierreParcial";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
+        
         /*
          * End custom selects
          */

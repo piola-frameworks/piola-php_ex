@@ -37,11 +37,10 @@ namespace CEIT\mvc\models
                 array_push($this->_sp, "sp_insUsuario");
                 array_push($this->_params, array(
                     ":idPersona"    =>  is_null($item->_idPersona) ? null : $model->_idPersona,
-                    ":nombre"       =>  is_null($item->_nombre) ? null : (string)$model->_nombre,
-                    ":apellido"     =>  is_null($item->_apellido) ? null : (string)$model->_apellido,
+                    ":usuario"      =>  is_null($item->_usuario) ? null : (string)$model->_usuario,
                     ":contrasena"   =>  is_null($item->_contrasena) ? null : (string)$model->_contrasena,
                     ":comentario"   =>  is_null($item->_comentario) ? null : (string)$model->_comentario,
-                    ":email"        =>  (bool)$model->_email,
+                    ":emailValido"  =>  (bool)$model->_emailValido,
                 ));
             }
             
@@ -70,6 +69,15 @@ namespace CEIT\mvc\models
         /*
          * Start custom selects
          */
+        
+        public function SelectEstYDoc()
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selEstYDoc";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
+        }
         
         public function SelectByUsername(core\AModel $model)
         {
@@ -166,10 +174,10 @@ namespace CEIT\mvc\models
                 array_push($this->_sp, "sp_updUsuario");
                 array_push($this->_params, array(
                     ":idUsuario"    =>  (int)$item->_idUsuario,
-                    ":idPersona"    =>  is_null($item->_idPersona) ? null : (int)$item->_idPersona,
-                    ":usuario"      =>  is_null($item->_usuario) ? null : (string)$item->_usuario,
-                    ":contrasena"   =>  is_null($item->_contrasena) ? null : (string)$item->_contrasena,
-                    ":comentario"   =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
+                    ":idPersona"    =>  empty($item->_idPersona) ? null : (int)$item->_idPersona,
+                    ":usuario"      =>  empty($item->_usuario) ? null : (string)$item->_usuario,
+                    ":contrasena"   =>  empty($item->_contrasena) ? null : (string)$item->_contrasena,
+                    ":comentario"   =>  empty($item->_comentario) ? null : (string)$item->_comentario,
                     ":email"        =>  (bool)$item->_emailValidado,
                 ));
             }

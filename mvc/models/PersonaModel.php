@@ -39,7 +39,7 @@ namespace CEIT\mvc\models
                     ':nombre'       =>  is_null($item->_nombre) ? null : (string)$item->_nombre,
                     ':apellido'     =>  is_null($item->_apellido) ? null : (string)$item->_apellido,
                     ':dni'          =>  (int)$item->_dni,
-                    ':telefono'     =>  is_null($item->_telefono) ? null :(int)$item->_telefono,
+                    ':telefono'     =>  is_null($item->_telefono) ? null : (int)$item->_telefono,
                     ':celular'      =>  is_null($item->_celular) ? null : (int)$item->_celular,
                     ':email'        =>  is_null($item->_email) ? null : (string)$item->_email,
                 ));
@@ -87,12 +87,12 @@ namespace CEIT\mvc\models
                 array_push($this->_sp, "sp_updPersona");
                 array_push($this->_params, array(
                     ':idPersona'    =>  (int)$item->_idPersona,
-                    ':nombre'       =>  is_null($item->_nombre) ? null : (string)$item->_nombre,
-                    ':apellido'     =>  is_null($item->_apellido) ? null : (string)$item->_apellido,
+                    ':nombre'       =>  empty($item->_nombre) ? null : (string)$item->_nombre,
+                    ':apellido'     =>  empty($item->_apellido) ? null : (string)$item->_apellido,
                     ':dni'          =>  (int)$item->_dni,
-                    ':telefono'     =>  is_null($item->_telefono) ? null :(int)$item->_telefono,
-                    ':celular'      =>  is_null($item->_celular) ? null : (int)$item->_celular,
-                    ':email'        =>  is_null($item->_email) ? null : (string)$item->_email,
+                    ':telefono'     =>  empty($item->_telefono) ? null :(int)$item->_telefono,
+                    ':celular'      =>  empty($item->_celular) ? null : (int)$item->_celular,
+                    ':email'        =>  empty($item->_email) ? null : (string)$item->_email,
                 ));
             }
             

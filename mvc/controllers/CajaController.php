@@ -436,8 +436,8 @@ namespace CEIT\mvc\controllers
                                 $pedido->_idUsuario = $this->result[0]['IdUsuario'];
                                 $pedido->_creado = $this->result[0]['Creado'];
                                 $pedido->_creadoPor = $this->result[0]['CreadoPor'];
-                                $pedido->_modificado = date('Y-m-d H:i:s');
-                                $pedido->_modificadoPor = $_SESSION['IdUsuario'];
+                                $pedido->_modificado = $this->result[0]['Modificado']; //date('Y-m-d H:i:s');
+                                $pedido->_modificadoPor = $this->result[0]['ModificadoPor']; //$_SESSION['IdUsuario'];
                                 $pedido->_anillado = $this->result[0]['Anillado'];
                                 $pedido->_comentario = $this->result[0]['Comentario'];
                                 $pedido->_posicionX = $this->result[0]['PosicionX'];

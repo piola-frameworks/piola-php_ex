@@ -499,7 +499,6 @@ namespace CEIT\mvc\controllers
             }
         }
         
-        
         public function caja_index()
         {
             $this->_template = $this->_template = BASE_DIR . "/mvc/templates/gabinete/{$this->_action}.html";
@@ -1004,6 +1003,13 @@ namespace CEIT\mvc\controllers
             {
                 // por que entro sin hacer mandado datos?
             }
+        }
+        
+        public function ajax_get_cierre_caja()
+        {
+            $this->_ajaxRequest = true;
+                
+            $this->result = $this->_model["Gabinete"]->SelectCierraCaja();
         }
     }
 }
