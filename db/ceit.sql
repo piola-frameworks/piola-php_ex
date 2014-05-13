@@ -27,9 +27,9 @@ CREATE TABLE IF NOT EXISTS `caja` (
   PRIMARY KEY (`IdCaja`),
   KEY `FK_Caja_usuarios` (`CreadoPor`),
   CONSTRAINT `FK_Caja_usuarios` FOREIGN KEY (`CreadoPor`) REFERENCES `usuarios` (`IdUsuario`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1 COMMENT='Contiene los ingresos en caja por operacion.';
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1 COMMENT='Contiene los ingresos en caja por operacion.';
 
--- Volcando datos para la tabla ceit.caja: ~21 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.caja: ~25 rows (aproximadamente)
 /*!40000 ALTER TABLE `caja` DISABLE KEYS */;
 INSERT INTO `caja` (`IdCaja`, `CreadoPor`, `Creado`, `SubTotal`, `Pago`, `Vuelto`, `Gabinete`) VALUES
 	(1, 1, '2014-05-08 10:41:36', 0.00, 12.00, 12.00, b'0'),
@@ -52,7 +52,11 @@ INSERT INTO `caja` (`IdCaja`, `CreadoPor`, `Creado`, `SubTotal`, `Pago`, `Vuelto
 	(24, 1, '2014-05-09 17:11:08', 17.40, 100.00, 82.60, b'1'),
 	(25, 1, '2014-05-09 17:11:48', 35.75, 100.00, 64.25, b'0'),
 	(26, 1, '2014-05-12 09:41:30', 14.50, 20.00, 5.50, b'0'),
-	(27, 1, '2014-05-12 09:42:00', 125.00, 150.00, 25.00, b'1');
+	(27, 1, '2014-05-12 09:42:00', 125.00, 150.00, 25.00, b'1'),
+	(28, 7, '2014-05-13 15:53:10', 21.80, 22.00, 0.20, b'0'),
+	(29, 1, '2014-05-13 15:56:50', 15.15, 16.00, 0.85, b'1'),
+	(30, 1, '2014-05-13 15:57:05', 10.00, 40.00, 30.00, b'1'),
+	(31, 1, '2014-05-13 15:59:46', 0.60, 1.00, 0.40, b'1');
 /*!40000 ALTER TABLE `caja` ENABLE KEYS */;
 
 
@@ -70,9 +74,9 @@ CREATE TABLE IF NOT EXISTS `cajaitems` (
   KEY `FK_cajaitems_pedidos` (`IdPedido`),
   CONSTRAINT `FK_cajaitems_caja` FOREIGN KEY (`IdCaja`) REFERENCES `caja` (`IdCaja`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_cajaitems_pedidos` FOREIGN KEY (`IdPedido`) REFERENCES `pedidos` (`IdPedido`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1 COMMENT='Contiene los detalles de una operacion realizada en la caja.';
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1 COMMENT='Contiene los detalles de una operacion realizada en la caja.';
 
--- Volcando datos para la tabla ceit.cajaitems: ~50 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.cajaitems: ~57 rows (aproximadamente)
 /*!40000 ALTER TABLE `cajaitems` DISABLE KEYS */;
 INSERT INTO `cajaitems` (`IdCaja`, `idCajaItem`, `IdPedido`, `IdItem`, `Descripcion`, `PrecioUnitario`, `Cantidad`) VALUES
 	(2, 1, 10, NULL, 'qweqweqw', 10.50, 1),
@@ -124,7 +128,14 @@ INSERT INTO `cajaitems` (`IdCaja`, `idCajaItem`, `IdPedido`, `IdItem`, `Descripc
 	(26, 77, NULL, 'PED', 'Pedido Especial Doble Faz', 0.25, 22),
 	(27, 78, 20, NULL, 'GAROMPO SAURIO', 0.00, 1),
 	(27, 79, 30, NULL, 'choto', 0.00, 1),
-	(27, 80, NULL, 'FDF', 'Fotocopia(s) Suelta(s) Doble Faz', 0.25, 500);
+	(27, 80, NULL, 'FDF', 'Fotocopia(s) Suelta(s) Doble Faz', 0.25, 500),
+	(28, 81, 47, NULL, 'INTRODUCCIÓN AL DISEÑO ARQUITECTÓNICO', 10.00, 1),
+	(28, 82, NULL, 'ANI', 'Anillado', 10.00, 1),
+	(28, 83, NULL, 'FSF', 'Fotocopia(s) Suelta(s) Simple Faz', 0.45, 4),
+	(29, 84, 48, NULL, 'digital menos 50', 13.80, 1),
+	(29, 85, NULL, 'FSF', 'Fotocopia(s) Suelta(s) Simple Faz', 0.45, 3),
+	(30, 86, NULL, 'ANI', 'Anillado', 10.00, 1),
+	(31, 87, 41, NULL, 'pedido digital 1', 0.60, 1);
 /*!40000 ALTER TABLE `cajaitems` ENABLE KEYS */;
 
 
@@ -182,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `docentes` (
   CONSTRAINT `FK_docentes_personas` FOREIGN KEY (`IdPersona`) REFERENCES `personas` (`IdPersona`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=495 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.docentes: ~507 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.docentes: ~494 rows (aproximadamente)
 /*!40000 ALTER TABLE `docentes` DISABLE KEYS */;
 INSERT INTO `docentes` (`IdDocente`, `IdPersona`, `Legajo`) VALUES
 	(1, 2, 65987),
@@ -695,9 +706,9 @@ CREATE TABLE IF NOT EXISTS `estudiantes` (
   KEY `FK_estudiantes_personas` (`IdPersona`),
   CONSTRAINT `FK_alumnos_carreras` FOREIGN KEY (`IdCarrera`) REFERENCES `carreras` (`IdCarrera`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `FK_estudiantes_personas` FOREIGN KEY (`IdPersona`) REFERENCES `personas` (`IdPersona`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3617 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
+) ENGINE=InnoDB AUTO_INCREMENT=3622 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.estudiantes: ~3.853 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.estudiantes: ~3.617 rows (aproximadamente)
 /*!40000 ALTER TABLE `estudiantes` DISABLE KEYS */;
 INSERT INTO `estudiantes` (`IdEstudiante`, `IdPersona`, `Legajo`, `IdCarrera`) VALUES
 	(1, 1, 101982, 5),
@@ -4315,7 +4326,8 @@ INSERT INTO `estudiantes` (`IdEstudiante`, `IdPersona`, `Legajo`, `IdCarrera`) V
 	(3613, 3619, 907505, NULL),
 	(3614, 3620, 907506, NULL),
 	(3615, 3621, 907508, NULL),
-	(3616, 3622, 907509, NULL);
+	(3616, 3622, 907509, NULL),
+	(3621, 4127, 999000, 1);
 /*!40000 ALTER TABLE `estudiantes` ENABLE KEYS */;
 
 
@@ -4809,9 +4821,9 @@ CREATE TABLE IF NOT EXISTS `pedidoitems` (
   CONSTRAINT `FK_pedidoitems_estadospedidoitem` FOREIGN KEY (`IdEstadoItem`) REFERENCES `pedidoitemestados` (`IdEstadoItem`) ON UPDATE CASCADE,
   CONSTRAINT `FK_pedidoitems_pedidos` FOREIGN KEY (`IdPedido`) REFERENCES `pedidos` (`IdPedido`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_pedidoitems_textos` FOREIGN KEY (`IdTexto`) REFERENCES `textos` (`IdTexto`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.pedidoitems: ~40 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.pedidoitems: ~44 rows (aproximadamente)
 /*!40000 ALTER TABLE `pedidoitems` DISABLE KEYS */;
 INSERT INTO `pedidoitems` (`IdPedido`, `IdPedidoItem`, `Cantidad`, `IdTexto`, `Anillado`, `Abrochado`, `SimpleFaz`, `IdEstadoItem`) VALUES
 	(5, 10, 1, 3095, b'0', b'0', b'0', 3),
@@ -4848,12 +4860,16 @@ INSERT INTO `pedidoitems` (`IdPedido`, `IdPedidoItem`, `Cantidad`, `IdTexto`, `A
 	(39, 44, 1, 49, b'0', b'0', b'0', 1),
 	(39, 45, 1, 58, b'0', b'0', b'0', 1),
 	(40, 46, 1, 1, b'0', b'0', b'0', 1),
-	(41, 47, 1, 3136, b'0', b'0', b'0', 1),
+	(41, 47, 1, 3136, b'0', b'0', b'0', 3),
 	(42, 48, 1, 3097, b'1', b'0', b'1', 3),
 	(42, 49, 1, 2, b'1', b'0', b'1', 3),
 	(43, 50, 1, 3137, b'1', b'0', b'0', 1),
 	(44, 51, 1, 3138, b'0', b'0', b'0', 1),
-	(45, 52, 1, 3097, b'0', b'0', b'0', 1);
+	(45, 52, 1, 3097, b'0', b'0', b'0', 1),
+	(46, 53, 1, 103, b'0', b'1', b'1', 1),
+	(46, 54, 1, 102, b'1', b'0', b'0', 1),
+	(47, 55, 1, 103, b'0', b'0', b'0', 3),
+	(48, 56, 1, 3139, b'0', b'0', b'0', 3);
 /*!40000 ALTER TABLE `pedidoitems` ENABLE KEYS */;
 
 
@@ -4889,9 +4905,9 @@ CREATE TABLE IF NOT EXISTS `pedidos` (
   CONSTRAINT `FK_pedidos_usuarios` FOREIGN KEY (`IdUsuario`) REFERENCES `usuarios` (`IdUsuario`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_pedidos_usuarios_2` FOREIGN KEY (`CreadoPor`) REFERENCES `usuarios` (`IdUsuario`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_pedidos_usuarios_3` FOREIGN KEY (`ModificadoPor`) REFERENCES `usuarios` (`IdUsuario`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.pedidos: ~41 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.pedidos: ~44 rows (aproximadamente)
 /*!40000 ALTER TABLE `pedidos` DISABLE KEYS */;
 INSERT INTO `pedidos` (`IdPedido`, `IdUsuario`, `Creado`, `CreadoPor`, `Modificado`, `ModificadoPor`, `Anillado`, `Comentario`, `PosicionX`, `PosicionY`, `Retiro`, `IdFranja`, `Pagado`, `IdEstado`, `Especial`) VALUES
 	(5, 1, '2014-05-05 10:52:00', 1, '2014-05-07 09:32:00', 1, b'0', NULL, 2, 3, '2014-05-05', 3, b'1', 5, b'0'),
@@ -4930,11 +4946,14 @@ INSERT INTO `pedidos` (`IdPedido`, `IdUsuario`, `Creado`, `CreadoPor`, `Modifica
 	(38, 8, '2014-05-09 14:57:41', 8, NULL, NULL, b'0', NULL, NULL, NULL, '2014-05-09', 1, b'0', 1, b'0'),
 	(39, 8, '2014-05-09 14:57:42', 8, NULL, NULL, b'0', NULL, NULL, NULL, '2014-05-09', 1, b'0', 1, b'0'),
 	(40, 1, '2014-05-09 15:23:26', 1, NULL, NULL, b'0', NULL, NULL, NULL, '2014-05-09', 1, b'0', 1, b'0'),
-	(41, 1, '2014-05-09 16:35:12', 1, '2014-05-09 16:35:53', 1, b'0', NULL, NULL, NULL, '2014-05-22', 5, b'0', 1, b'0'),
-	(42, 1, '2014-05-09 16:36:32', 1, '2014-05-09 17:11:48', 1, b'0', NULL, 1, 3, '2014-05-16', 1, b'1', 4, b'0'),
+	(41, 1, '2014-05-09 16:35:12', 1, '2014-05-13 15:59:37', 1, b'0', NULL, 1, 2, '2014-05-22', 5, b'1', 5, b'0'),
+	(42, 1, '2014-05-09 16:36:32', 1, '2014-05-09 17:11:48', 1, b'0', NULL, 1, 3, '2014-05-16', 1, b'1', 6, b'0'),
 	(43, 10, '2014-05-09 17:16:13', 1, NULL, NULL, b'0', NULL, NULL, NULL, '2014-05-30', 5, b'0', 1, b'1'),
 	(44, 1, '2014-05-09 17:45:18', 1, '2014-05-09 17:49:16', 1, b'0', NULL, NULL, NULL, '2014-05-09', 5, b'0', 1, b'0'),
-	(45, 1, '2014-05-12 13:34:47', 1, NULL, NULL, b'0', NULL, NULL, NULL, '2014-05-12', 1, b'0', 1, b'0');
+	(45, 1, '2014-05-12 13:34:47', 1, NULL, NULL, b'0', NULL, NULL, NULL, '2014-05-12', 1, b'0', 1, b'0'),
+	(46, 8, '2014-05-13 15:46:49', 8, NULL, NULL, b'0', NULL, NULL, NULL, '2014-05-13', 1, b'0', 1, b'0'),
+	(47, 8, '2014-05-13 15:47:43', 8, '2014-05-13 15:50:13', 6, b'0', NULL, 1, 2, '2014-05-13', 1, b'1', 5, b'0'),
+	(48, 1, '2014-05-13 15:54:14', 1, '2014-05-13 15:56:50', 1, b'0', NULL, 4, 2, '2014-05-14', 5, b'1', 4, b'0');
 /*!40000 ALTER TABLE `pedidos` ENABLE KEYS */;
 
 
@@ -4983,18 +5002,18 @@ CREATE TABLE IF NOT EXISTS `permisos` (
   `IdPermiso` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Controlador` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
   `Accion` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
-  `Descripcion` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `Descripcion` varchar(100) COLLATE utf8_spanish_ci NOT NULL,
   PRIMARY KEY (`IdPermiso`),
   UNIQUE KEY `Controlador_Accion` (`Controlador`,`Accion`)
-) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.permisos: ~89 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.permisos: ~101 rows (aproximadamente)
 /*!40000 ALTER TABLE `permisos` DISABLE KEYS */;
 INSERT INTO `permisos` (`IdPermiso`, `Controlador`, `Accion`, `Descripcion`) VALUES
-	(1, 'Preparador', 'index', 'PRE Consultar pedidos'),
-	(2, 'Estudiante', 'create', 'EST Agregar pedido'),
-	(3, 'Preparador', 'update', 'PRE Modificar pedido'),
-	(4, 'Estudiante', 'delete', 'EST Borrar pedido'),
+	(1, 'Preparador', 'index', 'Consultar pedidos a trabajar.'),
+	(2, 'Estudiante', 'create', 'Agregar pedido para trabajar.'),
+	(3, 'Preparador', 'update', 'Modificar pedido a trabajar.'),
+	(4, 'Estudiante', 'delete', 'Borrar pedido para trabajar.'),
 	(5, 'Textos', 'index', 'Consultar textos'),
 	(6, 'Textos', 'create', 'Agregar texto'),
 	(7, 'Textos', 'update', 'Modificar texto'),
@@ -5017,16 +5036,16 @@ INSERT INTO `permisos` (`IdPermiso`, `Controlador`, `Accion`, `Descripcion`) VAL
 	(24, 'Caja', 'index', 'Ingresar a Caja'),
 	(25, 'Caja', 'index_confirm', 'Confirmar pago en Caja'),
 	(26, 'Dashboard', 'index', 'Consultar tablero de resumen'),
-	(27, 'Estudiante', 'create_confirm', 'EST Confirmar pedido'),
-	(28, 'Preparador', 'detail', 'PRE Detalles de un pedido'),
+	(27, 'Estudiante', 'create_confirm', 'Confirmar pedido para trabajar.'),
+	(28, 'Preparador', 'detail', 'Detalles de un pedido a trabajar.'),
 	(29, 'Textos', 'detail', 'Detalles de un texto'),
-	(30, 'Estudiante', 'create_tp', 'EST Crear un trabajo practico'),
+	(30, 'Estudiante', 'create_tp', 'Crear un pedido digital para trabajar.'),
 	(31, 'Data', 'getpdf', 'Leer un PDF de catalogo.'),
 	(32, 'Data', 'gettp', 'Leer un TP.'),
 	(33, 'Data', 'getpreview', 'Ver pre-visualizacion de un texto.'),
-	(34, 'Preparador', 'detail_item', 'PRE Ver detalles de un item del pedido.'),
-	(35, 'Estudiante', 'ajax_get_niveles', 'EST Obtener niveles via XHR.'),
-	(36, 'Estudiante', 'ajax_get_materias', 'EST Obtener materias via XHR'),
+	(34, 'Preparador', 'detail_item', 'Ver detalles de un item del pedido para trabajar.'),
+	(35, 'Estudiante', 'ajax_get_niveles', 'Obtener niveles via XHR para listar textos.'),
+	(36, 'Estudiante', 'ajax_get_materias', 'Obtener materias via XHR para listar textos.'),
 	(37, 'Reportes', 'index', 'Ver reportes.'),
 	(38, 'Atpublico', 'index', 'Consultar pedidos a entregar'),
 	(39, 'Atpublico', 'update', 'Cambiar estado'),
@@ -5034,8 +5053,8 @@ INSERT INTO `permisos` (`IdPermiso`, `Controlador`, `Accion`, `Descripcion`) VAL
 	(41, 'Web', 'contact', 'Contactar con soporte.'),
 	(42, 'Gabinete', 'pedidos_index', 'Listar pedidos de Gabinete'),
 	(43, 'Preparador', 'ajax_detail_item_change_status', 'PRE Cambia el estado de un item de un pedido.'),
-	(44, 'Estudiante', 'detail', 'EST Ver detalles de un pedido en solo lectura.'),
-	(45, 'Estudiante', 'index', 'EST Ver los pedidos realizados por el usuario.'),
+	(44, 'Estudiante', 'detail', 'Ver detalles de un pedido realizado.'),
+	(45, 'Estudiante', 'index', 'Ver los pedidos realizados por el usuario.'),
 	(46, 'Atpublico', 'ajax_detail_item_change_status', 'Modificar estado del pedido via XHR.'),
 	(47, 'User', 'fill_docente', 'Relleno obligatorio de datos para docentes.'),
 	(48, 'User', 'fill_estudiante', 'Relleno obligatorio de datos para estudiantes.'),
@@ -5047,8 +5066,8 @@ INSERT INTO `permisos` (`IdPermiso`, `Controlador`, `Accion`, `Descripcion`) VAL
 	(54, 'Atpublico', 'create', 'Crear pedido especial.'),
 	(55, 'Atpublico', 'print_create', 'Imprimir comprobante de pedido.'),
 	(56, 'Preparador', 'print_detail', 'Imprimir comprobante de pedido.'),
-	(57, 'Gabinete', 'pedidos_detail', 'Ver detalles de un TP.'),
-	(58, 'Gabinete', 'pedidos_delete', 'Borrar un pedido de gabinete.'),
+	(57, 'Gabinete', 'pedidos_detail', 'Ver detalles de un pedido digital.'),
+	(58, 'Gabinete', 'pedidos_delete', 'Borrar un pedido digital de gabinete.'),
 	(59, 'Caja', 'ajax_get_cierre_caja', 'Obtener cierre de caja parcial via XHR.'),
 	(60, 'Atpublico', 'ajax_pedido_estado', 'Obtener estado de un pedido via XHR.'),
 	(61, 'Atpublico', 'especiales_index', 'Listar pedidos especiales.'),
@@ -5079,7 +5098,19 @@ INSERT INTO `permisos` (`IdPermiso`, `Controlador`, `Accion`, `Descripcion`) VAL
 	(86, 'Gabinete', 'ajax_get_cierre_caja', 'Obtener parcial de caja via XHR.'),
 	(87, 'Admin', 'estydoc_detail', 'Obtener detalles de un estudiante/docente.'),
 	(88, 'Admin', 'estydoc_update', 'Modificar un estudiante/docente.'),
-	(89, 'Admin', 'estydoc_delete', 'Borrar un estudiante/docente.');
+	(89, 'Admin', 'estydoc_delete', 'Borrar un estudiante/docente.'),
+	(90, 'Admin', 'oper_create', 'Crear un operario.'),
+	(91, 'Admin', 'oper_update', 'Modificar un operario.'),
+	(92, 'Admin', 'oper_detail', 'Ver detalles de un operario.'),
+	(93, 'Admin', 'oper_delete', 'Borrar un operario.'),
+	(95, 'Admin', 'roles_detail', 'Ver detalles de un rol.'),
+	(96, 'Admin', 'roles_create', 'Crear un rol.'),
+	(97, 'Admin', 'roles_update', 'Modificar un rol.'),
+	(98, 'Admin', 'roles_delete', 'Borrar un rol.'),
+	(99, 'Admin', 'perms_detail', 'Ver detalles de un permiso.'),
+	(100, 'Admin', 'perms_create', 'Crear un permiso.'),
+	(101, 'Admin', 'perms_update', 'Modificar un permiso.'),
+	(102, 'Admin', 'perms_delete', 'Borrar un permiso.');
 /*!40000 ALTER TABLE `permisos` ENABLE KEYS */;
 
 
@@ -5095,12 +5126,12 @@ CREATE TABLE IF NOT EXISTS `personas` (
   PRIMARY KEY (`IdPersona`),
   UNIQUE KEY `DNI` (`DNI`),
   UNIQUE KEY `Email` (`Email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4109 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
+) ENGINE=InnoDB AUTO_INCREMENT=4128 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.personas: ~3.486 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.personas: ~4.110 rows (aproximadamente)
 /*!40000 ALTER TABLE `personas` DISABLE KEYS */;
 INSERT INTO `personas` (`IdPersona`, `Nombre`, `Apellido`, `DNI`, `Telefono`, `Celular`, `Email`) VALUES
-	(1, ' Pablo Rodrigo', 'LEIROS', 34624421, 42555896, 1565987926, 'pleiros@travieso.com.ar'),
+	(1, 'Pablo Rodrigo', 'LEIROS', 34624421, 42555896, 1565987926, 'pleiros@travieso.com.ar'),
 	(2, 'Clever', 'Bossi', 32165465, 42512561, 1532653265, 'clever@qsolutions.com.ar'),
 	(3, 'Jose', 'DiMeglio', 35321654, 43659868, 1125656598, 'jdimeglio@qsolutions.com.ar'),
 	(4, 'Patricio', 'Pescio', 33654987, 42356986, 1154879544, 'patriciopa@qsolutions.com.ar'),
@@ -9207,7 +9238,9 @@ INSERT INTO `personas` (`IdPersona`, `Nombre`, `Apellido`, `DNI`, `Telefono`, `C
 	(4105, ' JORGE ALBERTO', 'ZARATE', 12599072, NULL, NULL, NULL),
 	(4106, ' FRANCISCO PABLO', 'ZATKO', 13739979, NULL, NULL, NULL),
 	(4107, ' MAURO DOMINGO', 'ZAZA', 12581376, NULL, NULL, NULL),
-	(4108, ' FERNANDO MAURICIO', 'ZITO', 21856604, NULL, NULL, NULL);
+	(4108, ' FERNANDO MAURICIO', 'ZITO', 21856604, NULL, NULL, NULL),
+	(4117, 'Rico', 'Cheta', 32145687, 45548123, 2147483647, 'ricochet@ejemplo.com'),
+	(4127, 'Quak', 'Er', 36985214, 87542132, 2147483647, 'quaker@ejemplo.com');
 /*!40000 ALTER TABLE `personas` ENABLE KEYS */;
 
 
@@ -9243,7 +9276,7 @@ CREATE TABLE IF NOT EXISTS `rolpermisos` (
   CONSTRAINT `FK_rolpermisos_roles` FOREIGN KEY (`IdRol`) REFERENCES `roles` (`IdRol`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.rolpermisos: ~211 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.rolpermisos: ~223 rows (aproximadamente)
 /*!40000 ALTER TABLE `rolpermisos` DISABLE KEYS */;
 INSERT INTO `rolpermisos` (`IdRol`, `IdPermiso`) VALUES
 	(1, 1),
@@ -9456,7 +9489,19 @@ INSERT INTO `rolpermisos` (`IdRol`, `IdPermiso`) VALUES
 	(3, 86),
 	(1, 87),
 	(1, 88),
-	(1, 89);
+	(1, 89),
+	(1, 90),
+	(1, 91),
+	(1, 92),
+	(1, 93),
+	(1, 95),
+	(1, 96),
+	(1, 97),
+	(1, 98),
+	(1, 99),
+	(1, 100),
+	(1, 101),
+	(1, 102);
 /*!40000 ALTER TABLE `rolpermisos` ENABLE KEYS */;
 
 
@@ -9543,6 +9588,21 @@ BEGIN
 	DELETE
 	FROM textos
 	WHERE IdTexto = p_idTexto;
+END//
+DELIMITER ;
+
+
+-- Volcando estructura para procedimiento ceit.sp_delUsuarioRol
+DELIMITER //
+CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_delUsuarioRol`(IN `p_idUsuario` INT, IN `p_idRol` INT)
+    MODIFIES SQL DATA
+BEGIN
+	DELETE
+	FROM
+		usuarioroles
+	WHERE
+		IdUsuario = p_idUsuario
+		AND IdRol = p_idRol;
 END//
 DELIMITER ;
 
@@ -9931,6 +9991,21 @@ BEGIN
 		(IdPersona, Usuario, Contrasena, Comentario, EmailValidado)
 	VALUES
 		(p_idPersona, p_nombre, p_contrasena, p_comentario, p_emailvalidado);
+END//
+DELIMITER ;
+
+
+-- Volcando estructura para procedimiento ceit.sp_insUsuarioRol
+DELIMITER //
+CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_insUsuarioRol`(IN `p_idUsuario` INT, IN `p_idRol` INT)
+    MODIFIES SQL DATA
+BEGIN
+	INSERT
+	INTO
+		usuarioroles
+		(IdUsuario, IdRol)
+	VALUES
+		(p_idUsuario, p_idRol);
 END//
 DELIMITER ;
 
@@ -10629,40 +10704,6 @@ END//
 DELIMITER ;
 
 
--- Volcando estructura para procedimiento ceit.sp_selEstYDoc
-DELIMITER //
-CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_selEstYDoc`()
-    READS SQL DATA
-BEGIN
-	SELECT
-		t1.IdPersona,
-		t2.IdUsuario,
-		t2.Usuario,
-		t2.Contrasena,
-		t1.Nombre,
-		t1.Apellido,
-		t1.DNI,
-		IF(t3.IdEstudiante IS NOT NULL, 'Estudiante', 'Docente') AS TipoUsuario,
-		IFNULL(t3.Legajo, t4.Legajo) AS Legajo,
-		t3.IdCarrera,
-		t1.Email,
-		t2.EmailValidado,
-		t2.Comentario
-	FROM
-		personas AS t1
-		INNER JOIN usuarios AS t2
-			ON t1.IdPersona = t2.IdPersona
-		LEFT JOIN estudiantes AS t3
-			ON t1.IdPersona = t3.IdPersona
-		LEFT JOIN docentes AS t4	
-			ON t1.IdPersona = t4.IdPersona
-	WHERE
-		t3.Legajo IS NOT NULL
-		OR t4.Legajo IS NOT NULL;
-END//
-DELIMITER ;
-
-
 -- Volcando estructura para procedimiento ceit.sp_selFeriados
 DELIMITER //
 CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_selFeriados`()
@@ -11206,33 +11247,6 @@ BEGIN
 		t1.*
 	FROM
 		v_operarios AS t1;
-END//
-DELIMITER ;
-
-
--- Volcando estructura para procedimiento ceit.sp_selOpers
-DELIMITER //
-CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_selOpers`()
-BEGIN
-	SELECT
-		t1.IdPersona,
-		t2.IdUsuario,
-		t2.Usuario,
-		t2.Contrasena,
-		t1.Nombre,
-		t1.Apellido,
-		t1.DNI,
-		t1.Email,
-		t2.EmailValidado,
-		t2.Comentario
-	FROM
-		personas AS t1
-		INNER JOIN usuarios AS t2
-			ON t1.IdPersona = t2.IdPersona
-		INNER JOIN usuarioroles AS t3
-			on t2.IdUsuario = t3.IdUsuario
-	WHERE
-		t3.IdRol NOT IN (7, 8);
 END//
 DELIMITER ;
 
@@ -12259,6 +12273,23 @@ END//
 DELIMITER ;
 
 
+-- Volcando estructura para procedimiento ceit.sp_selPersonaByIdUsuario
+DELIMITER //
+CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_selPersonaByIdUsuario`(IN `p_idUsuario` INT)
+    READS SQL DATA
+BEGIN
+	SELECT
+		t1.*
+	FROM
+		personas AS t1
+		INNER JOIN usuarios AS t2
+			ON t1.IdPersona = t2.IdPersona
+	WHERE
+		t2.IdUsuario = p_idUsuario;
+END//
+DELIMITER ;
+
+
 -- Volcando estructura para procedimiento ceit.sp_selRol
 DELIMITER //
 CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_selRol`(IN `p_idRol` INT)
@@ -12750,6 +12781,7 @@ DELIMITER ;
 -- Volcando estructura para procedimiento ceit.sp_selUsuarioRoles
 DELIMITER //
 CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_selUsuarioRoles`(IN `p_idUsuario` INT)
+    READS SQL DATA
 BEGIN
 	SELECT
 		t1.IdRol,
@@ -12786,6 +12818,83 @@ BEGIN
 		v_usuarios AS t1
 	LIMIT
 		20;
+END//
+DELIMITER ;
+
+
+-- Volcando estructura para procedimiento ceit.sp_selUsuariosEstudiantesYDocentes
+DELIMITER //
+CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_selUsuariosEstudiantesYDocentes`()
+    READS SQL DATA
+BEGIN
+	SELECT
+		t1.IdPersona,
+		t2.IdUsuario,
+		t2.Usuario,
+		t2.Contrasena,
+		t1.Nombre,
+		t1.Apellido,
+		t1.DNI,
+		IF(t3.IdEstudiante IS NOT NULL, 'Estudiante', 'Docente') AS TipoUsuario,
+		IFNULL(t3.Legajo, t4.Legajo) AS Legajo,
+		t3.IdCarrera,
+		t1.Email,
+		t2.EmailValidado,
+		t2.Comentario
+	FROM
+		personas AS t1
+		INNER JOIN usuarios AS t2
+			ON t1.IdPersona = t2.IdPersona
+		LEFT JOIN estudiantes AS t3
+			ON t1.IdPersona = t3.IdPersona
+		LEFT JOIN docentes AS t4	
+			ON t1.IdPersona = t4.IdPersona
+		INNER JOIN usuarioroles AS t5
+			ON t2.IdUsuario = t5.IdUsuario
+	WHERE
+		t5.IdRol IN (7, 8)
+	LIMIT
+		50;
+END//
+DELIMITER ;
+
+
+-- Volcando estructura para procedimiento ceit.sp_selUsuariosOperarios
+DELIMITER //
+CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_selUsuariosOperarios`()
+BEGIN
+	SELECT
+		t1.IdPersona,
+		t2.IdUsuario,
+		t2.Usuario,
+		t2.Contrasena,
+		t1.Nombre,
+		t1.Apellido,
+		t1.DNI,
+		t1.Email,
+		t2.EmailValidado,
+		t2.Comentario
+	FROM
+		personas AS t1
+		INNER JOIN usuarios AS t2
+			ON t1.IdPersona = t2.IdPersona
+		INNER JOIN usuarioroles AS t3
+			on t2.IdUsuario = t3.IdUsuario
+	WHERE
+		t3.IdRol NOT IN (7, 8);
+END//
+DELIMITER ;
+
+
+-- Volcando estructura para procedimiento ceit.sp_selUsuariosRoles
+DELIMITER //
+CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_selUsuariosRoles`()
+    READS SQL DATA
+BEGIN
+	SELECT
+		t1.*
+	FROM
+		usuarioroles AS t1;
 END//
 DELIMITER ;
 
@@ -13106,6 +13215,21 @@ END//
 DELIMITER ;
 
 
+-- Volcando estructura para procedimiento ceit.sp_updUsuarioRol
+DELIMITER //
+CREATE DEFINER=`apuntec`@`localhost` PROCEDURE `sp_updUsuarioRol`(IN `p_idUsuario` INT, IN `p_idRol` INT)
+    MODIFIES SQL DATA
+BEGIN
+	UPDATE
+		usuarioroles AS t1
+	SET
+		t1.IdRol = p_idRol
+	WHERE
+		t1.IdUsuario = p_idUsuario;
+END//
+DELIMITER ;
+
+
 -- Volcando estructura para tabla ceit.textos
 CREATE TABLE IF NOT EXISTS `textos` (
   `IdTexto` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -13133,9 +13257,9 @@ CREATE TABLE IF NOT EXISTS `textos` (
   CONSTRAINT `FK_textos_tipostexto` FOREIGN KEY (`IdTipoTexto`) REFERENCES `tipostexto` (`IdTipoTexto`) ON UPDATE CASCADE,
   CONSTRAINT `FK_textos_usuarios` FOREIGN KEY (`CreadoPor`) REFERENCES `usuarios` (`IdUsuario`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `FK_textos_usuarios_2` FOREIGN KEY (`ModificadoPor`) REFERENCES `usuarios` (`IdUsuario`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3139 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
+) ENGINE=InnoDB AUTO_INCREMENT=3140 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.textos: ~1.130 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.textos: ~1.085 rows (aproximadamente)
 /*!40000 ALTER TABLE `textos` DISABLE KEYS */;
 INSERT INTO `textos` (`IdTexto`, `CreadoPor`, `CreadoDia`, `ModificadoPor`, `ModificadoDia`, `CodInterno`, `IdMateria`, `IdTipoTexto`, `IdTipoContenido`, `Nombre`, `Autor`, `Docente`, `CantPaginas`, `Activo`) VALUES
 	(1, 1, '2014-05-05 10:48:30', 1, '2014-05-08 12:51:07', 3, 1, 2, 1, 'TEÓRICO - PROMOCIÓN DIRECTA: UNIDAD 1, CONJUNTOS NUMÉRICOS, FUNCIONES, TOPOLOGÍA EN R', 'UDB MATEMÁTICAS', 'UDB MATEMÁTICAS', 0, 1),
@@ -14221,7 +14345,8 @@ INSERT INTO `textos` (`IdTexto`, `CreadoPor`, `CreadoDia`, `ModificadoPor`, `Mod
 	(3135, 1, '2014-05-09 12:15:27', NULL, NULL, 65, 16, 2, 1, 'Tesis sobre Algo', 'Josue', 'Alumni', 40, 0),
 	(3136, 1, '2014-05-09 16:35:12', NULL, NULL, NULL, NULL, 4, NULL, 'pedido digital 1', NULL, NULL, 1, 0),
 	(3137, 1, '2014-05-09 17:15:45', NULL, NULL, NULL, NULL, 1, NULL, 'UNA GOMA LARGA', NULL, NULL, 0, 0),
-	(3138, 1, '2014-05-09 17:45:18', NULL, NULL, NULL, NULL, 4, NULL, 'adfsdfsa', NULL, NULL, 24, 0);
+	(3138, 1, '2014-05-09 17:45:18', NULL, NULL, NULL, NULL, 4, NULL, 'adfsdfsa', NULL, NULL, 24, 0),
+	(3139, 1, '2014-05-13 15:54:13', NULL, NULL, NULL, NULL, 4, NULL, 'digital menos 50', NULL, NULL, 23, 0);
 /*!40000 ALTER TABLE `textos` ENABLE KEYS */;
 
 
@@ -14269,7 +14394,7 @@ CREATE TABLE IF NOT EXISTS `tmpdocentes` (
   `DNI` int(10) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
--- Volcando datos para la tabla ceit.tmpdocentes: ~325 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.tmpdocentes: ~491 rows (aproximadamente)
 /*!40000 ALTER TABLE `tmpdocentes` DISABLE KEYS */;
 INSERT INTO `tmpdocentes` (`Legajo`, `Nombre`, `Apellido`, `DNI`) VALUES
 	(75470, ' RAUL OSVALDO JOSE', 'ABAD BAUSSET', 8406480),
@@ -14774,7 +14899,7 @@ CREATE TABLE IF NOT EXISTS `tmpestudiantes` (
   `DNI` int(10) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.tmpestudiantes: ~3.770 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.tmpestudiantes: ~3.624 rows (aproximadamente)
 /*!40000 ALTER TABLE `tmpestudiantes` DISABLE KEYS */;
 INSERT INTO `tmpestudiantes` (`Legajo`, `Nombre`, `Apellido`, `DNI`) VALUES
 	(4004, ' OSVALDO ALFREDO', 'MORGANTI', 4628792),
@@ -18416,7 +18541,7 @@ CREATE TABLE IF NOT EXISTS `tmp_apuntes` (
   `Hojas` smallint(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
--- Volcando datos para la tabla ceit.tmp_apuntes: ~989 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.tmp_apuntes: ~1.047 rows (aproximadamente)
 /*!40000 ALTER TABLE `tmp_apuntes` DISABLE KEYS */;
 INSERT INTO `tmp_apuntes` (`IdApunte`, `IdMateria`, `IdTipoApunte`, `CodApunte`, `Nombre`, `Autor`, `Docente`, `Hojas`) VALUES
 	(1, 1, 1, 3, 'TEÓRICO - PROMOCIÓN DIRECTA: UNIDAD 1, CONJUNTOS NUMÉRICOS, FUNCIONES, TOPOLOGÍA EN R', 'UDB MATEMÁTICAS', 'UDB MATEMÁTICAS', 30),
@@ -19482,7 +19607,7 @@ CREATE TABLE IF NOT EXISTS `tmp_textos` (
   PRIMARY KEY (`IdApunte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
--- Volcando datos para la tabla ceit.tmp_textos: ~979 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.tmp_textos: ~1.047 rows (aproximadamente)
 /*!40000 ALTER TABLE `tmp_textos` DISABLE KEYS */;
 INSERT INTO `tmp_textos` (`IdApunte`, `IdMateria`, `IdTipoApunte`, `CodigoApunte`, `NombreApunte`, `Autor`, `Profesor`, `CantidadHojas`) VALUES
 	(1, 1, 1, 3, 'TEÓRICO - PROMOCIÓN DIRECTA: UNIDAD 1, CONJUNTOS NUMÉRICOS, FUNCIONES, TOPOLOGÍA EN R', 'UDB MATEMÁTICAS', 'UDB MATEMÁTICAS', 30),
@@ -20545,11 +20670,12 @@ CREATE TABLE IF NOT EXISTS `usuarioroles` (
   CONSTRAINT `FK_usuarioroles_usuarios` FOREIGN KEY (`IdUsuario`) REFERENCES `usuarios` (`IdUsuario`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.usuarioroles: ~4.199 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.usuarioroles: ~4.110 rows (aproximadamente)
 /*!40000 ALTER TABLE `usuarioroles` DISABLE KEYS */;
 INSERT INTO `usuarioroles` (`IdUsuario`, `IdRol`) VALUES
 	(1, 1),
 	(5, 2),
+	(4113, 2),
 	(3, 3),
 	(7, 4),
 	(4, 5),
@@ -24655,7 +24781,8 @@ INSERT INTO `usuarioroles` (`IdUsuario`, `IdRol`) VALUES
 	(3619, 8),
 	(3620, 8),
 	(3621, 8),
-	(3622, 8);
+	(3622, 8),
+	(4119, 8);
 /*!40000 ALTER TABLE `usuarioroles` ENABLE KEYS */;
 
 
@@ -24672,9 +24799,9 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   UNIQUE KEY `IdPersona` (`IdPersona`),
   KEY `FK_usuarios_alumnos` (`IdPersona`),
   CONSTRAINT `FK_usuarios_personas` FOREIGN KEY (`IdPersona`) REFERENCES `personas` (`IdPersona`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4109 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
+) ENGINE=InnoDB AUTO_INCREMENT=4120 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci CHECKSUM=1;
 
--- Volcando datos para la tabla ceit.usuarios: ~3.545 rows (aproximadamente)
+-- Volcando datos para la tabla ceit.usuarios: ~4.110 rows (aproximadamente)
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
 INSERT INTO `usuarios` (`IdUsuario`, `IdPersona`, `Usuario`, `Contrasena`, `Comentario`, `EmailValidado`) VALUES
 	(1, 1, 'pleiros', '123456', 'Este es un comentario sobre el usuario.', b'1'),
@@ -28784,7 +28911,9 @@ INSERT INTO `usuarios` (`IdUsuario`, `IdPersona`, `Usuario`, `Contrasena`, `Come
 	(4105, 4105, NULL, NULL, NULL, b'0'),
 	(4106, 4106, NULL, NULL, NULL, b'0'),
 	(4107, 4107, NULL, NULL, NULL, b'0'),
-	(4108, 4108, NULL, NULL, NULL, b'0');
+	(4108, 4108, NULL, NULL, NULL, b'0'),
+	(4113, 4117, 'ricochet', '123456', NULL, b'1'),
+	(4119, 4127, 'quaker', '123456', NULL, b'0');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 
 

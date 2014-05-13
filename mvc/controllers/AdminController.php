@@ -16,6 +16,10 @@ namespace CEIT\mvc\controllers
             {
                 $this->_model = array(
                     'Usuarios'          =>  new models\UsuarioModel(),
+                    "UsuarioRoles"      =>  new models\UsuarioRolesModel(),
+                    "Personas"          =>  new models\PersonaModel(),
+                    "Estudiantes"       =>  new models\EstudianteModel(),
+                    "Docentes"          =>  new models\DocenteModel(),
                     'Roles'             =>  new models\RolModel(),
                     'Permisos'          =>  new models\PermisoModel(),
                     'RolPermisos'       =>  new models\RolPermisosModel(),
@@ -46,7 +50,7 @@ namespace CEIT\mvc\controllers
             // Modifico si hubo algun cambio de datos.
             if(!empty($_POST))
             {
-                $models = array();
+                /*$models = array();
                 
                 $post = filter_input(INPUT_POST, 'txtNumFotocopias', FILTER_SANITIZE_NUMBER_INT);
                 if($post !== null)
@@ -108,12 +112,11 @@ namespace CEIT\mvc\controllers
                     array_push($models, $model);
                 }
                 
-                $this->_model['Configuraciones']->Update($models);
+                $this->_model['Configuraciones']->Update($models);*/
             }
             
             // Cargo la lista de usuarios.
-            $this->result = $this->_model['Usuarios']->Select();
-            
+            /*$this->result = $this->_model['Usuarios']->Select();
             foreach($this->result as $row)
             {
                 $filename = BASE_DIR . "/mvc/templates/admin/{$this->_action}_user_row.html";
@@ -130,7 +133,7 @@ namespace CEIT\mvc\controllers
                     }
                 }
             }
-            unset($this->result);
+            unset($this->result);*/
             
             // Cargo la lista de roles.
             $this->result = $this->_model['Roles']->Select();
@@ -173,12 +176,12 @@ namespace CEIT\mvc\controllers
             unset($this->result);
             
             // Cargo los parametros del sistema.
-            $this->result = $this->_model['Configuraciones']->Select();
+            /*$this->result = $this->_model['Configuraciones']->Select();
             foreach($this->result as $row)
             {
                 $this->{$row['Clave']} = $row['Valor']; 
             }
-            unset($this->result);
+            unset($this->result);*/
         }
         
         public function create_user()
@@ -256,9 +259,8 @@ namespace CEIT\mvc\controllers
         {
             $this->_template = BASE_DIR . "/mvc/templates/admin/estydoc/{$this->_action}.html";
             
-            $this->result = $this->_model['Usuarios']->SelectEstYDoc();
+            $this->result = $this->_model['Usuarios']->SelectEstudiantesYDocentes();
             //var_dump($this->result);
-            
             if(count($this->result) > 0)
             {
                 foreach($this->result as $row)
@@ -316,48 +318,61 @@ namespace CEIT\mvc\controllers
                     $modelPersona->_email = $email;
                     $modelPersona->_telefono = $telefono;
                     $modelPersona->_celular = $celular;
-                    //$this->resultPersona = $this->_model["Personas"]->Insert(array($modelPersona));
-                    var_dump($this->resultPersona);
+                    $this->resultPersona = $this->_model["Personas"]->Insert(array($modelPersona));
+                    //var_dump($this->resultPersona);
                     unset($modelPersona);
                     
                     if(count($this->resultPersona) == 1)
                     {
+                        $modelUsuario = new models\UsuarioModel();
+                        $modelUsuario->_idPersona = $this->resultPersona;
+                        $modelUsuario->_usuario = $usuario;
+                        $modelUsuario->_contrasena = $contrasena;
+                        $modelUsuario->_comentario = $comentario;
+                        $modelUsuario->_emailValido = $emailValido == "on" ? true : false;
+                        $this->resultUsuario = $this->_model["Usuarios"]->Insert(array($modelUsuario));
+                        //var_dump($this->resultUsuario);
+                        unset($modelUsuario);
+                        
+                        $modelUsuarioRol = new models\UsuarioRolesModel();
+                        $modelUsuarioRol->_idUsuario = $this->resultUsuario;
+                        $modelUsuarioRol->_idRol = $rol;
+                        $this->resultRol = $this->_model["UsuarioRoles"]->Insert(array($modelUsuarioRol));
+                        var_dump($this->resultRol);
+                        unset($modelUsuarioRol);
+                        
                         switch($rol)
                         {
                             case 7:
                                 $modelDocente = new models\DocenteModel();
-                                $modelDocente->_idPersona = $this->resultPersona[0][0];
+                                $modelDocente->_idPersona = $this->resultPersona;
                                 $modelDocente->_legajo = $legajo;
-                                //$this->result = $this->_model["Docentes"]->Insert(array($modelDocente));
+                                $this->result = $this->_model["Docentes"]->Insert(array($modelDocente));
                                 unset($modelDocente);
                                 break;
                             case 8:
                                 $modelEstadiante = new models\EstudianteModel();
-                                $modelEstadiante->_idPersona = $this->resultPersona[0][0];
+                                $modelEstadiante->_idPersona = $this->resultPersona;
                                 $modelEstadiante->_legajo = $legajo;
                                 $modelEstadiante->_idCarrera = $carrera;
-                                //$this->result = $this->_model["Estudiantes"]->Insert(array($modelEstadiante));
+                                $this->result = $this->_model["Estudiantes"]->Insert(array($modelEstadiante));
                                 unset($modelEstadiante);
                                 break;
                             default:
                                 trigger_error("Tipo de rol no existente para esta operacion.", E_USER_ERROR);
                                 break;
                         }
-
-                        $modelUsuario = new models\UsuarioModel();
-                        $modelUsuario->_idPersona = $this->resultPersona[0][0];
-                        $modelUsuario->_usuario = $usuario;
-                        $modelUsuario->_contrasena = $contrasena;
-                        $modelUsuario->_comentario = $comentario;
-                        $modelUsuario->_emailValido = $emailValido;
-                        //$this->result = $this->_model["Usuarios"]->Insert(array($modelUsuario));
-                        unset($modelUsuario);
+                        
+                        unset($this->resultUsuario);
+                        unset($this->resultRol);
                     }
                     else
                     {
                         trigger_error("No se pudo insertar la persona", E_USER_ERROR);
                     }
                     unset($this->resultPersona);
+                    
+                    header("Location: index.php?do=/admin/estydoc_index");
                 }
             }
             
@@ -518,6 +533,18 @@ namespace CEIT\mvc\controllers
                     $emailValidado = filter_input(INPUT_POST, "chkEmailValido", FILTER_SANITIZE_SPECIAL_CHARS);
                     $comentario = filter_input(INPUT_POST, "txtComentario", FILTER_SANITIZE_SPECIAL_CHARS);
                     
+                    $modelUsuario = new models\UsuarioModel();
+                    $modelUsuario->_idUsuario = $id;
+                    $this->_resultUsuarioNeeded = $this->_model["Usuarios"]->Select($modelUsuario);
+                    unset($modelUsuario);
+                    var_dump($this->_resultUsuarioNeeded);
+                    
+                    $modelUsuarioRol = new models\UsuarioRolesModel();
+                    $modelUsuarioRol->_idUsuario = $id;
+                    $this->resultRolNeeded = $this->_model["UsuarioRoles"]->Select($modelUsuarioRol);
+                    unset($modelUsuarioRol);
+                    var_dump($this->resultRolNeeded);
+                    
                     $modelPersona = new models\PersonaModel();
                     $modelPersona->_idPersona = null;
                     $modelPersona->_nombre = $nombre;
@@ -526,17 +553,103 @@ namespace CEIT\mvc\controllers
                     $modelPersona->_telefono = $telefono;
                     $modelPersona->_celular = $celular;
                     $modelPersona->_email = $email;
-                    $this->result = $this->_model["Personas"]->Update(array($modelPersona));
+                    $this->_model["Personas"]->Update(array($modelPersona));
                     unset($modelPersona);
                     
                     $modelUsuario = new models\UsuarioModel();
                     $modelUsuario->_idUsuario = $id;
-                    $modelUsuario->_idPersona = "";
+                    $modelUsuario->_idPersona = $this->_resultUsuarioNeeded[0]["IdPersona"];
                     $modelUsuario->_usuario = $usuario;
                     $modelUsuario->_contrasena = $contrasena;
                     $modelUsuario->_comentario = $comentario;
-                    $modelUsuario->_emailValidado = $emailValidado;
-                    $this->result = $this->_model["Usuarios"]->Update(array($modelUsuario));
+                    $modelUsuario->_emailValido = $emailValidado == "on" ? true : false;
+                    $this->_model["Usuarios"]->Update(array($modelUsuario));
+                    
+                    if($this->resultRolNeeded[0]["IdRol"] != $rol)
+                    {
+                        $modelUsuarioRol = new models\UsuarioRolesModel();
+                        $modelUsuarioRol->_idUsuario = $id;
+                        $modelUsuarioRol->_idRol = $rol;
+                        $this->_model["UsuarioRoles"]->Update(array($modelUsuarioRol));
+                        unset($modelUsuarioRol);
+                        
+                        switch($rol)
+                        {
+                            case 7:
+                                $modelDocente = new models\DocenteModel();
+                                $modelDocente->_idUsuario = $id;
+                                $this->resultDocente = $this->_model["Docentes"]->SelectByIdUsuario($modelDocente);
+                                if(count($this->resultDocente) == 1)
+                                {
+                                    $modelDocente->_idDocente = $this->resultDocente[0]["IdDocente"];
+                                    $this->_model["Docentes"]->Delete(array($modelDocente));
+                                    unset($this->resultDocente);
+
+                                    $modelEstudiante = new models\EstudianteModel();
+                                    $modelEstudiante->_idPersona = $this->_resultUsuarioNeeded[0]["IdPersona"];
+                                    $modelEstudiante->_legajo = $legajo;
+                                    $modelEstudiante->_carrera = $carrera;
+                                    $this->_model["Estudiantes"]->Insert(array($modelEstudiante));
+                                    unset($modelEstudiante);
+                                }
+                                unset($this->resultDocente);
+                                break;
+                            case 8:
+                                $modelEstudiante = new models\EstudianteModel();
+                                $modelEstudiante->_idUsuario = $id;
+                                $this->resultEstudiante = $this->_model["Estudiantes"]->SelectByIdUsuario($modelDocente);
+                                if(count($this->resultEstudiante) == 1)
+                                {
+                                    $modelEstudiante->_idDocente = $this->resultEstudiante[0]["IdEstudiante"];
+                                    $this->_model["Docentes"]->Delete(array($modelEstudiante));
+                                    unset($this->resultEstudiante);
+
+                                    $modelDocente = new models\DocenteModel();
+                                    $modelDocente->_idPersona = $this->_resultUsuarioNeeded[0]["IdPersona"];
+                                    $modelDocente->_legajo = $legajo;
+                                    $this->result = $this->_model["Estudiantes"]->Insert(array($modelDocente));
+                                    unset($modelDocente);
+                                }
+                                unset($this->resultEstudiante);
+                                break;
+                            default:
+                                trigger_error("Rol no permitido para esta actualizacion.", E_USER_ERROR);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch($rol)
+                        {
+                            case 7:
+                                $modelDocente = new models\DocenteModel();
+                                $modelDocente->_idUsuario = $id;
+                                $this->resultDocenteNeeded = $this->_model["Docentes"]->SelectByIdUsuario($modelDocente);
+                                var_dump($this->resultDocenteNeeded);
+                                $modelDocente->_idDocente = $this->resultDocenteNeeded[0]["IdDocente"];
+                                $modelDocente->_idPersona = $this->_resultUsuarioNeeded[0]["IdPersona"];
+                                $modelDocente->_legajo = $legajo;
+                                $this->_model["Docentes"]->Update(array($modelDocente));
+                                unset($this->resultDocenteNeeded);
+                                break;
+                            case 8:
+                                $modelEstudiante = new models\EstudianteModel();
+                                $modelEstudiante->_idUsuario = $id;
+                                $this->resultEstudianteNeeded = $this->_model["Estudiantes"]->SelectByIdUsuario($modelEstudiante);
+                                var_dump($this->resultEstudianteNeeded);
+                                $modelEstudiante->_idEstudiante = $this->resultEstudianteNeeded[0]["IdEstudiante"];
+                                $modelEstudiante->_legajo = $legajo;
+                                $modelEstudiante->_idCarrera = $carrera;
+                                $this->_model["Estudiantes"]->Update(array($modelEstudiante));
+                                unset($modelEstudiante);
+                                break;
+                            default:
+                                trigger_error("Rol no permitido para esta actualizacion.", E_USER_ERROR);
+                                break;
+                        }
+                    }
+                    
+                    //header("Location: index.php?do=/admin/estydoc_index");
                 }
             }
             
@@ -649,6 +762,30 @@ namespace CEIT\mvc\controllers
                     header("Location: index.php?do=/admin/estydoc_index");
                 }
             }
+            
+            $modelUsuario = new models\UsuarioModel();
+            $modelUsuario->_idUsuario = $id;
+            $this->result = $this->_model["Usuarios"]->Select($modelUsuario);
+            unset($modelUsuario);
+            //var_dump($this->result);
+            if(count($this->result) == 1)
+            {
+                foreach($this->result as $row)
+                {
+                    if($row)
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            $this->{$key} = $value;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                trigger_error("No se encontro el usuario en el sistema.", E_USER_ERROR);
+            }
+            unset($this->result);
         }
         
         /*
@@ -694,16 +831,155 @@ namespace CEIT\mvc\controllers
             {
                 var_dump($_POST);
                 
-                if(isset($_POST[""]))
+                if(isset($_POST["btnGuardar"]))
                 {
+                    $usuario = filter_input(INPUT_POST, "txtUsuario", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $contrasena = filter_input(INPUT_POST, "txtContrasena", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $nombre = filter_input(INPUT_POST, "txtNombre", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $apellido = filter_input(INPUT_POST, "txtApellido", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $dni = filter_input(INPUT_POST, "txtDNI", FILTER_SANITIZE_NUMBER_INT);
+                    $rol = filter_input(INPUT_POST, "ddlRol", FILTER_SANITIZE_NUMBER_INT);
+                    $telefono = filter_input(INPUT_POST, "txtTelefono", FILTER_SANITIZE_NUMBER_INT);
+                    $celular = filter_input(INPUT_POST, "txtCelular", FILTER_SANITIZE_NUMBER_INT);
+                    $email = filter_input(INPUT_POST, "txtEmail", FILTER_SANITIZE_EMAIL);
+                    $emailValidado = filter_input(INPUT_POST, "chkEmailValido", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $comentario = filter_input(INPUT_POST, "txtComentario", FILTER_SANITIZE_SPECIAL_CHARS);
                     
+                    $modelPersona = new models\PersonaModel();
+                    $modelPersona->_nombre = $nombre;
+                    $modelPersona->_apellido = $apellido;
+                    $modelPersona->_dni = $dni;
+                    $modelPersona->_telefono = $telefono;
+                    $modelPersona->_celular = $celular;
+                    $modelPersona->_email = $email;
+                    $this->resultPersona = $this->_model["Personas"]->Insert(array($modelPersona));
+                    unset($modelPersona);
+                    //var_dump($this->resultPersona);
+                    
+                    if(count($this->resultPersona) == 1)
+                    {
+                        $modelUsuario = new models\UsuarioModel();
+                        $modelUsuario->_idPersona = $this->resultPersona;
+                        $modelUsuario->_usuario = $usuario;
+                        $modelUsuario->_contrasena = $contrasena;
+                        $modelUsuario->_comentario = $comentario;
+                        $modelUsuario->_emailValido = $emailValidado == "on" ? true : false;
+                        $this->resultUsuario = $this->_model["Usuarios"]->Insert(array($modelUsuario));
+                        unset($modelUsuario);
+                        //var_dump($this->resultUsuario);
+                        
+                        if(count($this->resultUsuario) == 1)
+                        {
+                            $modelUsuarioRol = new models\UsuarioRolesModel();
+                            $modelUsuarioRol->_idUsuario = $this->resultUsuario;
+                            $modelUsuarioRol->_idRol = $rol;
+                            $this->_model["UsuarioRoles"]->Insert(array($modelUsuarioRol));
+                            unset($modelUsuarioRol);
+                            
+                            header("Location: index.php?do=/admin/oper_index");
+                        }
+                        else
+                        {
+                            trigger_error("No se pudo insertar el rol para el usuario.", E_USER_ERROR);
+                        }
+                        
+                        unset($this->resultUsuario);
+                    }
+                    else
+                    {
+                        trigger_error("No se pudo insertar a la persona.", E_USER_ERROR);
+                    }
+                    
+                    unset($this->resultPersona);
                 }
             }
+            
+            // Cargo la lista de roles.
+            $this->result = $this->_model["Roles"]->Select();
+            //var_dump($this->result);
+            foreach($this->result as $row)
+            {
+                if(is_array($row))
+                {
+                    if(!($row["Nombre"] == "Estudiante" || $row["Nombre"] == "Docente"))
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/admin/controls/role_option.html";
+                        $this->combo_roles .= file_get_contents($filename);
+
+                        foreach($row as $key => $value)
+                        {
+                            if(!is_array($value))
+                            {
+                                $this->combo_roles = str_replace('{' . $key . '}', $value, $this->combo_roles);
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
         }
         
         public function oper_detail($id)
         {
             $this->_template = BASE_DIR . "/mvc/templates/admin/oper/{$this->_action}.html";
+            
+            $modelUsuario = new models\UsuarioModel();
+            $modelUsuario->_idUsuario = $id;
+            $this->result = $this->_model["Usuarios"]->Select($modelUsuario);
+            unset($modelUsuario);
+            //var_dump($this->result);
+            if(count($this->result) == 1)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case "EmailValidado":
+                                    $this->{$key} = $value == 1 ? "checked=\"checked\"" : "";
+                                    break;
+                                default:
+                                    $this->{$key} = $value;
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            $modelRol = new models\RolModel();
+            $modelRol->_idUsuario = $id;
+            $this->result = $this->_model["Usuarios"]->SelectAllRolesAndMarkByUser($modelRol);
+            unset($modelRol);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/admin/controls/role_option.html";
+                        $this->combo_rol .= file_get_contents($filename);
+
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case "Descripcion":
+                                    $this->combo_rol = str_replace('{Nombre}', $value, $this->combo_rol);
+                                    break;
+                                default:
+                                    $this->combo_rol = str_replace('{' . $key . '}', $value, $this->combo_rol);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
         }
         
         public function oper_update($id)
@@ -714,11 +990,130 @@ namespace CEIT\mvc\controllers
             {
                 var_dump($_POST);
                 
-                if(isset($_POST[""]))
+                if(isset($_POST["btnGuardar"]))
                 {
+                    $usuario = filter_input(INPUT_POST, "txtUsuario", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $contrasena = filter_input(INPUT_POST, "txtContrasena", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $nombre = filter_input(INPUT_POST, "txtNombre", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $apellido = filter_input(INPUT_POST, "txtApellido", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $dni = filter_input(INPUT_POST, "txtDNI", FILTER_SANITIZE_NUMBER_INT);
+                    $rol = filter_input(INPUT_POST, "ddlRol", FILTER_SANITIZE_NUMBER_INT);
+                    $telefono = filter_input(INPUT_POST, "txtTelefono", FILTER_SANITIZE_NUMBER_INT);
+                    $celular = filter_input(INPUT_POST, "txtCelular", FILTER_SANITIZE_NUMBER_INT);
+                    $email = filter_input(INPUT_POST, "txtEmail", FILTER_SANITIZE_EMAIL);
+                    $emailValidado = filter_input(INPUT_POST, "chkEmailValido", FILTER_SANITIZE_SPECIAL_CHARS);
+                    $comentario = filter_input(INPUT_POST, "txtComentario", FILTER_SANITIZE_SPECIAL_CHARS);
                     
+                    $modelUsuario = new models\UsuarioModel();
+                    $modelUsuario->_idUsuario = $id;
+                    $this->_resultUsuarioNeeded = $this->_model["Usuarios"]->Select($modelUsuario);
+                    unset($modelUsuario);
+                    //var_dump($this->_resultUsuarioNeeded);
+                    
+                    $modelUsuarioRol = new models\UsuarioRolesModel();
+                    $modelUsuarioRol->_idUsuario = $id;
+                    $this->resultRolNeeded = $this->_model["UsuarioRoles"]->Select($modelUsuarioRol);
+                    unset($modelUsuarioRol);
+                    //var_dump($this->resultRolNeeded);
+                    
+                    $modelPersona = new models\PersonaModel();
+                    $modelPersona->_idPersona = $this->_resultUsuarioNeeded[0]["IdPersona"];
+                    $modelPersona->_nombre = $nombre;
+                    $modelPersona->_apellido = $apellido;
+                    $modelPersona->_dni = $dni;
+                    $modelPersona->_telefono = $telefono;
+                    $modelPersona->_celular = $celular;
+                    $modelPersona->_email = $email;
+                    $this->resultPersona = $this->_model["Personas"]->Update(array($modelPersona));
+                    unset($modelPersona);
+                    //var_dump($this->resultPersona);
+                    
+                    $modelUsuario = new models\UsuarioModel();
+                    $modelUsuario->_idUsuario = $id;
+                    $modelUsuario->_idPersona = $this->_resultUsuarioNeeded[0]["IdPersona"];
+                    $modelUsuario->_usuario = $usuario;
+                    $modelUsuario->_contrasena = $contrasena;
+                    $modelUsuario->_comentario = $comentario;
+                    $modelUsuario->_emailValidado = $emailValidado == "on" ? true : false;
+                    $this->resultUsuario = $this->_model["Usuarios"]->Update(array($modelUsuario));
+                    unset($modelUsuario);
+                    //var_dump($this->resultUsuario);
+                    unset($this->resultUsuario);
+                    
+                    if($this->resultRolNeeded[0]["IdRol"] != $rol)
+                    {
+                        $modelUsuarioRol = new models\UsuarioRolesModel();
+                        $modelUsuarioRol->_idUsuario = $id;
+                        $modelUsuarioRol->_idRol = $rol;
+                        $this->_model["UsuarioRoles"]->Update(array($modelUsuarioRol));
+                        unset($modelUsuarioRol);
+                    }
+                    unset($this->resultPersona);
+                    
+                    unset($this->resultPersonaNeeded);
+                    unset($this->resultRolNeeded);
+                    
+                    header("Location: index.php?do=/admin/oper_index");
                 }
             }
+            
+            $modelUsuario = new models\UsuarioModel();
+            $modelUsuario->_idUsuario = $id;
+            $this->result = $this->_model["Usuarios"]->Select($modelUsuario);
+            unset($modelUsuario);
+            //var_dump($this->result);
+            if(count($this->result) == 1)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case "EmailValidado":
+                                    $this->{$key} = $value == 1 ? "checked=\"checked\"" : "";
+                                    break;
+                                default:
+                                    $this->{$key} = $value;
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            $modelRol = new models\RolModel();
+            $modelRol->_idUsuario = $id;
+            $this->result = $this->_model["Usuarios"]->SelectAllRolesAndMarkByUser($modelRol);
+            unset($modelRol);
+            //var_dump($this->result);
+            if(count($this->result) > 0)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        $filename = BASE_DIR . "/mvc/templates/admin/controls/role_option.html";
+                        $this->combo_rol .= file_get_contents($filename);
+
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case "Descripcion":
+                                    $this->combo_rol = str_replace('{Nombre}', $value, $this->combo_rol);
+                                    break;
+                                default:
+                                    $this->combo_rol = str_replace('{' . $key . '}', $value, $this->combo_rol);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->result);
         }
         
         public function oper_delete($id)
@@ -729,9 +1124,39 @@ namespace CEIT\mvc\controllers
             {
                 var_dump($_POST);
                 
-                if(isset($_POST[""]))
+                if(isset($_POST["btnBorrar"]))
                 {
-                    
+                    $modelUsuario = new models\UsuarioModel();
+                    $modelUsuario->_idUsuario = $id;
+                    $this->_model["Usuarios"]->Delete(array($modelUsuario));
+                    unset($modelUsuario);
+                }
+            }
+            
+            $modelUsuario = new models\UsuarioModel();
+            $modelUsuario->_idUsuario = $id;
+            $this->result = $this->_model["Usuarios"]->Select($modelUsuario);
+            unset($modelUsuario);
+            //var_dump($this->result);
+            if(count($this->result) == 1)
+            {
+                foreach($this->result as $row)
+                {
+                    if(is_array($row))
+                    {
+                        foreach($row as $key => $value)
+                        {
+                            switch($key)
+                            {
+                                case "EmailValidado":
+                                    $this->{$key} = $value == 1 ? "checked=\"checked\"" : "";
+                                    break;
+                                default:
+                                    $this->{$key} = $value;
+                                    break;
+                            }
+                        }
+                    }
                 }
             }
         }

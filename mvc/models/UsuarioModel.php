@@ -9,6 +9,8 @@ namespace CEIT\mvc\models
     {
         public function Delete(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -27,6 +29,8 @@ namespace CEIT\mvc\models
 
         public function Insert(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;
@@ -36,11 +40,11 @@ namespace CEIT\mvc\models
             {
                 array_push($this->_sp, "sp_insUsuario");
                 array_push($this->_params, array(
-                    ":idPersona"    =>  is_null($item->_idPersona) ? null : $model->_idPersona,
-                    ":usuario"      =>  is_null($item->_usuario) ? null : (string)$model->_usuario,
-                    ":contrasena"   =>  is_null($item->_contrasena) ? null : (string)$model->_contrasena,
-                    ":comentario"   =>  is_null($item->_comentario) ? null : (string)$model->_comentario,
-                    ":emailValido"  =>  (bool)$model->_emailValido,
+                    ":idPersona"    =>  is_null($item->_idPersona) ? null : $item->_idPersona,
+                    ":usuario"      =>  is_null($item->_usuario) ? null : (string)$item->_usuario,
+                    ":contrasena"   =>  is_null($item->_contrasena) ? null : (string)$item->_contrasena,
+                    ":comentario"   =>  is_null($item->_comentario) ? null : (string)$item->_comentario,
+                    ":emailValido"  =>  (bool)$item->_emailValido,
                 ));
             }
             
@@ -49,6 +53,8 @@ namespace CEIT\mvc\models
 
         public function Select(core\AModel $model = null)
         {
+            $this->init();
+            
             if($model != null)
             {
                 $this->_sp = "sp_selUsuario";
@@ -70,17 +76,10 @@ namespace CEIT\mvc\models
          * Start custom selects
          */
         
-        public function SelectEstYDoc()
+        public function SelectByUsername(core\AModel $model)
         {
             $this->init();
             
-            $this->_sp = "sp_selEstYDoc";
-            
-            return Database::getInstance()->DoQuery($this->_sp);
-        }
-        
-        public function SelectByUsername(core\AModel $model)
-        {
             $this->_sp = "sp_selUsuarioByUsernameOrDNI";
             $this->_params = array(
                 ':username'   =>  $model->_username,
@@ -91,6 +90,8 @@ namespace CEIT\mvc\models
         
         public function SelectByLegajoOrDNI(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selUsuarioByLegajoOrDNI";
             $this->_params = array(
                 ':legajoDni'    =>  (int)$model->_legajoDNI,
@@ -101,6 +102,8 @@ namespace CEIT\mvc\models
         
         public function SelectByEmail(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selUsuarioByEmail";
             $this->_params = array(
                 ':username'   =>  $model->_email,
@@ -111,6 +114,8 @@ namespace CEIT\mvc\models
         
         public function SelectRoles(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selUsuarioRoles";
             $this->_params = array(
                 ':idUsuario'    =>  $model->_idUsuario,
@@ -131,6 +136,8 @@ namespace CEIT\mvc\models
         
         public function SelectPermissionByIdRol(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selUsuarioPermisosByIdRol";
             $this->_params = array(
                 ':idRol'  =>  $model->_idRol,
@@ -141,12 +148,23 @@ namespace CEIT\mvc\models
         
         public function SelectAllRolesAndMarkByUser(core\AModel $model)
         {
+            $this->init();
+            
             $this->_sp = "sp_selUsuariosRoles2";
             $this->_params = array(
                 ':idUsuario'    =>  $model->_idUsuario,
             );
             
             return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
+        public function SelectEstudiantesYDocentes()
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selUsuariosEstudiantesYDocentes";
+            
+            return Database::getInstance()->DoQuery($this->_sp);
         }
         
         public function SelectOperarios()
@@ -164,6 +182,8 @@ namespace CEIT\mvc\models
         
         public function Update(array $model)
         {
+            $this->init();
+            
             if(count($model) > 1)
             {
                 $this->_trans = true;

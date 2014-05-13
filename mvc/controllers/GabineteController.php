@@ -869,13 +869,13 @@ namespace CEIT\mvc\controllers
                                 $pedido = new models\GabineteModel();
                                 $pedido->_idGabinetePedido = $item["Id"];
                                 $this->result = $this->_model["Gabinete"]->Select($pedido);
-                                var_dump($this->result);
+                                //var_dump($this->result);
 
                                 $pedido->_idUsuario = $this->result[0]['IdUsuario'];
                                 $pedido->_creado = $this->result[0]['Creado'];
                                 $pedido->_creadoPor = $this->result[0]['CreadoPor'];
-                                $pedido->_modificado = date('Y-m-d H:i:s');
-                                $pedido->_modificadoPor = $_SESSION['IdUsuario'];
+                                $pedido->_modificado = $this->result[0]['Modificado'];
+                                $pedido->_modificadoPor = $this->result[0]['ModificadoPor'];
                                 $pedido->_anillado = $this->result[0]['Anillado'];
                                 $pedido->_comentario = $this->result[0]['Comentario'];
                                 $pedido->_posicionX = $this->result[0]['PosicionX'];
@@ -883,7 +883,7 @@ namespace CEIT\mvc\controllers
                                 $pedido->_retiro = $this->result[0]['Retiro'];
                                 $pedido->_idFranja = $this->result[0]['IdFranja'];
                                 $pedido->_pagado = true;
-                                $pedido->_idEstado = $this->result[0]['IdEstado'];
+                                $pedido->_idEstado = 5;
                                 //$pedido->_especial = $this->result[0]['Especial'];
                                 
                                 array_push($pedidosAPagar, $pedido);

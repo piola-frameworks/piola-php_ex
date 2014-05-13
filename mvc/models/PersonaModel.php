@@ -71,6 +71,18 @@ namespace CEIT\mvc\models
          * Start custom selects
          */
         
+        public function SelectByIdUsuario(core\AModel $model)
+        {
+            $this->init();
+            
+            $this->_sp = "sp_selPersonaByIdUsuario";
+            $this->_params = array(
+                ":idUsuario"    =>  $model->_idUsuario,
+            );
+            
+            return Database::getInstance()->DoQuery($this->_sp, $this->_params);
+        }
+        
         /*
          * End custom selects
          */
@@ -90,7 +102,7 @@ namespace CEIT\mvc\models
                     ':nombre'       =>  empty($item->_nombre) ? null : (string)$item->_nombre,
                     ':apellido'     =>  empty($item->_apellido) ? null : (string)$item->_apellido,
                     ':dni'          =>  (int)$item->_dni,
-                    ':telefono'     =>  empty($item->_telefono) ? null :(int)$item->_telefono,
+                    ':telefono'     =>  empty($item->_telefono) ? null : (int)$item->_telefono,
                     ':celular'      =>  empty($item->_celular) ? null : (int)$item->_celular,
                     ':email'        =>  empty($item->_email) ? null : (string)$item->_email,
                 ));

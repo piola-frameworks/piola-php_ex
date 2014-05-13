@@ -502,7 +502,7 @@ namespace CEIT\mvc\controllers
                 else
                 {
                     // Si no hay item, entonces, no se agrego alguno. Regreso a la pagina principal.
-                    header("Location: index.php?do=/estudiante/create");
+                    //header("Location: index.php?do=/estudiante/create");
                 }
 
                 // Si acepto el pedido, persisto en DB.
@@ -517,7 +517,7 @@ namespace CEIT\mvc\controllers
                     {
                         foreach($this->franjaResult as $item)
                         {
-                            if(date("H", strtotime($item["Desde"])) == $horaRetiro)
+                            if(date("H", strtotime($item["Desde"] . ":00")) == $horaRetiro)
                             {
                                 $idFranjaSeleccionada = $item["IdHorarioFranja"];
                             }
