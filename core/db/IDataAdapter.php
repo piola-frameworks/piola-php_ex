@@ -6,14 +6,13 @@
  * and open the template in the editor.
  */
 
-namespace CEIT\libs;
+namespace piola\db;
 
 /**
- * Description of CCookieManager
  *
- * @author Pablo
+ * @author pleiros
  */
-class CCookieManager
+interface IDataAdapter
 {
     //put your code here
 }

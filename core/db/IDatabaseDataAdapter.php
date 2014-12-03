@@ -6,14 +6,13 @@
  * and open the template in the editor.
  */
 
-namespace CEIT\libs;
+namespace piola\db;
 
 /**
- * Description of CSessionManager
  *
- * @author Pablo
+ * @author pleiros
  */
-class CSessionManager
+interface IDatabaseDataAdapter
 {
     //put your code here
 }
